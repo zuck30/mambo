@@ -41,7 +41,21 @@ To send professional OTP emails, configure Supabase to use Brevo's SMTP server:
    - **User**: Your Brevo login email.
    - **Pass**: Your generated SMTP key.
 
-### 3. AI Insights Setup (Gemini)
+### 3. Troubleshooting Email OTP
+
+If you are not receiving OTP emails or verification is failing, check the following:
+
+1. **Brevo Sender Verification**: Ensure the "Sender email" you configured in Supabase is a **verified sender** in your Brevo account.
+2. **Supabase Email Templates**:
+   - Go to **Authentication > Email Templates** in Supabase.
+   - Ensure the "Magic Link" or "OTP" template contains the `{{ .Token }}` variable.
+   - If `{{ .ConfirmationURL }}` is used instead of `{{ .Token }}`, Supabase will send a link instead of a 6-digit code.
+3. **SMTP Port**: While `587` is standard for TLS, some environments might require port `465` with SSL.
+4. **Spam/Promotions**: Check your spam and promotions folders.
+5. **Rate Limits**: Supabase and Brevo have rate limits. If you've requested too many codes in a short time, you may be temporarily blocked.
+6. **Code Type**: In the frontend, Ensure `verifyOtp` uses `type: 'magiclink'` when verifying 6-digit codes sent via `signInWithOtp` (email).
+
+### 4. AI Insights Setup (Gemini)
 
 1. Get a Gemini API key from [Google AI Studio](https://aistudio.google.com/).
 2. Set the secret in Supabase:
