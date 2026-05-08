@@ -1,236 +1,131 @@
 import React, { useState } from 'react';
+import { supabase } from '../../lib/supabase';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../hooks/useAuth';
 import { toast } from 'react-hot-toast';
-import { Loader2, Mail, Lock, ArrowRight } from 'lucide-react';
-import logo from '../../assets/garidesk.png';
+import { Flame } from 'lucide-react';
 
 const LoginPage = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [phone, setPhone] = useState('');
+  const [otp, setOtp] = useState('');
+  const [showOtp, setShowOtp] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
+  const handleSendOtp = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
-      await login(email, password);
-      toast.success('Access Granted');
-      navigate('/');
+      const { error } = await supabase.auth.signInWithOtp({
+        phone: phone.startsWith('+') ? phone : `+${phone}`,
+      });
+      if (error) throw error;
+      setShowOtp(true);
+      toast.success('OTP sent to your phone!');
     } catch (error) {
-      toast.error(error.message || 'Authentication Failed');
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleVerifyOtp = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const { error, data: { session } } = await supabase.auth.verifyOtp({
+        phone: phone.startsWith('+') ? phone : `+${phone}`,
+        token: otp,
+        type: 'sms',
+      });
+      if (error) throw error;
+
+      // Check if profile exists and is onboarded
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('is_onboarded')
+        .eq('id', session.user.id)
+        .single();
+
+      if (profile?.is_onboarded) {
+        navigate('/home');
+      } else {
+        navigate('/onboarding');
+      }
+    } catch (error) {
+      toast.error(error.message);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center overflow-hidden font-sans">
-      {/* Background Image with Overlay */}
-      <div 
-        className="absolute inset-0 z-0"
-        style={{
-
-          backgroundImage: 'url("https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&q=80&w=2070")', 
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-        }}
-      >
-        <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px]" />
-      </div>
-
-      {/* Glassmorphic Card */}
-      <div className="relative z-10 w-full max-w-[90%] sm:max-w-md mx-auto">
-        <div className="bg-white/10 backdrop-blur-2xl border border-white/20 p-6 sm:p-10 rounded-[2rem] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] transition-all hover:border-white/30">
-          
-          {/* Header */}
-          <div className="text-center mb-8 sm:mb-10">
-            <img src={logo} alt="GariDesk Logo" className="h-16 sm:h-20 w-16 sm:w-20 mx-auto mb-4 object-cover rounded-full border-2 border-white/20 shadow-lg" />
-            <h2 className="text-white text-xl font-light tracking-[0.3em]">GariDesk</h2>
+    <div className="min-h-screen bg-dark flex flex-col items-center justify-center p-4">
+      <div className="w-full max-w-md space-y-8 bg-dark-card p-8 rounded-2xl shadow-2xl border border-white/5">
+        <div className="text-center">
+          <div className="flex justify-center">
+            <Flame size={64} className="text-primary fill-current" />
           </div>
+          <h1 className="mt-4 text-4xl font-black text-white">Oa</h1>
+          <p className="mt-2 text-dark-text">By tapping Log In, you agree with our Terms.</p>
+        </div>
 
-          <form className="space-y-5" onSubmit={handleSubmit}>
-            {/* Email Field */}
-            <div className="relative group">
-              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-white transition-colors" />
+        {!showOtp ? (
+          <form onSubmit={handleSendOtp} className="space-y-6">
+            <div>
+              <label className="block text-sm font-medium text-white mb-2">
+                Phone Number
+              </label>
               <input
-                type="email"
+                type="tel"
+                placeholder="+1234567890"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                className="w-full bg-dark-surface border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary/50"
                 required
-                className="w-full pl-12 pr-4 py-4 rounded-2xl bg-black/30 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/30 focus:bg-black/50 transition-all"
-                placeholder="Email Address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
-
-            {/* Password Field */}
-            <div className="relative group">
-              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-white transition-colors" />
-              <input
-                type="password"
-                required
-                className="w-full pl-12 pr-4 py-4 rounded-2xl bg-black/30 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/30 focus:bg-black/50 transition-all"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
-
-            <div className="flex justify-end">
-              <button
-                type="button"
-                onClick={() => navigate('/forgot-password')}
-                className="text-[10px] text-gray-400 hover:text-white transition-colors uppercase tracking-widest"
-              >
-                Forgot Credentials?
-              </button>
-            </div>
-
-            {/* Submit Button */}
             <button
               type="submit"
               disabled={loading}
-              className="group relative w-full flex items-center justify-center py-4 px-4 overflow-hidden rounded-2xl bg-white text-black font-bold text-sm uppercase tracking-[0.2em] hover:bg-gray-200 transition-all duration-300 disabled:opacity-50 active:scale-[0.98]"
+              className="w-full bg-gradient-to-r from-primary to-primary-dark text-white font-bold py-3 rounded-full hover:opacity-90 transition-opacity disabled:opacity-50"
             >
-              {loading ? (
-                <Loader2 className="w-5 h-5 animate-spin" />
-              ) : (
-                <>
-                  Enter Dashboard
-                  <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </>
-              )}
+              {loading ? 'Sending...' : 'Get OTP'}
             </button>
           </form>
-        </div>
+        ) : (
+          <form onSubmit={handleVerifyOtp} className="space-y-6">
+            <div>
+              <label className="block text-sm font-medium text-white mb-2">
+                Verification Code
+              </label>
+              <input
+                type="text"
+                placeholder="123456"
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
+                className="w-full bg-dark-surface border border-white/10 rounded-xl px-4 py-3 text-white text-center text-2xl tracking-widest focus:outline-none focus:ring-2 focus:ring-primary/50"
+                required
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-gradient-to-r from-primary to-primary-dark text-white font-bold py-3 rounded-full hover:opacity-90 transition-opacity disabled:opacity-50"
+            >
+              {loading ? 'Verifying...' : 'Verify & Log In'}
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowOtp(false)}
+              className="w-full text-white/50 text-sm hover:text-white transition-colors"
+            >
+              Back to Phone Number
+            </button>
+          </form>
+        )}
       </div>
     </div>
   );
 };
 
 export default LoginPage;
-
-
-// LOGIN PAGE WITH VIDEO
-// import React, { useState } from 'react';
-// import { useNavigate } from 'react-router-dom';
-// import { useAuth } from '../../hooks/useAuth';
-// import { toast } from 'react-hot-toast';
-// import { Loader2, Mail, Lock, ArrowRight } from 'lucide-react';
-// import logo from '../../assets/garidesk.png';
-
-// const LoginPage = () => {
-//   const [email, setEmail] = useState('');
-//   const [password, setPassword] = useState('');
-//   const [loading, setLoading] = useState(false);
-//   const { login } = useAuth();
-//   const navigate = useNavigate();
-
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-//     setLoading(true);
-//     try {
-//       await login(email, password);
-//       toast.success('Access Granted');
-//       navigate('/');
-//     } catch (error) {
-//       toast.error(error.message || 'Authentication Failed');
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   return (
-//     <div className="relative min-h-screen flex items-center justify-center overflow-hidden font-sans">
-//       {/* Background YouTube Video with Overlay */}
-//       <div className="absolute inset-0 z-0">
-//         <div className="absolute inset-0 w-full h-full">
-//           <iframe
-//             className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 min-w-full min-h-full w-auto h-auto pointer-events-none"
-//             src="https://www.youtube.com/embed/JbPBHtLstGw?autoplay=1&loop=1&playlist=JbPBHtLstGw&controls=0&showinfo=0&rel=0&mute=1&start=5&modestbranding=1&iv_load_policy=3&disablekb=1&fs=0&playsinline=1"
-//             title="2024 Mercedes-AMG GT Background"
-//             frameBorder="0"
-//             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-//             allowFullScreen
-//             style={{
-//               objectFit: 'cover',
-//             }}
-//           ></iframe>
-//         </div>
-//         {/* Dark overlay for better text readability */}
-//         <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/80 backdrop-blur-[2px]" />
-//       </div>
-
-//       {/* Glassmorphic Card */}
-//       <div className="relative z-10 w-full max-w-[90%] sm:max-w-md mx-auto">
-//         <div className="bg-white/10 backdrop-blur-2xl border border-white/20 p-6 sm:p-10 rounded-[2rem] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] transition-all hover:border-white/30">
-          
-//           {/* Header */}
-//           <div className="text-center mb-8 sm:mb-10">
-//             <img src={logo} alt="GariDesk Logo" className="h-16 sm:h-20 w-16 sm:w-20 mx-auto mb-4 object-cover rounded-full border-2 border-white/20 shadow-lg" />
-//             <h2 className="text-white text-xl font-light tracking-[0.3em]">GariDesk</h2>
-//             <p className="text-white/60 text-xs tracking-wider mt-2">LUXURY AUTOMOTIVE</p>
-//           </div>
-
-//           <form className="space-y-5" onSubmit={handleSubmit}>
-//             {/* Email Field */}
-//             <div className="relative group">
-//               <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-white transition-colors" />
-//               <input
-//                 type="email"
-//                 required
-//                 className="w-full pl-12 pr-4 py-4 rounded-2xl bg-black/30 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/30 focus:bg-black/50 transition-all"
-//                 placeholder="Email Address"
-//                 value={email}
-//                 onChange={(e) => setEmail(e.target.value)}
-//               />
-//             </div>
-
-//             {/* Password Field */}
-//             <div className="relative group">
-//               <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-white transition-colors" />
-//               <input
-//                 type="password"
-//                 required
-//                 className="w-full pl-12 pr-4 py-4 rounded-2xl bg-black/30 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/30 focus:bg-black/50 transition-all"
-//                 placeholder="Password"
-//                 value={password}
-//                 onChange={(e) => setPassword(e.target.value)}
-//               />
-//             </div>
-
-//             <div className="flex justify-end">
-//               <button
-//                 type="button"
-//                 onClick={() => navigate('/forgot-password')}
-//                 className="text-[10px] text-gray-400 hover:text-white transition-colors uppercase tracking-widest"
-//               >
-//                 Forgot Credentials?
-//               </button>
-//             </div>
-
-//             {/* Submit Button */}
-//             <button
-//               type="submit"
-//               disabled={loading}
-//               className="group relative w-full flex items-center justify-center py-4 px-4 overflow-hidden rounded-2xl bg-white text-black font-bold text-sm uppercase tracking-[0.2em] hover:bg-gray-200 transition-all duration-300 disabled:opacity-50 active:scale-[0.98]"
-//             >
-//               {loading ? (
-//                 <Loader2 className="w-5 h-5 animate-spin" />
-//               ) : (
-//                 <>
-//                   Enter Dashboard
-//                   <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
-//                 </>
-//               )}
-//             </button>
-//           </form>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default LoginPage;

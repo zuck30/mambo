@@ -5,9 +5,13 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: { DEFAULT: '#2563EB', light: '#3B82F6', dark: '#1D4ED8' },
-        accent: '#38BDF8',
-        navy: { DEFAULT: '#0F172A', light: '#1E293B' },
+        primary: { DEFAULT: '#ff79ac', dark: '#ff5280' },
+        dark: {
+          DEFAULT: '#000000',
+          card: '#1F1F1F',
+          surface: '#2A2A2A',
+          text: '#B0B0B0'
+        }
       },
       fontFamily: { sans: ['Inter', 'sans-serif'] },
       screens: { xs: '375px' },
