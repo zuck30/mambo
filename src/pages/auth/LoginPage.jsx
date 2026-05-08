@@ -43,6 +43,7 @@ const LoginPage = () => {
       setShowOtp(true);
       toast.success('Check your email for the verification code!');
     } catch (error) {
+      console.error('OTP Send Error:', error);
       setError(error.message);
       toast.error(error.message);
     } finally {
@@ -76,6 +77,7 @@ const LoginPage = () => {
         navigate('/onboarding');
       }
     } catch (error) {
+      console.error('OTP Verify Error:', error);
       setError(error.message);
       toast.error(error.message);
     } finally {
