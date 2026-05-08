@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../hooks/useAuth';
-import { ChevronLeft, Send, Phone, Video } from 'lucide-react';
+import { ChevronLeft, Send, Phone, Video, Sparkles } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 
 const ChatPage = () => {
@@ -13,6 +13,7 @@ const ChatPage = () => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(true);
+  const [aiLoading, setAiLoading] = useState(false);
   const scrollRef = useRef();
 
   useEffect(() => {
@@ -96,6 +97,24 @@ const ChatPage = () => {
     }
   };
 
+  const handleAiIcebreaker = async () => {
+    setAiLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('oa-ai', {
+        body: {
+          prompt: 'Give me a creative icebreaker for this person.',
+          context: `Matched with ${match?.otherUser.name}. They are into ${match?.otherUser.interests.join(', ')}.`
+        }
+      });
+      if (error) throw error;
+      setNewMessage(data.response);
+    } catch (error) {
+      toast.error('AI assistant is busy right now');
+    } finally {
+      setAiLoading(false);
+    }
+  };
+
   if (loading) return <div className="h-screen flex items-center justify-center">Loading...</div>;
 
   return (
@@ -141,7 +160,16 @@ const ChatPage = () => {
 
       {/* Input */}
       <form onSubmit={handleSendMessage} className="p-4 bg-dark-card border-t border-white/5">
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center">
+          <button
+            type="button"
+            onClick={handleAiIcebreaker}
+            disabled={aiLoading}
+            className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${aiLoading ? 'text-primary animate-pulse' : 'text-dark-text hover:text-primary'}`}
+            title="Get AI Icebreaker"
+          >
+            <Sparkles size={20} />
+          </button>
           <input
             type="text"
             value={newMessage}
