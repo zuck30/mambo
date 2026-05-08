@@ -27,7 +27,7 @@ const EditProfilePage = () => {
       if (error) throw error;
       await fetchProfile(profile.id);
       toast.success('Profile updated!');
-      navigate('/profile');
+      navigate('/app/profile');
     } catch (error) {
       toast.error('Failed to update profile');
     } finally {

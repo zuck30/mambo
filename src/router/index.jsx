@@ -2,6 +2,7 @@ import React from 'react';
 import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 
+import LandingPage from '../pages/LandingPage';
 import LoginPage from '../pages/auth/LoginPage';
 import OnboardingPage from '../pages/onboarding/OnboardingPage';
 import HomePage from '../pages/home/HomePage';
@@ -31,6 +32,10 @@ const ProtectedRoute = ({ children, requireOnboarded = true }) => {
 
 const router = createBrowserRouter([
   {
+    path: '/',
+    element: <LandingPage />,
+  },
+  {
     path: '/login',
     element: <LoginPage />,
   },
@@ -43,7 +48,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: '/',
+    path: '/app',
     element: (
       <ProtectedRoute>
         <AppLayout />
@@ -52,7 +57,7 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <Navigate to="/home" replace />,
+        element: <Navigate to="/app/home" replace />,
       },
       {
         path: 'home',
