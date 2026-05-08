@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { supabase } from '../../lib/supabase';
-import { Settings, Edit2, Shield, CreditCard, ChevronRight } from 'lucide-react';
+import { Settings, Edit2, Shield, CreditCard, ChevronRight, ShieldCheck } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const ProfilePage = () => {
@@ -84,6 +84,18 @@ const ProfilePage = () => {
 
       {/* Quick Menu */}
       <div className="px-6 space-y-2">
+        {profile?.role === 'admin' && (
+          <button
+            onClick={() => navigate('/app/admin')}
+            className="w-full flex justify-between items-center p-4 bg-primary/10 rounded-2xl border border-primary/20 text-primary"
+          >
+             <div className="flex items-center gap-3">
+               <ShieldCheck size={20} />
+               <span className="font-bold">Admin Dashboard</span>
+             </div>
+             <ChevronRight size={20} />
+          </button>
+        )}
         <button className="w-full flex justify-between items-center p-4 bg-dark-card rounded-2xl border border-white/5">
            <span className="font-bold">Discovery Settings</span>
            <ChevronRight size={20} className="text-dark-text" />

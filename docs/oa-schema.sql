@@ -1,4 +1,5 @@
 -- ENUMS
+CREATE TYPE user_role AS ENUM ('user', 'admin');
 CREATE TYPE swipe_direction AS ENUM ('like', 'pass', 'superlike');
 CREATE TYPE gender_option AS ENUM ('male', 'female', 'non-binary');
 CREATE TYPE show_gender_pref AS ENUM ('men', 'women', 'everyone');
@@ -24,6 +25,7 @@ CREATE TABLE profiles (
   swipes_remaining INT DEFAULT 100,
   super_likes_remaining INT DEFAULT 1,
   boost_until TIMESTAMPTZ,
+  role user_role DEFAULT 'user',
   is_onboarded BOOLEAN DEFAULT false,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
@@ -66,13 +68,15 @@ ALTER TABLE swipes ENABLE ROW LEVEL SECURITY;
 ALTER TABLE matches ENABLE ROW LEVEL SECURITY;
 ALTER TABLE messages ENABLE ROW LEVEL SECURITY;
 
--- Profiles: Users can read profiles that match their preferences
--- (Simplified for now, will refine based on discovery logic)
-CREATE POLICY "Public profiles are viewable by authenticated users"
+-- Profiles Policies
+CREATE POLICY "Profiles are viewable by authenticated"
 ON profiles FOR SELECT TO authenticated USING (true);
 
 CREATE POLICY "Users can update own profile"
-ON profiles FOR UPDATE TO authenticated USING (auth.uid() = id);
+ON profiles FOR UPDATE TO authenticated USING (auth.uid() = id OR (SELECT role FROM profiles WHERE id = auth.uid()) = 'admin');
+
+CREATE POLICY "Admins can delete profiles"
+ON profiles FOR DELETE TO authenticated USING ((SELECT role FROM profiles WHERE id = auth.uid()) = 'admin');
 
 -- Swipes: Users can only see their own swipes
 CREATE POLICY "Users can see their own swipes"

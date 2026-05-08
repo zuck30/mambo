@@ -10,6 +10,8 @@ Oa is a premium, professional dating application built with React, Supabase, and
 - **Real-time Messaging**: Instant chat with matches.
 - **Onboarding**: Comprehensive multi-step flow for a personalized experience.
 - **Premium Features**: Oa Gold reveals who liked you; Super Likes and Boosts for increased visibility.
+- **Oa AI**: Get creative conversation starters and profile optimization tips powered by Gemini.
+- **Admin Dashboard**: Comprehensive management for users, matches, and system stats.
 
 ## Prerequisites
 
@@ -39,7 +41,28 @@ To send professional OTP emails, configure Supabase to use Brevo's SMTP server:
    - **User**: Your Brevo login email.
    - **Pass**: Your generated SMTP key.
 
-### 3. Frontend Configuration
+### 3. AI Insights Setup (Gemini)
+
+1. Get a Gemini API key from [Google AI Studio](https://aistudio.google.com/).
+2. Set the secret in Supabase:
+   ```bash
+   supabase secrets set GEMINI_API_KEY=your-api-key
+   ```
+3. Deploy the AI edge function:
+   ```bash
+   supabase functions deploy oa-ai
+   ```
+
+### 4. Admin Setup
+
+To create your first admin account:
+1. Register a normal account through the app.
+2. In the Supabase SQL Editor, run:
+   ```sql
+   UPDATE profiles SET role = 'admin' WHERE id = 'YOUR_USER_UUID';
+   ```
+
+### 5. Frontend Configuration
 
 1. Clone the repository.
 2. Install dependencies:

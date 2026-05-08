@@ -11,10 +11,11 @@ import MessagesPage from '../pages/messages/MessagesPage';
 import ProfilePage from '../pages/profile/ProfilePage';
 import EditProfilePage from '../pages/profile/EditProfilePage';
 import SettingsPage from '../pages/settings/SettingsPage';
+import AdminDashboard from '../pages/admin/AdminDashboard';
 import ChatPage from '../pages/chat/ChatPage';
 import AppLayout from '../components/layout/AppLayout';
 
-const ProtectedRoute = ({ children, requireOnboarded = true }) => {
+const ProtectedRoute = ({ children, requireOnboarded = true, requireAdmin = false }) => {
   const { session, profile, loading } = useAuth();
 
   if (loading) return null;
@@ -25,6 +26,10 @@ const ProtectedRoute = ({ children, requireOnboarded = true }) => {
 
   if (requireOnboarded && profile && !profile.is_onboarded) {
     return <Navigate to="/onboarding" replace />;
+  }
+
+  if (requireAdmin && profile?.role !== 'admin') {
+    return <Navigate to="/app/home" replace />;
   }
 
   return children;
@@ -82,6 +87,14 @@ const router = createBrowserRouter([
       {
         path: 'settings',
         element: <SettingsPage />,
+      },
+      {
+        path: 'admin',
+        element: (
+          <ProtectedRoute requireAdmin={true}>
+            <AdminDashboard />
+          </ProtectedRoute>
+        ),
       },
       {
         path: 'chat/:matchId',
