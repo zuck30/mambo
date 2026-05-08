@@ -13,7 +13,7 @@ const LandingPage = () => {
       <div 
         className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-30"
         style={{
-          backgroundImage: 'url("https://w.wallhaven.cc/full/72/wallhaven-72pmyo.jpg")',
+          backgroundImage: 'url("https://w.wallhaven.cc/full/21/wallhaven-218e6g.jpg")',
         }}
       />
       
@@ -149,11 +149,6 @@ const LandingPage = () => {
             </ul>
           </div>
           <div>
-            <h4 className="font-black text-xl mb-6">Careers</h4>
-            <ul className="space-y-4 text-dark-text font-medium">
-              <li><Link to="/careers" className="hover:text-white transition-colors">Careers</Link></li>
-              <li><Link to="/tech-blog" className="hover:text-white transition-colors">Tech Blog</Link></li>
-            </ul>
           </div>
           <div>
             <h4 className="font-black text-xl mb-6">Social</h4>
