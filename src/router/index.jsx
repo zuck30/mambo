@@ -4,7 +4,19 @@ import { useAuth } from '../hooks/useAuth';
 
 import LandingPage from '../pages/LandingPage';
 import LoginPage from '../pages/auth/LoginPage';
+import RegisterPage from '../pages/auth/RegisterPage';
 import OnboardingPage from '../pages/onboarding/OnboardingPage';
+
+// Info Pages
+import ProductsPage from '../pages/info/ProductsPage';
+import LearnPage from '../pages/info/LearnPage';
+import SafetyPage from '../pages/info/SafetyPage';
+import SupportPage from '../pages/info/SupportPage';
+import PrivacyPage from '../pages/info/PrivacyPage';
+import TermsPage from '../pages/info/TermsPage';
+import CookiePolicyPage from '../pages/info/CookiePolicyPage';
+import CareersPage from '../pages/info/CareersPage';
+import TechBlogPage from '../pages/info/TechBlogPage';
 import HomePage from '../pages/home/HomePage';
 import LikesPage from '../pages/likes/LikesPage';
 import MessagesPage from '../pages/messages/MessagesPage';
@@ -41,8 +53,48 @@ const router = createBrowserRouter([
     element: <LandingPage />,
   },
   {
+    path: '/products',
+    element: <ProductsPage />,
+  },
+  {
+    path: '/learn',
+    element: <LearnPage />,
+  },
+  {
+    path: '/safety',
+    element: <SafetyPage />,
+  },
+  {
+    path: '/support',
+    element: <SupportPage />,
+  },
+  {
+    path: '/privacy',
+    element: <PrivacyPage />,
+  },
+  {
+    path: '/terms',
+    element: <TermsPage />,
+  },
+  {
+    path: '/cookie-policy',
+    element: <CookiePolicyPage />,
+  },
+  {
+    path: '/careers',
+    element: <CareersPage />,
+  },
+  {
+    path: '/tech-blog',
+    element: <TechBlogPage />,
+  },
+  {
     path: '/login',
     element: <LoginPage />,
+  },
+  {
+    path: '/register',
+    element: <RegisterPage />,
   },
   {
     path: '/onboarding',
