@@ -28,7 +28,7 @@ const SupportPage = () => {
             </div>
             <div className="flex items-center gap-4 text-dark-text">
               <Phone className="text-primary" size={20} />
-              <span>+1 (800) OA-SUPPORT</span>
+              <span>+1 (514) 900 1475</span>
             </div>
           </div>
         </section>

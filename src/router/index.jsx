@@ -15,8 +15,6 @@ import SupportPage from '../pages/info/SupportPage';
 import PrivacyPage from '../pages/info/PrivacyPage';
 import TermsPage from '../pages/info/TermsPage';
 import CookiePolicyPage from '../pages/info/CookiePolicyPage';
-import CareersPage from '../pages/info/CareersPage';
-import TechBlogPage from '../pages/info/TechBlogPage';
 import HomePage from '../pages/home/HomePage';
 import LikesPage from '../pages/likes/LikesPage';
 import MessagesPage from '../pages/messages/MessagesPage';
@@ -80,14 +78,7 @@ const router = createBrowserRouter([
     path: '/cookie-policy',
     element: <CookiePolicyPage />,
   },
-  {
-    path: '/careers',
-    element: <CareersPage />,
-  },
-  {
-    path: '/tech-blog',
-    element: <TechBlogPage />,
-  },
+
   {
     path: '/login',
     element: <LoginPage />,
