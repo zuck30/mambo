@@ -61,7 +61,6 @@ const RegisterPage = () => {
       });
       if (error) throw error;
 
-      // New users go to onboarding
       navigate('/onboarding');
     } catch (error) {
       setError(error.message);
@@ -72,16 +71,28 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center px-4 relative overflow-hidden">
-      <div className="absolute -right-20 -top-20 opacity-[0.03] pointer-events-none">
+    <div className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden">
+      {/* Background Image */}
+      <div 
+        className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
+        style={{
+          backgroundImage: 'url("https://w.wallhaven.cc/full/21/wallhaven-218e6g.jpg")',
+        }}
+      >
+        <div className="absolute inset-0 bg-black/60" />
+      </div>
+
+      {/* Decorative Crown Watermarks */}
+      <div className="absolute -right-20 -top-20 opacity-[0.03] pointer-events-none z-0">
         <Crown size={350} />
       </div>
-      <div className="absolute -left-20 -bottom-20 opacity-[0.03] pointer-events-none">
+      <div className="absolute -left-20 -bottom-20 opacity-[0.03] pointer-events-none z-0">
         <Crown size={300} />
       </div>
 
-      <div className="absolute top-[-20%] right-[-10%] w-[300px] h-[300px] bg-[#ff79ac]/10 rounded-full blur-[100px] pointer-events-none" />
-      <div className="absolute bottom-[-20%] left-[-10%] w-[300px] h-[300px] bg-[#ff79ac]/5 rounded-full blur-[100px] pointer-events-none" />
+      {/* Subtle gradient orbs */}
+      <div className="absolute top-[-20%] right-[-10%] w-[300px] h-[300px] bg-[#ff79ac]/10 rounded-full blur-[100px] pointer-events-none z-0" />
+      <div className="absolute bottom-[-20%] left-[-10%] w-[300px] h-[300px] bg-[#ff79ac]/5 rounded-full blur-[100px] pointer-events-none z-0" />
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -89,7 +100,15 @@ const RegisterPage = () => {
         transition={{ duration: 0.5 }}
         className="w-full max-w-md relative z-10"
       >
+        {/* Logo */}
         <div className="text-center mb-8 relative">
+          <div className="absolute -top-8 -right-4 opacity-[0.06] pointer-events-none">
+            <Crown size={50} />
+          </div>
+          <div className="absolute -bottom-4 -left-6 opacity-[0.04] pointer-events-none">
+            <Crown size={40} />
+          </div>
+          
           <div className="flex items-center justify-center gap-2">
             <Flame className="text-[#ff79ac] fill-current" size={40} />
             <span className="text-3xl font-black tracking-tighter text-white">oa</span>
@@ -100,6 +119,7 @@ const RegisterPage = () => {
           </p>
         </div>
 
+        {/* Error */}
         {error && (
           <motion.div
             initial={{ opacity: 0 }}
@@ -113,19 +133,6 @@ const RegisterPage = () => {
 
         {!showOtp ? (
           <div className="space-y-6">
-            <button
-              onClick={handleGoogleLogin}
-              className="w-full py-2.5 bg-white text-black rounded-lg font-bold text-sm hover:bg-white/90 transition-all flex items-center justify-center gap-2"
-            >
-              <img src="https://www.google.com/favicon.ico" alt="Google" className="w-4 h-4" />
-              Continue with Google
-            </button>
-
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-white/10"></div></div>
-              <div className="relative flex justify-center text-xs uppercase"><span className="bg-black px-2 text-white/40 font-medium">Or</span></div>
-            </div>
-
             <form onSubmit={handleSendOtp} className="space-y-4">
               <div>
                 <label className="block text-xs font-medium text-white/60 mb-1">Email</label>
@@ -134,7 +141,7 @@ const RegisterPage = () => {
                   <input
                     type="email"
                     required
-                    className="w-full pl-10 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-lg focus:border-[#ff79ac] focus:outline-none focus:ring-1 focus:ring-[#ff79ac] text-white text-sm placeholder:text-white/30"
+                    className="w-full pl-10 pr-4 py-2.5 bg-white/10 backdrop-blur-sm border border-white/10 rounded-lg focus:border-[#ff79ac] focus:outline-none focus:ring-1 focus:ring-[#ff79ac] text-white text-sm placeholder:text-white/30"
                     placeholder="john@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -151,6 +158,19 @@ const RegisterPage = () => {
                 {loading ? 'Sending code...' : 'Create account'}
               </button>
             </form>
+
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-white/10"></div></div>
+              <div className="relative flex justify-center text-xs uppercase"><span className="bg-transparent px-2 text-white/40 font-medium">Or continue with</span></div>
+            </div>
+
+            <button
+              onClick={handleGoogleLogin}
+              className="w-full py-2.5 bg-white text-black rounded-lg font-bold text-sm hover:bg-white/90 transition-all flex items-center justify-center gap-2"
+            >
+              <img src="https://www.google.com/favicon.ico" alt="Google" className="w-4 h-4" />
+              Google
+            </button>
           </div>
         ) : (
           <form onSubmit={handleVerifyOtp} className="space-y-4">
@@ -161,7 +181,7 @@ const RegisterPage = () => {
                 <input
                   type="text"
                   required
-                  className="w-full pl-10 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-lg focus:border-[#ff79ac] focus:outline-none focus:ring-1 focus:ring-[#ff79ac] text-white text-center text-sm tracking-[0.3em] placeholder:text-white/30"
+                  className="w-full pl-10 pr-4 py-2.5 bg-white/10 backdrop-blur-sm border border-white/10 rounded-lg focus:border-[#ff79ac] focus:outline-none focus:ring-1 focus:ring-[#ff79ac] text-white text-center text-sm tracking-[0.3em] placeholder:text-white/30"
                   placeholder="000000"
                   value={otp}
                   onChange={(e) => setOtp(e.target.value)}
@@ -190,12 +210,17 @@ const RegisterPage = () => {
 
         <p className="text-center mt-8 text-sm text-white/60">
           Already have an account?{' '}
-          <Link to="/login" className="text-primary hover:underline font-medium">Log in</Link>
+          <Link to="/login" className="text-[#ff79ac] hover:underline font-medium">Log in</Link>
         </p>
 
         <p className="text-[10px] text-center text-white/40 mt-8 px-8">
-          By signing up, you agree to our <Link to="/terms" className="underline">Terms</Link>. Learn how we process your data in our <Link to="/privacy" className="underline">Privacy Policy</Link> and <Link to="/cookie-policy" className="underline">Cookie Policy</Link>.
+          By signing up, you agree to our <Link to="/terms" className="underline hover:text-white/60">Terms</Link>. Learn how we process your data in our <Link to="/privacy" className="underline hover:text-white/60">Privacy Policy</Link> and <Link to="/cookie-policy" className="underline hover:text-white/60">Cookie Policy</Link>.
         </p>
+
+        {/* Decorative crown at bottom of form */}
+        <div className="absolute -bottom-16 left-1/2 -translate-x-1/2 opacity-[0.02] pointer-events-none">
+          <Crown size={80} />
+        </div>
       </motion.div>
     </div>
   );

@@ -78,21 +78,31 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center px-4 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden">
+      {/* Background Image */}
+      <div 
+        className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
+        style={{
+          backgroundImage: 'url("https://w.wallhaven.cc/full/21/wallhaven-218e6g.jpg")',
+        }}
+      >
+        <div className="absolute inset-0 bg-black/60" />
+      </div>
+      
       {/* Decorative Crown Watermarks */}
-      <div className="absolute -right-20 -top-20 opacity-[0.03] pointer-events-none">
+      <div className="absolute -right-20 -top-20 opacity-[0.03] pointer-events-none z-0">
         <Crown size={350} />
       </div>
-      <div className="absolute -left-20 -bottom-20 opacity-[0.03] pointer-events-none">
+      <div className="absolute -left-20 -bottom-20 opacity-[0.03] pointer-events-none z-0">
         <Crown size={300} />
       </div>
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.01] pointer-events-none">
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.01] pointer-events-none z-0">
         <Crown size={250} />
       </div>
       
-      {/* Subtle gradient orbs - keeping your pink/red tones */}
-      <div className="absolute top-[-20%] right-[-10%] w-[300px] h-[300px] bg-[#ff79ac]/10 rounded-full blur-[100px] pointer-events-none" />
-      <div className="absolute bottom-[-20%] left-[-10%] w-[300px] h-[300px] bg-[#ff79ac]/5 rounded-full blur-[100px] pointer-events-none" />
+      {/* Subtle gradient orbs */}
+      <div className="absolute top-[-20%] right-[-10%] w-[300px] h-[300px] bg-[#ff79ac]/10 rounded-full blur-[100px] pointer-events-none z-0" />
+      <div className="absolute bottom-[-20%] left-[-10%] w-[300px] h-[300px] bg-[#ff79ac]/5 rounded-full blur-[100px] pointer-events-none z-0" />
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -100,9 +110,8 @@ const LoginPage = () => {
         transition={{ duration: 0.5 }}
         className="w-full max-w-md relative z-10"
       >
-        {/* Logo - Clean like landing page */}
+        {/* Logo */}
         <div className="text-center mb-8 relative">
-          {/* Small crown near logo */}
           <div className="absolute -top-8 -right-4 opacity-[0.06] pointer-events-none">
             <Crown size={50} />
           </div>
@@ -133,44 +142,44 @@ const LoginPage = () => {
 
         {!showOtp ? (
           <div className="space-y-6">
+            <form onSubmit={handleSendOtp} className="space-y-4">
+              <div>
+                <label className="block text-xs font-medium text-white/60 mb-1">Email</label>
+                <div className="relative">
+                  <Mail size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40" />
+                  <input
+                    type="email"
+                    required
+                    className="w-full pl-10 pr-4 py-2.5 bg-white/10 backdrop-blur-sm border border-white/10 rounded-lg focus:border-[#ff79ac] focus:outline-none focus:ring-1 focus:ring-[#ff79ac] text-white text-sm placeholder:text-white/30"
+                    placeholder="john@example.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full py-2.5 bg-gradient-to-r from-[#ff79ac] to-[#ff4d8c] text-white rounded-lg font-medium text-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-2 shadow-lg"
+              >
+                {loading ? <Loader2 size={16} className="animate-spin" /> : <LogIn size={16} />}
+                {loading ? 'Sending...' : 'Continue'}
+              </button>
+            </form>
+
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-white/10"></div></div>
+              <div className="relative flex justify-center text-xs uppercase"><span className="bg-transparent px-2 text-white/40 font-medium">Or continue with</span></div>
+            </div>
+
             <button
               onClick={handleGoogleLogin}
               className="w-full py-2.5 bg-white text-black rounded-lg font-bold text-sm hover:bg-white/90 transition-all flex items-center justify-center gap-2"
             >
               <img src="https://www.google.com/favicon.ico" alt="Google" className="w-4 h-4" />
-              Continue with Google
+              Google
             </button>
-
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-white/10"></div></div>
-              <div className="relative flex justify-center text-xs uppercase"><span className="bg-black px-2 text-white/40 font-medium">Or</span></div>
-            </div>
-
-          <form onSubmit={handleSendOtp} className="space-y-4">
-            <div>
-              <label className="block text-xs font-medium text-white/60 mb-1">Email</label>
-              <div className="relative">
-                <Mail size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40" />
-                <input
-                  type="email"
-                  required
-                  className="w-full pl-10 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-lg focus:border-[#ff79ac] focus:outline-none focus:ring-1 focus:ring-[#ff79ac] text-white text-sm placeholder:text-white/30"
-                  placeholder="john@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-2.5 bg-gradient-to-r from-[#ff79ac] to-[#ff4d8c] text-white rounded-lg font-medium text-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-2 shadow-lg"
-            >
-              {loading ? <Loader2 size={16} className="animate-spin" /> : <LogIn size={16} />}
-              {loading ? 'Sending...' : 'Continue'}
-            </button>
-          </form>
           </div>
         ) : (
           <form onSubmit={handleVerifyOtp} className="space-y-4">
@@ -181,7 +190,7 @@ const LoginPage = () => {
                 <input
                   type="text"
                   required
-                  className="w-full pl-10 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-lg focus:border-[#ff79ac] focus:outline-none focus:ring-1 focus:ring-[#ff79ac] text-white text-center text-sm tracking-[0.3em] placeholder:text-white/30"
+                  className="w-full pl-10 pr-4 py-2.5 bg-white/10 backdrop-blur-sm border border-white/10 rounded-lg focus:border-[#ff79ac] focus:outline-none focus:ring-1 focus:ring-[#ff79ac] text-white text-center text-sm tracking-[0.3em] placeholder:text-white/30"
                   placeholder="000000"
                   value={otp}
                   onChange={(e) => setOtp(e.target.value)}
@@ -214,7 +223,7 @@ const LoginPage = () => {
 
         <p className="text-center mt-8 text-sm text-white/60">
           Don't have an account?{' '}
-          <Link to="/register" className="text-primary hover:underline font-medium">Sign up</Link>
+          <Link to="/register" className="text-[#ff79ac] hover:underline font-medium">Sign up</Link>
         </p>
         
         {/* Decorative crown at bottom of form */}
