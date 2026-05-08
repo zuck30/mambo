@@ -31,9 +31,13 @@ const LoginPage = () => {
     e.preventDefault();
     setError('');
     setLoading(true);
+    const cleanEmail = email.trim().toLowerCase();
     try {
       const { error } = await supabase.auth.signInWithOtp({
-        email: email,
+        email: cleanEmail,
+        options: {
+          shouldCreateUser: true,
+        }
       });
       if (error) throw error;
       setShowOtp(true);
@@ -50,11 +54,13 @@ const LoginPage = () => {
     e.preventDefault();
     setError('');
     setLoading(true);
+    const cleanEmail = email.trim().toLowerCase();
+    const cleanOtp = otp.trim();
     try {
       const { error, data: { session } } = await supabase.auth.verifyOtp({
-        email: email,
-        token: otp,
-        type: 'email',
+        email: cleanEmail,
+        token: cleanOtp,
+        type: 'magiclink',
       });
       if (error) throw error;
 
