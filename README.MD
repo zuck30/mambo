@@ -103,4 +103,4 @@ To create your first admin account:
 | `npm run lint` | Runs ESLint for code quality |
 
 ---
-© 2024 Oa Group, LLC. All Rights Reserved.
+© 2026 Oa Group, LLC. All Rights Reserved.
