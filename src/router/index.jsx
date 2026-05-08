@@ -2,29 +2,18 @@ import React from 'react';
 import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 
-
 import LoginPage from '../pages/auth/LoginPage';
-import ForgotPasswordPage from '../pages/auth/ForgotPasswordPage';
-import DashboardPage from '../pages/dashboard/DashboardPage';
-import QueuePage from '../pages/queue/QueuePage';
-import CustomersPage from '../pages/customers/CustomersPage';
-import CustomerDetailPage from '../pages/customers/CustomerDetailPage';
-import CarsPage from '../pages/cars/CarsPage';
-import CarDetailPage from '../pages/cars/CarDetailPage';
-import ServicesPage from '../pages/services/ServicesPage';
-import PaymentsPage from '../pages/payments/PaymentsPage';
-import InventoryPage from '../pages/inventory/InventoryPage';
-import ReportsPage from '../pages/reports/ReportsPage';
-import TopCustomersPage from '../pages/reports/TopCustomersPage';
-import ExpensesPage from '../pages/expenses/ExpensesPage';
-import StaffPage from '../pages/staff/StaffPage';
-import StaffFinancesPage from '../pages/staff/StaffFinancesPage';
+import OnboardingPage from '../pages/onboarding/OnboardingPage';
+import HomePage from '../pages/home/HomePage';
+import LikesPage from '../pages/likes/LikesPage';
+import MessagesPage from '../pages/messages/MessagesPage';
+import ProfilePage from '../pages/profile/ProfilePage';
+import EditProfilePage from '../pages/profile/EditProfilePage';
 import SettingsPage from '../pages/settings/SettingsPage';
-
-
+import ChatPage from '../pages/chat/ChatPage';
 import AppLayout from '../components/layout/AppLayout';
 
-const ProtectedRoute = ({ children, roles }) => {
+const ProtectedRoute = ({ children, requireOnboarded = true }) => {
   const { session, profile, loading } = useAuth();
 
   if (loading) return null;
@@ -33,11 +22,8 @@ const ProtectedRoute = ({ children, roles }) => {
     return <Navigate to="/login" replace />;
   }
 
-  if (roles && profile && !roles.includes(profile.role)) {
-    if (profile.role === 'staff') {
-      return <Navigate to="/queue" replace />;
-    }
-    return <Navigate to="/" replace />;
+  if (requireOnboarded && profile && !profile.is_onboarded) {
+    return <Navigate to="/onboarding" replace />;
   }
 
   return children;
@@ -49,8 +35,12 @@ const router = createBrowserRouter([
     element: <LoginPage />,
   },
   {
-    path: '/forgot-password',
-    element: <ForgotPasswordPage />,
+    path: '/onboarding',
+    element: (
+      <ProtectedRoute requireOnboarded={false}>
+        <OnboardingPage />
+      </ProtectedRoute>
+    ),
   },
   {
     path: '/',
@@ -62,99 +52,35 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: (
-          <ProtectedRoute roles={['admin', 'manager', 'secretary']}>
-            <DashboardPage />
-          </ProtectedRoute>
-        ),
+        element: <Navigate to="/home" replace />,
       },
       {
-        path: 'staff/finances',
-        element: (
-          <ProtectedRoute roles={['admin', 'secretary']}>
-            <StaffFinancesPage />
-          </ProtectedRoute>
-        ),
+        path: 'home',
+        element: <HomePage />,
       },
       {
-        path: 'queue',
-        element: <QueuePage />,
+        path: 'likes',
+        element: <LikesPage />,
       },
       {
-        path: 'customers',
-        element: <CustomersPage />,
+        path: 'messages',
+        element: <MessagesPage />,
       },
       {
-        path: 'customers/:id',
-        element: <CustomerDetailPage />,
+        path: 'profile',
+        element: <ProfilePage />,
       },
       {
-        path: 'cars',
-        element: <CarsPage />,
-      },
-      {
-        path: 'cars/:id',
-        element: <CarDetailPage />,
-      },
-      {
-        path: 'services',
-        element: (
-          <ProtectedRoute roles={['admin', 'manager', 'secretary']}>
-            <ServicesPage />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: 'reports/top-customers',
-        element: (
-          <ProtectedRoute roles={['admin', 'manager']}>
-            <TopCustomersPage />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: 'payments',
-        element: <PaymentsPage />,
-      },
-      {
-        path: 'expenses',
-        element: (
-          <ProtectedRoute roles={['admin', 'manager']}>
-            <ExpensesPage />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: 'inventory',
-        element: (
-          <ProtectedRoute roles={['admin', 'manager', 'secretary']}>
-            <InventoryPage />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: 'reports',
-        element: (
-          <ProtectedRoute roles={['admin', 'manager']}>
-            <ReportsPage />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: 'staff',
-        element: (
-          <ProtectedRoute roles={['admin', 'secretary']}>
-            <StaffPage />
-          </ProtectedRoute>
-        ),
+        path: 'profile/edit',
+        element: <EditProfilePage />,
       },
       {
         path: 'settings',
-        element: (
-          <ProtectedRoute roles={['admin']}>
-            <SettingsPage />
-          </ProtectedRoute>
-        ),
+        element: <SettingsPage />,
+      },
+      {
+        path: 'chat/:matchId',
+        element: <ChatPage />,
       },
     ],
   },
