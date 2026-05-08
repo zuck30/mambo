@@ -3,7 +3,7 @@ import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../hooks/useAuth';
 import DiscoverCard from '../../components/home/DiscoverCard';
 import DiscoverySettingsModal from '../../components/home/DiscoverySettingsModal';
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { Flame, Filter, RefreshCcw, X, Star, Heart, Zap } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import confetti from 'canvas-confetti';
@@ -24,17 +24,14 @@ const HomePage = () => {
     if (!profile) return;
     setLoading(true);
     try {
-      // 1. Get IDs of users already swiped
       const { data: swipedData } = await supabase
         .from('swipes')
         .select('swiped_id')
         .eq('swiper_id', user.id);
 
       const swipedIds = swipedData?.map(s => s.swiped_id) || [];
-      swipedIds.push(user.id); // Exclude self
+      swipedIds.push(user.id);
 
-      // 2. RPC call for distance filtering or basic query
-      // For now, using basic query but with a dummy distance check
       let query = supabase
         .from('profiles')
         .select('*')
@@ -46,16 +43,13 @@ const HomePage = () => {
         query = query.eq('gender', genderMap[profile.show_gender]);
       }
 
-      // Age filter
       query = query
         .gte('birthday', formatDate(profile.max_age_pref))
         .lte('birthday', formatDate(profile.min_age_pref));
 
       const { data, error } = await query.limit(20);
-
       if (error) throw error;
 
-      // Filter by distance in JS if PostGIS isn't available
       const filteredData = data?.filter(p => {
         if (!profile.latitude || !p.latitude) return true;
         const d = calculateDistance(profile.latitude, profile.longitude, p.latitude, p.longitude);
@@ -71,7 +65,7 @@ const HomePage = () => {
   };
 
   const calculateDistance = (lat1, lon1, lat2, lon2) => {
-    const R = 6371; // km
+    const R = 6371;
     const dLat = (lat2 - lat1) * Math.PI / 180;
     const dLon = (lon2 - lon1) * Math.PI / 180;
     const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
@@ -88,25 +82,17 @@ const HomePage = () => {
   };
 
   const handleSwipe = async (direction, swipedProfile) => {
-    // Optimistic UI update
     setStack(prev => prev.filter(p => p.id !== swipedProfile.id));
-
     try {
       const { error } = await supabase
         .from('swipes')
-        .insert({
-          swiper_id: user.id,
-          swiped_id: swipedProfile.id,
-          direction
-        });
-
+        .insert({ swiper_id: user.id, swiped_id: swipedProfile.id, direction });
       if (error) throw error;
-
       if (direction === 'like' || direction === 'superlike') {
         checkMatch(swipedProfile);
       }
     } catch (error) {
-      toast.error('Swipe failed: ' + error.message);
+      toast.error('Swipe failed');
     }
   };
 
@@ -120,15 +106,9 @@ const HomePage = () => {
       .single();
 
     if (otherSwipe) {
-      // It's a match!
-      const { data: match, error } = await supabase
+      const { error } = await supabase
         .from('matches')
-        .insert({
-          user1_id: user.id,
-          user2_id: otherProfile.id
-        })
-        .select()
-        .single();
+        .insert({ user1_id: user.id, user2_id: otherProfile.id });
 
       if (!error) {
         setMatchedUser(otherProfile);
@@ -145,10 +125,7 @@ const HomePage = () => {
 
   const handleUpdateFilters = async (filters) => {
     try {
-      const { error } = await supabase
-        .from('profiles')
-        .update(filters)
-        .eq('id', user.id);
+      const { error } = await supabase.from('profiles').update(filters).eq('id', user.id);
       if (error) throw error;
       setShowFilters(false);
       fetchDiscoveryStack();
@@ -158,31 +135,42 @@ const HomePage = () => {
   };
 
   return (
-    <div className="h-[calc(100vh-64px)] flex flex-col relative overflow-hidden bg-dark">
+    <div className="h-screen flex flex-col relative overflow-hidden bg-black font-sans">
       <DiscoverySettingsModal
         isOpen={showFilters}
         onClose={() => setShowFilters(false)}
         profile={profile}
         onSave={handleUpdateFilters}
       />
-      {/* Top Bar */}
-      <div className="flex items-center justify-between px-6 py-4">
-        <div className="w-10 h-10 rounded-full bg-dark-surface flex items-center justify-center overflow-hidden border border-white/10">
+
+      {/* Professional Header */}
+      <div className="flex items-center justify-between px-6 py-4 z-20">
+        <motion.div
+          whileTap={{ scale: 0.9 }}
+          className="w-10 h-10 rounded-full bg-dark-card flex items-center justify-center overflow-hidden border border-white/10"
+        >
            {profile?.photos?.[0] ? <img src={profile.photos[0]} className="w-full h-full object-cover" /> : <Flame className="text-primary" />}
+        </motion.div>
+        <div className="flex items-center gap-1">
+          <Flame size={28} className="text-primary fill-current" />
+          <span className="font-black text-2xl italic tracking-tighter">oa</span>
         </div>
-        <Flame size={32} className="text-primary fill-current" />
-        <button
+        <motion.button
+          whileTap={{ scale: 0.9 }}
           onClick={() => setShowFilters(true)}
           className="p-2 text-dark-text hover:text-white transition-colors"
         >
           <Filter size={24} />
-        </button>
+        </motion.button>
       </div>
 
       {/* Stack Area */}
       <div className="flex-grow relative px-4 flex items-center justify-center">
         {loading ? (
-          <div className="text-primary animate-pulse">Finding people nearby...</div>
+          <div className="flex flex-col items-center gap-4">
+            <div className="w-20 h-20 rounded-full border-4 border-primary/20 border-t-primary animate-spin" />
+            <p className="text-primary font-bold animate-pulse">Finding people nearby...</p>
+          </div>
         ) : stack.length > 0 ? (
           <AnimatePresence>
             {stack.map((p, i) => (
@@ -195,45 +183,48 @@ const HomePage = () => {
             )).reverse()}
           </AnimatePresence>
         ) : (
-          <div className="text-center space-y-4">
-             <div className="w-32 h-32 rounded-full border-4 border-primary/20 flex items-center justify-center mx-auto">
-               <RefreshCcw size={48} className="text-primary/40" />
+          <div className="text-center space-y-6 max-w-xs">
+             <div className="w-32 h-32 rounded-full bg-dark-card border border-white/5 flex items-center justify-center mx-auto shadow-2xl">
+               <RefreshCcw size={48} className="text-dark-text animate-spin-slow" />
              </div>
-             <p className="text-dark-text font-medium">No more people in your area.</p>
+             <div>
+               <p className="text-white text-xl font-bold mb-2">No more discovery</p>
+               <p className="text-dark-text text-sm">Expand your filters to see more people in your area.</p>
+             </div>
              <button
-              onClick={fetchDiscoveryStack}
-              className="text-primary font-bold px-6 py-2 rounded-full border border-primary/20 hover:bg-primary/10 transition-colors"
+              onClick={() => setShowFilters(true)}
+              className="primary-gradient text-white font-bold px-8 py-3 rounded-full shadow-lg"
              >
-               Try again
+               Discovery Settings
              </button>
           </div>
         )}
       </div>
 
-      {/* Buttons */}
-      <div className="px-6 py-8 flex items-center justify-center gap-4">
-        <button className="w-12 h-12 rounded-full border-2 border-yellow-500/50 flex items-center justify-center text-yellow-500 hover:bg-yellow-500/10 transition-colors">
+      {/* Action Row */}
+      <div className="px-6 py-8 flex items-center justify-center gap-4 z-20">
+        <button className="w-12 h-12 rounded-full bg-dark-card border border-white/5 flex items-center justify-center text-yellow-500 shadow-lg hover:scale-110 active:scale-95 transition-transform">
           <RefreshCcw size={20} />
         </button>
         <button
           onClick={() => stack[0] && handleSwipe('pass', stack[0])}
-          className="w-16 h-16 rounded-full border-2 border-red-500/50 flex items-center justify-center text-red-500 hover:bg-red-500/10 transition-colors"
+          className="w-16 h-16 rounded-full bg-dark-card border border-white/5 flex items-center justify-center text-red-500 shadow-xl hover:scale-110 active:scale-95 transition-transform"
         >
           <X size={32} />
         </button>
         <button
           onClick={() => stack[0] && handleSwipe('superlike', stack[0])}
-          className="w-12 h-12 rounded-full border-2 border-blue-400/50 flex items-center justify-center text-blue-400 hover:bg-blue-400/10 transition-colors"
+          className="w-12 h-12 rounded-full bg-dark-card border border-white/5 flex items-center justify-center text-blue-400 shadow-lg hover:scale-110 active:scale-95 transition-transform"
         >
           <Star size={24} fill="currentColor" />
         </button>
         <button
           onClick={() => stack[0] && handleSwipe('like', stack[0])}
-          className="w-16 h-16 rounded-full border-2 border-green-500/50 flex items-center justify-center text-green-500 hover:bg-green-500/10 transition-colors"
+          className="w-16 h-16 rounded-full bg-dark-card border border-white/5 flex items-center justify-center text-green-500 shadow-xl hover:scale-110 active:scale-95 transition-transform"
         >
           <Heart size={32} fill="currentColor" />
         </button>
-        <button className="w-12 h-12 rounded-full border-2 border-purple-500/50 flex items-center justify-center text-purple-500 hover:bg-purple-500/10 transition-colors">
+        <button className="w-12 h-12 rounded-full bg-dark-card border border-white/5 flex items-center justify-center text-purple-500 shadow-lg hover:scale-110 active:scale-95 transition-transform">
           <Zap size={24} fill="currentColor" />
         </button>
       </div>
@@ -245,29 +236,29 @@ const HomePage = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[200] bg-black/90 flex flex-col items-center justify-center p-6 text-center"
+            className="fixed inset-0 z-[200] bg-black/95 flex flex-col items-center justify-center p-6 text-center"
           >
-            <motion.h2
-              initial={{ scale: 0.5, rotate: -10 }}
-              animate={{ scale: 1, rotate: -5 }}
-              className="text-5xl font-black text-primary mb-4 italic"
+            <motion.div
+              initial={{ scale: 0.5, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              className="space-y-4 mb-12"
             >
-              It's a Match!
-            </motion.h2>
-            <p className="text-white mb-8">You and {matchedUser.name} have liked each other.</p>
+              <h2 className="text-6xl font-black text-primary italic">Match!</h2>
+              <p className="text-white text-xl">You and {matchedUser.name} liked each other.</p>
+            </motion.div>
 
-            <div className="flex gap-0 mb-12 relative">
+            <div className="flex gap-0 mb-16">
                <motion.div
-                initial={{ x: -100, opacity: 0 }}
-                animate={{ x: 20, opacity: 1 }}
-                className="w-32 h-32 rounded-full border-4 border-white overflow-hidden z-10 shadow-2xl"
+                initial={{ x: -100, rotate: -20, opacity: 0 }}
+                animate={{ x: 20, rotate: -10, opacity: 1 }}
+                className="w-40 h-40 rounded-full border-4 border-white overflow-hidden z-10 shadow-2xl"
                >
                   <img src={profile.photos[0]} className="w-full h-full object-cover" />
                </motion.div>
                <motion.div
-                initial={{ x: 100, opacity: 0 }}
-                animate={{ x: -20, opacity: 1 }}
-                className="w-32 h-32 rounded-full border-4 border-white overflow-hidden z-0 shadow-2xl"
+                initial={{ x: 100, rotate: 20, opacity: 0 }}
+                animate={{ x: -20, rotate: 10, opacity: 1 }}
+                className="w-40 h-40 rounded-full border-4 border-white overflow-hidden z-0 shadow-2xl"
                >
                   <img src={matchedUser.photos[0]} className="w-full h-full object-cover" />
                </motion.div>
@@ -276,15 +267,15 @@ const HomePage = () => {
             <div className="space-y-4 w-full max-w-xs">
               <button
                 onClick={() => setShowMatch(false)}
-                className="w-full primary-gradient text-white font-bold py-4 rounded-full shadow-lg"
+                className="w-full primary-gradient text-white font-black py-4 rounded-full shadow-2xl hover:scale-[1.02] active:scale-[0.98] transition-all"
               >
-                Send Message
+                SEND A MESSAGE
               </button>
               <button
                 onClick={() => setShowMatch(false)}
-                className="w-full border border-white/20 text-white font-bold py-4 rounded-full hover:bg-white/10 transition-colors"
+                className="w-full border-2 border-white/20 text-white font-black py-4 rounded-full hover:bg-white/10 transition-all"
               >
-                Keep Swiping
+                KEEP SWIPING
               </button>
             </div>
           </motion.div>

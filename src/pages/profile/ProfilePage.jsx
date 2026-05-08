@@ -35,13 +35,13 @@ const ProfilePage = () => {
 
         <div className="flex gap-4 mt-8">
            <button
-             onClick={() => navigate('/settings')}
+             onClick={() => navigate('/app/settings')}
              className="w-12 h-12 rounded-full bg-dark-card border border-white/5 flex items-center justify-center text-dark-text hover:text-white"
            >
              <Settings size={20} />
            </button>
            <button
-             onClick={() => navigate('/profile/edit')}
+             onClick={() => navigate('/app/profile/edit')}
              className="px-8 py-3 rounded-full bg-gradient-to-r from-primary to-primary-dark text-white font-bold flex items-center gap-2"
            >
              <Edit2 size={18} /> Edit Profile
