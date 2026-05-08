@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../hooks/useAuth';
-import TinderCard from '../../components/home/TinderCard';
+import DiscoverCard from '../../components/home/DiscoverCard';
 import DiscoverySettingsModal from '../../components/home/DiscoverySettingsModal';
 import { AnimatePresence } from 'framer-motion';
 import { Flame, Filter, RefreshCcw, X, Star, Heart, Zap } from 'lucide-react';
@@ -186,7 +186,7 @@ const HomePage = () => {
         ) : stack.length > 0 ? (
           <AnimatePresence>
             {stack.map((p, i) => (
-              <TinderCard
+              <DiscoverCard
                 key={p.id}
                 profile={p}
                 onSwipe={(dir) => handleSwipe(dir, p)}

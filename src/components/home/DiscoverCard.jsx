@@ -2,7 +2,7 @@ import React from 'react';
 import { motion, useMotionValue, useTransform } from 'framer-motion';
 import { MapPin } from 'lucide-react';
 
-const TinderCard = ({ profile, onSwipe, onClick }) => {
+const DiscoverCard = ({ profile, onSwipe, onClick }) => {
   const x = useMotionValue(0);
   const y = useMotionValue(0);
 
@@ -82,4 +82,4 @@ const TinderCard = ({ profile, onSwipe, onClick }) => {
   );
 };
 
-export default TinderCard;
+export default DiscoverCard;

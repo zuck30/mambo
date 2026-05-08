@@ -9,3 +9,12 @@
   ➜  Network: use --host to expose
 4:37:46 PM [vite] .env.local changed, restarting server...
 4:37:46 PM [vite] server restarted.
+4:55:48 PM [vite] hmr update /src/components/home/TinderCard.jsx, /src/index.css
+4:55:59 PM [vite] hmr update /src/pages/home/HomePage.jsx, /src/index.css
+4:58:58 PM [vite] page reload src/pages/auth/ForgotPasswordPage.jsx
+5:00:12 PM [vite] page reload src/hooks/useNotifications.js
+5:00:12 PM [vite] page reload src/hooks/useRealtime.js
+5:00:12 PM [vite] page reload src/hooks/useSettings.js
+5:00:12 PM [vite] page reload src/store/notificationStore.js
+5:00:12 PM [vite] page reload src/store/uiStore.js
+5:02:11 PM [vite] hmr update /src/index.css, /src/router/index.jsx, /src/pages/onboarding/OnboardingPage.jsx, /src/pages/likes/LikesPage.jsx, /src/pages/home/HomePage.jsx, /src/pages/messages/MessagesPage.jsx, /src/pages/profile/ProfilePage.jsx, /src/pages/profile/EditProfilePage.jsx, /src/pages/settings/SettingsPage.jsx, /src/pages/chat/ChatPage.jsx

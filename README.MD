@@ -1,6 +1,6 @@
 # Oa - Dating App
 
-A professional Tinder clone built with React, Supabase, and Framer Motion.
+A professional dating app clone built with React, Supabase, and Framer Motion.
 
 ## Features
 
