@@ -8,6 +8,14 @@ const LandingPage = () => {
 
   return (
     <div className="min-h-screen bg-black text-white flex flex-col relative overflow-x-hidden">
+      {/* Background Image */}
+      <div 
+        className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-30"
+        style={{
+          backgroundImage: 'url("https://w.wallhaven.cc/full/72/wallhaven-72pmyo.jpg")',
+        }}
+      />
+      
       {/* Background Gradient / Image Placeholder */}
       <div className="absolute inset-0 z-0 opacity-40">
         <div className="absolute inset-0 bg-gradient-to-b from-[#ff79ac]/20 via-transparent to-black" />
@@ -55,31 +63,32 @@ const LandingPage = () => {
         </motion.button>
       </main>
 
-      {/* App Stores Banner */}
-      <section className="relative z-10 bg-black/50 backdrop-blur-md py-12 px-6 border-y border-white/5">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
-          <div className="text-center md:text-left">
-            <h2 className="text-3xl font-black mb-2">Get the app!</h2>
-            <p className="text-dark-text">Available on iOS and Android. Start swiping today.</p>
-          </div>
-          <div className="flex gap-4">
-            <button className="flex items-center gap-2 bg-white text-black px-6 py-3 rounded-xl font-bold">
-              <Apple size={24} />
-              <div className="text-left leading-none">
-                <span className="text-[10px] uppercase block">Download on the</span>
-                <span className="text-xl">App Store</span>
-              </div>
-            </button>
-            <button className="flex items-center gap-2 bg-white text-black px-6 py-3 rounded-xl font-bold">
-              <PlayCircle size={24} />
-              <div className="text-left leading-none">
-                <span className="text-[10px] uppercase block">Get it on</span>
-                <span className="text-xl">Google Play</span>
-              </div>
-            </button>
-          </div>
+
+{/* App Stores Banner */}
+<section className="relative z-10 py-12 px-6">
+  <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
+    <div className="text-center md:text-left">
+      <h2 className="text-3xl font-black mb-2">Get the app!</h2>
+      <p className="text-dark-text">Available on iOS and Android. Start swiping today.</p>
+    </div>
+    <div className="flex gap-4">
+      <button className="flex items-center gap-2 bg-white text-black px-6 py-3 rounded-xl font-bold">
+        <Apple size={24} />
+        <div className="text-left leading-none">
+          <span className="text-[10px] uppercase block">Download on the</span>
+          <span className="text-xl">App Store</span>
         </div>
-      </section>
+      </button>
+      <button className="flex items-center gap-2 bg-white text-black px-6 py-3 rounded-xl font-bold">
+        <PlayCircle size={24} />
+        <div className="text-left leading-none">
+          <span className="text-[10px] uppercase block">Get it on</span>
+          <span className="text-xl">Google Play</span>
+        </div>
+      </button>
+    </div>
+  </div>
+</section>
 
       {/* Footer */}
       <footer className="relative z-10 bg-black py-16 px-6 md:px-12 border-t border-white/5">
@@ -90,13 +99,11 @@ const LandingPage = () => {
               <li><Link to="#" className="hover:text-white">Privacy</Link></li>
               <li><Link to="#" className="hover:text-white">Terms</Link></li>
               <li><Link to="#" className="hover:text-white">Cookie Policy</Link></li>
-              <li><Link to="#" className="hover:text-white">Intellectual Property</Link></li>
             </ul>
           </div>
           <div>
             <h4 className="font-black text-xl mb-6">Careers</h4>
             <ul className="space-y-4 text-dark-text font-medium">
-              <li><Link to="#" className="hover:text-white">Careers Portal</Link></li>
               <li><Link to="#" className="hover:text-white">Tech Blog</Link></li>
             </ul>
           </div>
@@ -116,7 +123,7 @@ const LandingPage = () => {
           </div>
         </div>
         <div className="max-w-6xl mx-auto pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
-          <p className="text-sm text-dark-text">© 2024 Oa Group, LLC, All Rights Reserved.</p>
+          <p className="text-sm text-dark-text">© {new Date().getFullYear()} Oa Group, LLC, All Rights Reserved.</p>
           <div className="flex gap-6 text-sm text-dark-text">
             <Link to="#" className="hover:text-white">FAQ</Link>
             <Link to="#" className="hover:text-white">Destinations</Link>
