@@ -63,34 +63,20 @@ const ProfilePage = () => {
         </div>
       )}
 
-      {/* Stats/Subscription */}
+      {/* Stats Section */}
       <div className="px-6 grid grid-cols-3 gap-4 mb-8">
          <div className="bg-dark-card p-4 rounded-2xl border border-white/5 text-center">
-            <span className="block text-primary font-bold text-xl">{profile?.swipes_remaining ?? 100}</span>
-            <span className="text-[10px] text-dark-text uppercase font-bold tracking-wider">Swipes Left</span>
+            <span className="block text-primary font-bold text-xl">∞</span>
+            <span className="text-[10px] text-dark-text uppercase font-bold tracking-wider">Swipes</span>
          </div>
          <div className="bg-dark-card p-4 rounded-2xl border border-white/5 text-center">
-            <span className="block text-blue-400 font-bold text-xl">{profile?.super_likes_remaining ?? 5}</span>
+            <span className="block text-blue-400 font-bold text-xl">∞</span>
             <span className="text-[10px] text-dark-text uppercase font-bold tracking-wider">Super Likes</span>
          </div>
          <div className="bg-dark-card p-4 rounded-2xl border border-white/5 text-center">
-            <span className="block text-purple-400 font-bold text-xl">{profile?.boosts_remaining ?? 1}</span>
+            <span className="block text-purple-400 font-bold text-xl">∞</span>
             <span className="text-[10px] text-dark-text uppercase font-bold tracking-wider">Boosts</span>
          </div>
-      </div>
-
-      {/* Subscription Banner */}
-      <div className="px-6 mb-8">
-        <div className="bg-gradient-to-r from-[#FFD700] to-[#FFA500] p-6 rounded-2xl text-dark-card">
-           <div className="flex justify-between items-center mb-2">
-             <h3 className="font-black text-xl">Get Oa Gold</h3>
-             <CreditCard size={24} />
-           </div>
-           <p className="text-sm font-medium mb-4">See who likes you & more!</p>
-           <button className="w-full bg-dark-card text-white py-2 rounded-full font-bold text-sm">
-             Upgrade from 5,000 TZS
-           </button>
-        </div>
       </div>
 
       {/* Quick Menu */}
