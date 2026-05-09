@@ -6,9 +6,29 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 
 const SettingsPage = () => {
-  const { profile, signOut } = useAuth();
+  const { profile, signOut, fetchProfile } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [isEditingPhone, setIsEditingPhone] = useState(false);
+  const [phoneNumber, setPhoneNumber] = useState(profile?.phone || '');
+
+  const handleUpdatePhone = async () => {
+    setLoading(true);
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ phone: phoneNumber })
+        .eq('id', profile.id);
+      if (error) throw error;
+      await fetchProfile(profile.id);
+      setIsEditingPhone(false);
+      toast.success('Phone number updated');
+    } catch (error) {
+      toast.error('Failed to update phone number');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleDeleteAccount = async () => {
     if (window.confirm('Are you sure you want to delete your account? This cannot be undone.')) {
@@ -40,12 +60,40 @@ const SettingsPage = () => {
         <section>
           <h3 className="text-sm font-bold text-dark-text uppercase tracking-widest mb-4">Account Settings</h3>
           <div className="bg-dark-card rounded-2xl border border-white/5 overflow-hidden divide-y divide-white/5">
-            <div className="p-4 flex justify-between items-center">
-              <div className="flex items-center gap-3">
-                <Phone size={20} className="text-dark-text" />
-                <span>Phone Number</span>
+            <div className="p-4 space-y-4">
+              <div className="flex justify-between items-center">
+                <div className="flex items-center gap-3">
+                  <Phone size={20} className="text-dark-text" />
+                  <span>Phone Number</span>
+                </div>
+                <button
+                  onClick={() => setIsEditingPhone(!isEditingPhone)}
+                  className="text-primary font-bold text-sm"
+                >
+                  {isEditingPhone ? 'Cancel' : (profile?.phone ? 'Edit' : 'Add')}
+                </button>
               </div>
-              <span className="text-dark-text">{profile?.phone || 'Not set'}</span>
+
+              {isEditingPhone ? (
+                <div className="flex gap-2">
+                  <input
+                    type="tel"
+                    value={phoneNumber}
+                    onChange={(e) => setPhoneNumber(e.target.value)}
+                    placeholder="Enter phone number"
+                    className="flex-grow bg-dark-surface border border-white/10 rounded-xl px-4 py-2 focus:outline-none focus:ring-1 focus:ring-primary"
+                  />
+                  <button
+                    onClick={handleUpdatePhone}
+                    disabled={loading}
+                    className="bg-primary text-white px-4 py-2 rounded-xl font-bold disabled:opacity-50"
+                  >
+                    Save
+                  </button>
+                </div>
+              ) : (
+                <span className="text-dark-text ml-8 block">{profile?.phone || 'Not set'}</span>
+              )}
             </div>
             <button className="w-full p-4 flex justify-between items-center hover:bg-white/5 transition-colors">
               <div className="flex items-center gap-3">

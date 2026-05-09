@@ -4,12 +4,14 @@ import { useAuth } from '../../hooks/useAuth';
 import DiscoverCard from '../../components/home/DiscoverCard';
 import DiscoverySettingsModal from '../../components/home/DiscoverySettingsModal';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { Flame, Filter, RefreshCcw, X, Star, Heart, Zap } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import confetti from 'canvas-confetti';
 
 const HomePage = () => {
   const { user, profile } = useAuth();
+  const navigate = useNavigate();
   const [stack, setStack] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showMatch, setShowMatch] = useState(false);
@@ -47,16 +49,28 @@ const HomePage = () => {
         .gte('birthday', formatDate(profile.max_age_pref))
         .lte('birthday', formatDate(profile.min_age_pref));
 
-      const { data, error } = await query.limit(20);
+      const { data, error } = await query.limit(100);
       if (error) throw error;
 
       const filteredData = data?.filter(p => {
         if (!profile.latitude || !p.latitude) return true;
         const d = calculateDistance(profile.latitude, profile.longitude, p.latitude, p.longitude);
-        return d <= profile.distance_pref;
+        return d <= (profile.distance_pref || 50);
       });
 
-      setStack(filteredData || []);
+      // Sort by common interests
+      const sortedData = filteredData?.sort((a, b) => {
+        const aInterests = a.interests || [];
+        const bInterests = b.interests || [];
+        const myInterests = profile.interests || [];
+
+        const aCommon = aInterests.filter(i => myInterests.includes(i)).length;
+        const bCommon = bInterests.filter(i => myInterests.includes(i)).length;
+
+        return bCommon - aCommon;
+      });
+
+      setStack(sortedData || []);
     } catch (error) {
       console.error('Error fetching stack:', error);
     } finally {
@@ -82,18 +96,44 @@ const HomePage = () => {
   };
 
   const handleSwipe = async (direction, swipedProfile) => {
+    if (!swipedProfile) return;
+
+    // Optimistic update
     setStack(prev => prev.filter(p => p.id !== swipedProfile.id));
+
     try {
       const { error } = await supabase
         .from('swipes')
-        .insert({ swiper_id: user.id, swiped_id: swipedProfile.id, direction });
+        .insert({
+          swiper_id: user.id,
+          swiped_id: swipedProfile.id,
+          direction,
+          created_at: new Date().toISOString()
+        });
+
       if (error) throw error;
+
       if (direction === 'like' || direction === 'superlike') {
-        checkMatch(swipedProfile);
+        await checkMatch(swipedProfile);
       }
     } catch (error) {
-      toast.error('Swipe failed');
+      console.error('Swipe error:', error);
+      toast.error('Action failed. Please try again.');
     }
+  };
+
+  const handleBoost = async () => {
+    toast.success('Boost activated! You are now one of the top profiles in your area for 30 minutes.', {
+      icon: '⚡',
+      duration: 4000
+    });
+    // In a real app, this would update a 'boosted_until' timestamp in the DB
+  };
+
+  const handleRewind = () => {
+    toast.error('Get Oa Gold to rewind your last swipe!', {
+      icon: '⏪'
+    });
   };
 
   const checkMatch = async (otherProfile) => {
@@ -106,12 +146,14 @@ const HomePage = () => {
       .single();
 
     if (otherSwipe) {
-      const { error } = await supabase
+      const { data: matchData, error } = await supabase
         .from('matches')
-        .insert({ user1_id: user.id, user2_id: otherProfile.id });
+        .insert({ user1_id: user.id, user2_id: otherProfile.id })
+        .select()
+        .single();
 
-      if (!error) {
-        setMatchedUser(otherProfile);
+      if (!error && matchData) {
+        setMatchedUser({ ...otherProfile, matchId: matchData.id });
         setShowMatch(true);
         confetti({
           particleCount: 150,
@@ -132,6 +174,11 @@ const HomePage = () => {
     } catch (error) {
       toast.error('Failed to update filters');
     }
+  };
+
+  const navigateToChat = (matchId) => {
+    setShowMatch(false);
+    navigate(`/app/chat/${matchId}`);
   };
 
   return (
@@ -203,7 +250,10 @@ const HomePage = () => {
 
       {/* Action Row */}
       <div className="px-6 py-8 flex items-center justify-center gap-4 z-20">
-        <button className="w-12 h-12 rounded-full bg-dark-card border border-white/5 flex items-center justify-center text-yellow-500 shadow-lg hover:scale-110 active:scale-95 transition-transform">
+        <button
+          onClick={handleRewind}
+          className="w-12 h-12 rounded-full bg-dark-card border border-white/5 flex items-center justify-center text-yellow-500 shadow-lg hover:scale-110 active:scale-95 transition-transform"
+        >
           <RefreshCcw size={20} />
         </button>
         <button
@@ -224,7 +274,10 @@ const HomePage = () => {
         >
           <Heart size={32} fill="currentColor" />
         </button>
-        <button className="w-12 h-12 rounded-full bg-dark-card border border-white/5 flex items-center justify-center text-purple-500 shadow-lg hover:scale-110 active:scale-95 transition-transform">
+        <button
+          onClick={handleBoost}
+          className="w-12 h-12 rounded-full bg-dark-card border border-white/5 flex items-center justify-center text-purple-500 shadow-lg hover:scale-110 active:scale-95 transition-transform"
+        >
           <Zap size={24} fill="currentColor" />
         </button>
       </div>
@@ -266,7 +319,7 @@ const HomePage = () => {
 
             <div className="space-y-4 w-full max-w-xs">
               <button
-                onClick={() => setShowMatch(false)}
+                onClick={() => navigateToChat(matchedUser.matchId)}
                 className="w-full primary-gradient text-white font-black py-4 rounded-full shadow-2xl hover:scale-[1.02] active:scale-[0.98] transition-all"
               >
                 SEND A MESSAGE

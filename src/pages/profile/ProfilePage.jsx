@@ -32,6 +32,7 @@ const ProfilePage = () => {
           {profile?.name}, {calculateAge(profile?.birthday)}
         </h2>
         <p className="text-dark-text">{profile?.job || 'Add job title'}</p>
+        {profile?.school && <p className="text-dark-text text-sm">{profile.school}</p>}
 
         <div className="flex gap-4 mt-8">
            <button
@@ -52,18 +53,28 @@ const ProfilePage = () => {
         </div>
       </div>
 
+      {/* Bio Section */}
+      {profile?.bio && (
+        <div className="px-6 mb-8">
+          <h3 className="text-sm font-bold text-dark-text uppercase tracking-widest mb-2">About Me</h3>
+          <p className="text-white bg-dark-card p-4 rounded-2xl border border-white/5">
+            {profile.bio}
+          </p>
+        </div>
+      )}
+
       {/* Stats/Subscription */}
       <div className="px-6 grid grid-cols-3 gap-4 mb-8">
          <div className="bg-dark-card p-4 rounded-2xl border border-white/5 text-center">
-            <span className="block text-primary font-bold text-xl">{profile?.swipes_remaining || 0}</span>
+            <span className="block text-primary font-bold text-xl">{profile?.swipes_remaining ?? 100}</span>
             <span className="text-[10px] text-dark-text uppercase font-bold tracking-wider">Swipes Left</span>
          </div>
          <div className="bg-dark-card p-4 rounded-2xl border border-white/5 text-center">
-            <span className="block text-blue-400 font-bold text-xl">{profile?.super_likes_remaining || 0}</span>
+            <span className="block text-blue-400 font-bold text-xl">{profile?.super_likes_remaining ?? 5}</span>
             <span className="text-[10px] text-dark-text uppercase font-bold tracking-wider">Super Likes</span>
          </div>
          <div className="bg-dark-card p-4 rounded-2xl border border-white/5 text-center">
-            <span className="block text-purple-400 font-bold text-xl">0</span>
+            <span className="block text-purple-400 font-bold text-xl">{profile?.boosts_remaining ?? 1}</span>
             <span className="text-[10px] text-dark-text uppercase font-bold tracking-wider">Boosts</span>
          </div>
       </div>
