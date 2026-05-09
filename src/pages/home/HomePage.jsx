@@ -71,20 +71,26 @@ const HomePage = () => {
       const filteredData = data?.filter(p => {
         if (!profile.latitude || !p.latitude) return true;
         const d = calculateDistance(profile.latitude, profile.longitude, p.latitude, p.longitude);
-        return d <= (profile.distance_pref || 50);
+        return d <= (profile.distance_pref || 80); // Default to 80km if not set
       });
 
-      // Advanced Sorting (Drafting LLM Recommendation engine behavior)
+      // Advanced Sorting with Location and Interests
       const sortedData = filteredData?.sort((a, b) => {
         const myInterests = profile.interests || [];
-        // Extract common interests from users we've already liked (simulating behavior learning)
-        // In a real app, we'd fetch the interests of swiped_id users separately
+
         const calculateScore = (p) => {
           const pInterests = p.interests || [];
-          const commonWithMe = pInterests.filter(i => myInterests.includes(i)).length;
+          const commonInterestsCount = pInterests.filter(i => myInterests.includes(i)).length;
 
-          // Weighted score: common interests with user
-          return (commonWithMe * 2);
+          let score = (commonInterestsCount * 10); // Interests are high priority
+
+          if (profile.latitude && profile.longitude && p.latitude && p.longitude) {
+            const distance = calculateDistance(profile.latitude, profile.longitude, p.latitude, p.longitude);
+            // Higher score for closer users (Inverse distance weighting)
+            score += Math.max(0, 50 - (distance / 2));
+          }
+
+          return score;
         };
 
         return calculateScore(b) - calculateScore(a);
@@ -118,11 +124,13 @@ const HomePage = () => {
   const handleSwipe = async (direction, swipedProfile) => {
     if (!swipedProfile || loading) return;
 
-    // Track for rewind
-    setLastSwipedProfile(swipedProfile);
+    // Store current state for potential rollback
+    const previousStack = [...stack];
+    const previousLastSwiped = lastSwipedProfile;
 
     // Optimistic update
     setStack(prev => prev.filter(p => p.id !== swipedProfile.id));
+    setLastSwipedProfile(swipedProfile);
 
     try {
       const { error } = await supabase
@@ -134,17 +142,21 @@ const HomePage = () => {
           created_at: new Date().toISOString()
         }, { onConflict: 'swiper_id, swiped_id' });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase Swipe Error:', error);
+        throw error;
+      }
 
       if (direction === 'like' || direction === 'superlike') {
-        await checkMatch(swipedProfile);
+        // Run match check in background
+        checkMatch(swipedProfile);
       }
     } catch (error) {
-      console.error('Swipe error:', error);
+      console.error('Swipe error details:', error);
       toast.error('Action failed. Please try again.');
       // Rollback optimistic update
-      setStack(prev => [swipedProfile, ...prev]);
-      setLastSwipedProfile(null);
+      setStack(previousStack);
+      setLastSwipedProfile(previousLastSwiped);
     }
   };
 
@@ -183,15 +195,16 @@ const HomePage = () => {
   };
 
   const checkMatch = async (otherProfile) => {
-    const { data: otherSwipe } = await supabase
-      .from('swipes')
-      .select('direction')
-      .eq('swiper_id', otherProfile.id)
-      .eq('swiped_id', user.id)
-      .in('direction', ['like', 'superlike'])
-      .single();
+    try {
+      const { data: otherSwipe } = await supabase
+        .from('swipes')
+        .select('direction')
+        .eq('swiper_id', otherProfile.id)
+        .eq('swiped_id', user.id)
+        .in('direction', ['like', 'superlike'])
+        .maybeSingle();
 
-    if (otherSwipe) {
+      if (otherSwipe) {
       // Sort IDs to ensure consistent user1/user2 mapping
       const [u1, u2] = [user.id, otherProfile.id].sort();
 
@@ -201,16 +214,20 @@ const HomePage = () => {
         .select()
         .single();
 
-      if (!error && matchData) {
-        setMatchedUser({ ...otherProfile, matchId: matchData.id });
-        setShowMatch(true);
-        confetti({
-          particleCount: 150,
-          spread: 70,
-          origin: { y: 0.6 },
-          colors: ['#ff79ac', '#ff5280', '#ffffff']
-        });
+        if (!error && matchData) {
+          setMatchedUser({ ...otherProfile, matchId: matchData.id });
+          setShowMatch(true);
+          confetti({
+            particleCount: 150,
+            spread: 70,
+            origin: { y: 0.6 },
+            colors: ['#ff79ac', '#ff5280', '#ffffff']
+          });
+        }
       }
+    } catch (err) {
+      console.error('Match check error:', err);
+      // Don't toast here to avoid confusing the user after a successful swipe
     }
   };
 

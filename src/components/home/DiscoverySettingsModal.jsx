@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -6,6 +6,17 @@ const DiscoverySettingsModal = ({ isOpen, onClose, profile, onSave }) => {
   const [distance, setDistance] = useState(profile?.distance_pref || 80);
   const [ageRange, setAgeRange] = useState([profile?.min_age_pref || 18, profile?.max_age_pref || 55]);
   const [showGender, setShowGender] = useState(profile?.show_gender || 'everyone');
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -21,7 +32,7 @@ const DiscoverySettingsModal = ({ isOpen, onClose, profile, onSave }) => {
           initial={{ y: '100%' }}
           animate={{ y: 0 }}
           exit={{ y: '100%' }}
-          className="bg-dark-card w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 pb-12 sm:pb-8"
+          className="bg-dark-card w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 pb-24 sm:pb-8 max-h-[90vh] overflow-y-auto"
         >
           <div className="flex justify-between items-center mb-8">
             <h2 className="text-xl font-black">Discovery Settings</h2>
