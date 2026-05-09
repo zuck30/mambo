@@ -27,9 +27,11 @@ const HomePage = () => {
     fetchDiscoveryStack();
   }, [profile]);
 
-  const fetchDiscoveryStack = async () => {
+  const fetchDiscoveryStack = async (isRefresh = false) => {
     if (!profile) return;
     setLoading(true);
+    if (isRefresh) setStack([]);
+
     try {
       const { data: swipedData } = await supabase
         .from('swipes')
@@ -42,8 +44,11 @@ const HomePage = () => {
       let query = supabase
         .from('profiles')
         .select('*')
-        .not('id', 'in', `(${swipedIds.join(',')})`)
         .eq('is_onboarded', true);
+
+      if (swipedIds.length > 0) {
+        query = query.not('id', 'in', `(${swipedIds.join(',')})`);
+      }
 
       if (profile.show_gender !== 'everyone') {
         const genderMap = { 'men': 'male', 'women': 'female' };
@@ -105,7 +110,7 @@ const HomePage = () => {
   };
 
   const handleSwipe = async (direction, swipedProfile) => {
-    if (!swipedProfile) return;
+    if (!swipedProfile || loading) return;
 
     // Track for rewind
     setLastSwipedProfile(swipedProfile);
@@ -116,12 +121,12 @@ const HomePage = () => {
     try {
       const { error } = await supabase
         .from('swipes')
-        .insert({
+        .upsert({
           swiper_id: user.id,
           swiped_id: swipedProfile.id,
           direction,
           created_at: new Date().toISOString()
-        });
+        }, { onConflict: 'swiper_id, swiped_id' });
 
       if (error) throw error;
 
@@ -131,6 +136,9 @@ const HomePage = () => {
     } catch (error) {
       console.error('Swipe error:', error);
       toast.error('Action failed. Please try again.');
+      // Rollback optimistic update
+      setStack(prev => [swipedProfile, ...prev]);
+      setLastSwipedProfile(null);
     }
   };
 
@@ -175,9 +183,12 @@ const HomePage = () => {
       .single();
 
     if (otherSwipe) {
+      // Sort IDs to ensure consistent user1/user2 mapping
+      const [u1, u2] = [user.id, otherProfile.id].sort();
+
       const { data: matchData, error } = await supabase
         .from('matches')
-        .insert({ user1_id: user.id, user2_id: otherProfile.id })
+        .upsert({ user1_id: u1, user2_id: u2, is_active: true }, { onConflict: 'user1_id, user2_id' })
         .select()
         .single();
 
@@ -199,7 +210,8 @@ const HomePage = () => {
       const { error } = await supabase.from('profiles').update(filters).eq('id', user.id);
       if (error) throw error;
       setShowFilters(false);
-      fetchDiscoveryStack();
+      // Wait for profile update to propagate or use passed filters
+      fetchDiscoveryStack(true);
     } catch (error) {
       toast.error('Failed to update filters');
     }
@@ -298,10 +310,16 @@ const HomePage = () => {
       {/* Action Row */}
       <div className="px-6 py-8 flex items-center justify-center gap-4 z-20">
         <button
-          onClick={handleRewind}
+          onClick={() => {
+            if (lastSwipedProfile) {
+              handleRewind();
+            } else {
+              fetchDiscoveryStack(true);
+            }
+          }}
           className="w-12 h-12 rounded-full bg-dark-card border border-white/5 flex items-center justify-center text-yellow-500 shadow-lg hover:scale-110 active:scale-95 transition-transform"
         >
-          <RefreshCcw size={20} />
+          <RefreshCcw size={20} className={loading ? 'animate-spin' : ''} />
         </button>
         <button
           onClick={() => stack[0] && handleSwipe('pass', stack[0])}
