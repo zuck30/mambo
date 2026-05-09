@@ -21,7 +21,7 @@ const HomePage = () => {
   const [showMatch, setShowMatch] = useState(false);
   const [matchedUser, setMatchedUser] = useState(null);
   const [showFilters, setShowFilters] = useState(false);
-  const [lastSwipedProfile, setLastSwipedProfile] = useState(null);
+  const [swipeHistory, setSwipeHistory] = useState([]);
 
   useEffect(() => {
     fetchDiscoveryStack();
@@ -33,10 +33,14 @@ const HomePage = () => {
     if (isRefresh) setStack([]);
 
     try {
-      const { data: swipedData } = await supabase
+      const { data: swipedData, error: swipesError } = await supabase
         .from('swipes')
-        .select('swiped_id, direction')
+        .select('swiped_id')
         .eq('swiper_id', user.id);
+
+      if (swipesError) {
+        console.warn('Could not fetch previous swipes (this is normal for new accounts):', swipesError);
+      }
 
       const swipedIds = swipedData?.map(s => s.swiped_id) || [];
       swipedIds.push(user.id);
@@ -99,6 +103,7 @@ const HomePage = () => {
       setStack(sortedData || []);
     } catch (error) {
       console.error('Error fetching stack:', error);
+      toast.error('Failed to load discovery feed');
     } finally {
       setLoading(false);
     }
@@ -124,15 +129,13 @@ const HomePage = () => {
   const handleSwipe = async (direction, swipedProfile) => {
     if (!swipedProfile || loading) return;
 
-    // Store current state for potential rollback
-    const previousStack = [...stack];
-    const previousLastSwiped = lastSwipedProfile;
-
-    // Optimistic update
+    // Optimistic UI update
     setStack(prev => prev.filter(p => p.id !== swipedProfile.id));
-    setLastSwipedProfile(swipedProfile);
+    setSwipeHistory(prev => [swipedProfile, ...prev]);
 
     try {
+      // Use UPSERT to handle potential retries or race conditions
+      // Note: 403 error might occur if RLS policies are misconfigured
       const { error } = await supabase
         .from('swipes')
         .upsert({
@@ -143,20 +146,19 @@ const HomePage = () => {
         }, { onConflict: 'swiper_id, swiped_id' });
 
       if (error) {
-        console.error('Supabase Swipe Error:', error);
+        console.error('Swipe DB Error:', error);
         throw error;
       }
 
       if (direction === 'like' || direction === 'superlike') {
-        // Run match check in background
         checkMatch(swipedProfile);
       }
     } catch (error) {
-      console.error('Swipe error details:', error);
-      toast.error('Action failed. Please try again.');
+      console.error('Swipe error caught:', error);
+      toast.error('Action failed. Check your connection or settings.');
       // Rollback optimistic update
-      setStack(previousStack);
-      setLastSwipedProfile(previousLastSwiped);
+      setStack(prev => [swipedProfile, ...prev]);
+      setSwipeHistory(prev => prev.filter(p => p.id !== swipedProfile.id));
     }
   };
 
@@ -165,28 +167,26 @@ const HomePage = () => {
       icon: '⚡',
       duration: 4000
     });
-    // In a real app, this would update a 'boosted_until' timestamp in the DB
   };
 
   const handleRewind = async () => {
-    if (!lastSwipedProfile) {
+    const lastProfile = swipeHistory[0];
+    if (!lastProfile) {
       toast.error('Nothing to rewind');
       return;
     }
 
     try {
-      // Remove the swipe from DB
       const { error } = await supabase
         .from('swipes')
         .delete()
         .eq('swiper_id', user.id)
-        .eq('swiped_id', lastSwipedProfile.id);
+        .eq('swiped_id', lastProfile.id);
 
       if (error) throw error;
 
-      // Add back to stack
-      setStack(prev => [lastSwipedProfile, ...prev]);
-      setLastSwipedProfile(null);
+      setStack(prev => [lastProfile, ...prev]);
+      setSwipeHistory(prev => prev.slice(1));
       toast.success('Swipe undone!', { icon: '⏪' });
     } catch (error) {
       console.error('Rewind error:', error);
@@ -196,7 +196,8 @@ const HomePage = () => {
 
   const checkMatch = async (otherProfile) => {
     try {
-      const { data: otherSwipe } = await supabase
+      // maybeSingle avoids 406 if no match found
+      const { data: otherSwipe, error: checkError } = await supabase
         .from('swipes')
         .select('direction')
         .eq('swiper_id', otherProfile.id)
@@ -204,17 +205,20 @@ const HomePage = () => {
         .in('direction', ['like', 'superlike'])
         .maybeSingle();
 
+      if (checkError) {
+         console.warn('Error checking for match:', checkError);
+         return;
+      }
+
       if (otherSwipe) {
-      // Sort IDs to ensure consistent user1/user2 mapping
-      const [u1, u2] = [user.id, otherProfile.id].sort();
+        const [u1, u2] = [user.id, otherProfile.id].sort();
+        const { data: matchData, error: matchError } = await supabase
+          .from('matches')
+          .upsert({ user1_id: u1, user2_id: u2, is_active: true }, { onConflict: 'user1_id, user2_id' })
+          .select()
+          .single();
 
-      const { data: matchData, error } = await supabase
-        .from('matches')
-        .upsert({ user1_id: u1, user2_id: u2, is_active: true }, { onConflict: 'user1_id, user2_id' })
-        .select()
-        .single();
-
-        if (!error && matchData) {
+        if (!matchError && matchData) {
           setMatchedUser({ ...otherProfile, matchId: matchData.id });
           setShowMatch(true);
           confetti({
@@ -223,11 +227,12 @@ const HomePage = () => {
             origin: { y: 0.6 },
             colors: ['#ff79ac', '#ff5280', '#ffffff']
           });
+        } else {
+           console.error('Match creation error:', matchError);
         }
       }
     } catch (err) {
-      console.error('Match check error:', err);
-      // Don't toast here to avoid confusing the user after a successful swipe
+      console.error('Internal match check error:', err);
     }
   };
 
@@ -236,7 +241,6 @@ const HomePage = () => {
       const { error } = await supabase.from('profiles').update(filters).eq('id', user.id);
       if (error) throw error;
 
-      // Update local profile state to ensure fetchDiscoveryStack uses latest filters
       const { data: updatedProfile } = await supabase
         .from('profiles')
         .select('*')
@@ -261,7 +265,7 @@ const HomePage = () => {
     navigate(`/app/chat/${matchId}`);
   };
 
-  const spotlights = stack.slice(0, 3); // Highlight first 3 users as "Spotlights"
+  const spotlights = stack.slice(0, 3);
 
   return (
     <div className="h-screen flex flex-col relative overflow-hidden bg-black font-sans">
@@ -272,7 +276,7 @@ const HomePage = () => {
         onSave={handleUpdateFilters}
       />
 
-      {/* Professional Header */}
+      {/* Header */}
       <div className="flex items-center justify-between px-6 py-4 z-20 bg-black/50 backdrop-blur-md">
         <motion.div
           whileTap={{ scale: 0.9 }}
@@ -293,7 +297,7 @@ const HomePage = () => {
         </motion.button>
       </div>
 
-      {/* Spotlights Section */}
+      {/* Spotlights */}
       {!loading && stack.length > 0 && (
         <div className="px-6 py-2 z-20 overflow-x-auto flex gap-4 no-scrollbar">
           {spotlights.map(p => (
@@ -350,7 +354,7 @@ const HomePage = () => {
       <div className="px-6 py-8 flex items-center justify-center gap-4 z-20">
         <button
           onClick={() => {
-            if (lastSwipedProfile) {
+            if (swipeHistory.length > 0) {
               handleRewind();
             } else {
               fetchDiscoveryStack(true);
@@ -410,14 +414,14 @@ const HomePage = () => {
                 animate={{ x: 20, rotate: -10, opacity: 1 }}
                 className="w-40 h-40 rounded-full border-4 border-white overflow-hidden z-10 shadow-2xl"
                >
-                  <img src={profile.photos[0]} className="w-full h-full object-cover" />
+                  {profile.photos?.[0] && <img src={profile.photos[0]} className="w-full h-full object-cover" />}
                </motion.div>
                <motion.div
                 initial={{ x: 100, rotate: 20, opacity: 0 }}
                 animate={{ x: -20, rotate: 10, opacity: 1 }}
                 className="w-40 h-40 rounded-full border-4 border-white overflow-hidden z-0 shadow-2xl"
                >
-                  <img src={matchedUser.photos[0]} className="w-full h-full object-cover" />
+                  {matchedUser.photos?.[0] && <img src={matchedUser.photos[0]} className="w-full h-full object-cover" />}
                </motion.div>
             </div>
 
