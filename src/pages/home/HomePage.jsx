@@ -158,17 +158,20 @@ const HomePage = () => {
 
     try {
       // Remove the swipe from DB
-      await supabase
+      const { error } = await supabase
         .from('swipes')
         .delete()
         .eq('swiper_id', user.id)
         .eq('swiped_id', lastSwipedProfile.id);
+
+      if (error) throw error;
 
       // Add back to stack
       setStack(prev => [lastSwipedProfile, ...prev]);
       setLastSwipedProfile(null);
       toast.success('Swipe undone!', { icon: '⏪' });
     } catch (error) {
+      console.error('Rewind error:', error);
       toast.error('Failed to undo swipe');
     }
   };
@@ -209,10 +212,23 @@ const HomePage = () => {
     try {
       const { error } = await supabase.from('profiles').update(filters).eq('id', user.id);
       if (error) throw error;
+
+      // Update local profile state to ensure fetchDiscoveryStack uses latest filters
+      const { data: updatedProfile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      if (updatedProfile) {
+        useAuthStore.getState().setProfile(updatedProfile);
+      }
+
       setShowFilters(false);
-      // Wait for profile update to propagate or use passed filters
       fetchDiscoveryStack(true);
+      toast.success('Filters updated');
     } catch (error) {
+      console.error('Error updating filters:', error);
       toast.error('Failed to update filters');
     }
   };
