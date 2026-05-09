@@ -10,11 +10,18 @@ const DiscoverySettingsModal = ({ isOpen, onClose, profile, onSave }) => {
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
+      // For iOS Safari extra protection
+      document.body.style.position = 'fixed';
+      document.body.style.width = '100%';
     } else {
       document.body.style.overflow = 'unset';
+      document.body.style.position = 'unset';
+      document.body.style.width = 'unset';
     }
     return () => {
       document.body.style.overflow = 'unset';
+      document.body.style.position = 'unset';
+      document.body.style.width = 'unset';
     };
   }, [isOpen]);
 
@@ -22,26 +29,34 @@ const DiscoverySettingsModal = ({ isOpen, onClose, profile, onSave }) => {
 
   return (
     <AnimatePresence>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 z-[200] bg-black/60 backdrop-blur-sm flex items-end justify-center sm:items-center"
-      >
+      <div className="fixed inset-0 z-[200] flex items-end justify-center sm:items-center p-0 sm:p-4">
+        {/* Backdrop */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={onClose}
+          className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+        />
+
+        {/* Modal Container */}
         <motion.div
           initial={{ y: '100%' }}
           animate={{ y: 0 }}
           exit={{ y: '100%' }}
-          className="bg-dark-card w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 pb-24 sm:pb-8 max-h-[90vh] overflow-y-auto"
+          transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+          className="relative bg-dark-card w-full max-w-md h-[85vh] sm:h-auto sm:max-h-[90vh] flex flex-col rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden"
         >
-          <div className="flex justify-between items-center mb-8">
+          {/* Header */}
+          <div className="flex justify-between items-center p-6 border-b border-white/5">
             <h2 className="text-xl font-black">Discovery Settings</h2>
-            <button onClick={onClose} className="p-2 text-dark-text hover:text-white">
+            <button onClick={onClose} className="p-2 text-dark-text hover:text-white transition-colors">
               <X size={24} />
             </button>
           </div>
 
-          <div className="space-y-8">
+          {/* Scrollable Content */}
+          <div className="flex-grow overflow-y-auto p-6 space-y-8 pb-32">
             {/* Distance */}
             <div>
               <div className="flex justify-between mb-4">
@@ -65,22 +80,28 @@ const DiscoverySettingsModal = ({ isOpen, onClose, profile, onSave }) => {
                 <span className="text-primary font-bold">{ageRange[0]} - {ageRange[1]}</span>
               </div>
               <div className="flex gap-4">
-                <input
-                  type="range"
-                  min="18"
-                  max="55"
-                  value={ageRange[0]}
-                  onChange={(e) => setAgeRange([parseInt(e.target.value), ageRange[1]])}
-                  className="w-full accent-primary"
-                />
-                <input
-                  type="range"
-                  min="18"
-                  max="55"
-                  value={ageRange[1]}
-                  onChange={(e) => setAgeRange([ageRange[0], parseInt(e.target.value)])}
-                  className="w-full accent-primary"
-                />
+                <div className="flex-grow">
+                  <span className="text-[10px] text-dark-text uppercase font-bold">Min</span>
+                  <input
+                    type="range"
+                    min="18"
+                    max="55"
+                    value={ageRange[0]}
+                    onChange={(e) => setAgeRange([parseInt(e.target.value), Math.max(parseInt(e.target.value), ageRange[1])])}
+                    className="w-full accent-primary"
+                  />
+                </div>
+                <div className="flex-grow">
+                  <span className="text-[10px] text-dark-text uppercase font-bold">Max</span>
+                  <input
+                    type="range"
+                    min="18"
+                    max="55"
+                    value={ageRange[1]}
+                    onChange={(e) => setAgeRange([Math.min(parseInt(e.target.value), ageRange[0]), parseInt(e.target.value)])}
+                    className="w-full accent-primary"
+                  />
+                </div>
               </div>
             </div>
 
@@ -100,16 +121,21 @@ const DiscoverySettingsModal = ({ isOpen, onClose, profile, onSave }) => {
                 ))}
               </div>
             </div>
+          </div>
 
+          {/* Fixed Footer for the Done Button */}
+          <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-dark-card via-dark-card to-transparent pt-10">
             <button
               onClick={() => onSave({ distance_pref: distance, min_age_pref: ageRange[0], max_age_pref: ageRange[1], show_gender: showGender })}
-              className="w-full primary-gradient text-white font-bold py-4 rounded-full"
+              className="w-full primary-gradient text-white font-bold py-4 rounded-full shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all"
             >
               Done
             </button>
+            {/* Spacer for iPhone home indicator */}
+            <div className="h-safe-bottom" />
           </div>
         </motion.div>
-      </motion.div>
+      </div>
     </AnimatePresence>
   );
 };
