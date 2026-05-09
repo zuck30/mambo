@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../hooks/useAuth';
@@ -13,9 +13,15 @@ const INTERESTS_OPTIONS = [
 ];
 
 const OnboardingPage = () => {
-  const { user, fetchProfile } = useAuth();
+  const { user, profile, fetchProfile } = useAuth();
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
+
+  useEffect(() => {
+    if (profile?.is_onboarded) {
+      navigate('/app/home');
+    }
+  }, [profile, navigate]);
   const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
