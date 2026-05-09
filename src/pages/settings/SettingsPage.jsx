@@ -38,12 +38,19 @@ const SettingsPage = () => {
     if (window.confirm('Are you sure you want to delete your account? This cannot be undone.')) {
       setLoading(true);
       try {
+        // Delete all related records first to avoid FK constraints
+        await supabase.from('messages').delete().or(`sender_id.eq.${profile.id},receiver_id.eq.${profile.id}`);
+        await supabase.from('matches').delete().or(`user1_id.eq.${profile.id},user2_id.eq.${profile.id}`);
+        await supabase.from('swipes').delete().or(`swiper_id.eq.${profile.id},swiped_id.eq.${profile.id}`);
+
         const { error } = await supabase.from('profiles').delete().eq('id', profile.id);
         if (error) throw error;
+
         await signOut();
         navigate('/login');
       } catch (error) {
-        toast.error('Failed to delete account');
+        console.error('Delete error:', error);
+        toast.error('Failed to delete account. Please contact support.');
       } finally {
         setLoading(false);
       }
