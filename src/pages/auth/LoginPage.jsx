@@ -44,8 +44,11 @@ const LoginPage = () => {
       toast.success('Check your email for the verification code!');
     } catch (error) {
       console.error('OTP Send Error:', error);
-      setError(error.message);
-      toast.error(error.message);
+      const message = error.message === 'Email rate limit exceeded'
+        ? 'Please wait a minute before requesting another code.'
+        : error.message;
+      setError(message);
+      toast.error(message);
     } finally {
       setLoading(false);
     }

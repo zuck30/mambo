@@ -41,24 +41,45 @@ To send professional OTP emails, configure Supabase to use Brevo's SMTP server:
    - **User**: Your Brevo login email.
    - **Pass**: Your generated SMTP key.
 
-### 3. Troubleshooting Email OTP
+### 3. Troubleshooting Email OTP (Brevo "Never Used" Issue)
 
-If you are not receiving OTP emails or verification is failing, check the following:
+If Brevo shows your SMTP key as **"Never Used"**, it means Supabase is not attempting to connect to Brevo or the connection is failing before the key is exercised.
 
-1. **Check Supabase Logs**: This is the most important step. Go to **Authentication > Logs** in your Supabase dashboard. If the SMTP connection is failing, you will see an error message here (e.g., `Error sending email: 535 Authentication Failed`).
-2. **Enable SMTP Toggle**: Ensure the **"Enable SMTP"** switch is turned **ON** in **Settings > Authentication > SMTP Settings**. If it's off, Supabase uses its default (highly limited) mailer.
-3. **Brevo Sender Verification**: Ensure the "Sender email" (e.g., `mcveigh3691@gmail.com`) is a **verified sender** in your Brevo account and matches exactly.
-4. **Supabase Email Templates**:
-   - Go to **Authentication > Email Templates** in Supabase.
-   - Ensure the "Magic Link" or "OTP" template contains the `{{ .Token }}` variable.
-   - **Crucial**: Ensure there are no trailing spaces in the "Sender email" or "Sender name" fields in the template settings.
-5. **SMTP Port & Security**:
-   - Try Port `587` (TLS).
-   - If `587` fails, try Port `465` (SSL).
-6. **Rate Limits**:
-   - Check the **"Minimum interval per user"** setting in Supabase (default is 60s). If you try to send another OTP within 60 seconds, it will be silently ignored.
-   - Brevo also has daily limits on free accounts.
-7. **Code Type**: In the frontend code, `verifyOtp` must use `type: 'magiclink'` for email codes sent via `signInWithOtp`.
+#### Step 1: Check Supabase Logs (CRITICAL)
+Go to **Authentication > Logs** in your Supabase dashboard.
+- If you see **no logs** when you click "Continue" in your app, the request is being rate-limited or blocked by Supabase before it even tries to send an email.
+- If you see an error like `Error sending email: 535 Authentication Failed`, your **SMTP Key** is incorrect.
+
+#### Step 2: Verify Supabase SMTP Settings
+Go to **Settings > Authentication > SMTP Settings**:
+1. **Enable SMTP**: Ensure this toggle is **ON**.
+2. **Sender Email**: Must be exactly `mcveigh3691@gmail.com` (Verified in Brevo).
+3. **Host**: `smtp-relay.brevo.com`
+4. **Port**: `587`
+5. **User**: `aab538001@smtp-brevo.com`
+6. **Pass**: Use a **freshly generated SMTP key** from Brevo.
+   - *Note*: Ensure it is an **SMTP Key**, not an API Key.
+   - *Tip*: If the long key fails, try generating the **"Short SMTP key"** variant in Brevo.
+
+#### Step 3: Check Email Templates
+Go to **Authentication > Email Templates**:
+- Check "Magic Link" and "Change Email" templates.
+- Ensure the **"Sender email"** in the template settings also matches your verified Brevo sender.
+- Ensure `{{ .Token }}` is present in the body.
+
+#### Step 4: Rate Limiting
+Supabase has a **"Minimum interval per user"** (default 60 seconds). If you click the button twice within a minute, the second email will **never be sent**, and no error will be shown in the UI. Wait 2 minutes between tests.
+
+#### Step 5: Frontend Verification
+Ensure your code uses the correct verification type:
+```javascript
+// Verification must use 'magiclink' type for email OTP
+const { error } = await supabase.auth.verifyOtp({
+  email: email,
+  token: token,
+  type: 'magiclink'
+});
+```
 
 ### 4. AI Insights Setup (Gemini)
 
