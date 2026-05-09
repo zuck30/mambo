@@ -15,13 +15,13 @@ const DiscoverySettingsModal = ({ isOpen, onClose, profile, onSave }) => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-end justify-center sm:items-center"
+        className="fixed inset-0 z-[200] bg-black/60 backdrop-blur-sm flex items-end justify-center sm:items-center"
       >
         <motion.div
           initial={{ y: '100%' }}
           animate={{ y: 0 }}
           exit={{ y: '100%' }}
-          className="bg-dark-card w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6"
+          className="bg-dark-card w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 pb-12 sm:pb-8"
         >
           <div className="flex justify-between items-center mb-8">
             <h2 className="text-xl font-black">Discovery Settings</h2>

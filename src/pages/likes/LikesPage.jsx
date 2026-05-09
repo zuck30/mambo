@@ -19,7 +19,7 @@ const LikesPage = () => {
         .from('swipes')
         .select('swiper:profiles!swipes_swiper_id_fkey(*)')
         .eq('swiped_id', user.id)
-        .eq('direction', 'like');
+        .in('direction', ['like', 'superlike']);
 
       if (error) throw error;
 
