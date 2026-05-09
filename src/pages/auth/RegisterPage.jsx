@@ -18,7 +18,7 @@ const RegisterPage = () => {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/app/home`
+          redirectTo: `${window.location.origin}/onboarding`
         }
       });
       if (error) throw error;
