@@ -3,9 +3,10 @@ import { useAuth } from '../../hooks/useAuth';
 import { useAuthStore } from '../../store/authStore';
 import { translations } from '../../lib/translations';
 import { supabase } from '../../lib/supabase';
-import { ChevronLeft, LogOut, Trash2, Bell, Shield, Phone , Flame, Globe} from 'lucide-react';
+import { ChevronLeft, LogOut, Trash2, Bell, Shield, Phone, Flame, Globe, ChevronDown, Lock, Eye, AlertTriangle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const SettingsPage = () => {
   const { profile, signOut, fetchProfile } = useAuth();
@@ -15,6 +16,11 @@ const SettingsPage = () => {
   const [loading, setLoading] = useState(false);
   const [isEditingPhone, setIsEditingPhone] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState(profile?.phone || '');
+  const [expandedSection, setExpandedSection] = useState(null);
+
+  const toggleSection = (section) => {
+    setExpandedSection(expandedSection === section ? null : section);
+  };
 
   const handleUpdatePhone = async () => {
     setLoading(true);
@@ -38,7 +44,6 @@ const SettingsPage = () => {
     if (window.confirm('Are you sure you want to delete your account? This cannot be undone.')) {
       setLoading(true);
       try {
-        // Delete all related records first to avoid FK constraints
         await supabase.from('messages').delete().or(`sender_id.eq.${profile.id},receiver_id.eq.${profile.id}`);
         await supabase.from('matches').delete().or(`user1_id.eq.${profile.id},user2_id.eq.${profile.id}`);
         await supabase.from('swipes').delete().or(`swiper_id.eq.${profile.id},swiped_id.eq.${profile.id}`);
@@ -142,21 +147,156 @@ const SettingsPage = () => {
                 <div className="absolute right-1 top-1 w-4 h-4 bg-white rounded-full shadow-sm" />
               </div>
             </button>
-            <button className="w-full p-4 flex justify-between items-center hover:bg-white/5 transition-colors">
-              <div className="flex items-center gap-3">
-                <Shield size={20} className="text-dark-text" />
-                <span>{t.privacy_safety}</span>
-              </div>
-            </button>
+            <div className="w-full">
+              <button
+                onClick={() => toggleSection('safety')}
+                className="w-full p-4 flex justify-between items-center hover:bg-white/5 transition-colors"
+              >
+                <div className="flex items-center gap-3">
+                  <Shield size={20} className="text-dark-text" />
+                  <span>{t.privacy_safety}</span>
+                </div>
+                <ChevronDown size={20} className={`text-dark-text transition-transform ${expandedSection === 'safety' ? 'rotate-180' : ''}`} />
+              </button>
+              <AnimatePresence>
+                {expandedSection === 'safety' && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    className="overflow-hidden bg-white/5"
+                  >
+                    <div className="p-6 space-y-6">
+                      <div className="grid grid-cols-1 gap-4">
+                        <div className="flex gap-4">
+                          <Shield className="text-primary shrink-0" size={24} />
+                          <div>
+                            <h4 className="font-bold text-sm">Member Verification</h4>
+                            <p className="text-xs text-dark-text">AI and human moderation to keep bots and scammers off.</p>
+                          </div>
+                        </div>
+                        <div className="flex gap-4">
+                          <Lock className="text-primary shrink-0" size={24} />
+                          <div>
+                            <h4 className="font-bold text-sm">Data Privacy</h4>
+                            <p className="text-xs text-dark-text">Your information is encrypted and protected.</p>
+                          </div>
+                        </div>
+                        <div className="flex gap-4">
+                          <Eye className="text-primary shrink-0" size={24} />
+                          <div>
+                            <h4 className="font-bold text-sm">Reporting</h4>
+                            <p className="text-xs text-dark-text">Report inappropriate behavior instantly.</p>
+                          </div>
+                        </div>
+                        <div className="flex gap-4">
+                          <AlertTriangle className="text-primary shrink-0" size={24} />
+                          <div>
+                            <h4 className="font-bold text-sm">Safety Tips</h4>
+                            <p className="text-xs text-dark-text">Guides on how to stay safe online and offline.</p>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="pt-4 border-t border-white/10">
+                        <h4 className="font-bold text-sm mb-2">Meeting Safely</h4>
+                        <ul className="text-xs text-dark-text space-y-1 list-disc pl-4">
+                          <li>Always meet in a public place.</li>
+                          <li>Tell a friend or family member about your plans.</li>
+                          <li>Stay in control of your transportation.</li>
+                          <li>Trust your instincts. If something feels wrong, leave.</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           </div>
         </section>
 
-        {/* Support */}
+        {/* Legal */}
         <section>
           <h3 className="text-sm font-bold text-dark-text uppercase tracking-widest mb-4">Legal</h3>
           <div className="bg-dark-card rounded-2xl border border-white/5 overflow-hidden divide-y divide-white/5">
-            <button className="w-full p-4 text-left hover:bg-white/5 transition-colors">Privacy Policy</button>
-            <button className="w-full p-4 text-left hover:bg-white/5 transition-colors">Terms of Service</button>
+            <div className="w-full">
+              <button
+                onClick={() => toggleSection('privacy')}
+                className="w-full p-4 flex justify-between items-center hover:bg-white/5 transition-colors"
+              >
+                <span>Privacy Policy</span>
+                <ChevronDown size={20} className={`text-dark-text transition-transform ${expandedSection === 'privacy' ? 'rotate-180' : ''}`} />
+              </button>
+              <AnimatePresence>
+                {expandedSection === 'privacy' && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    className="overflow-hidden bg-white/5"
+                  >
+                    <div className="p-6 text-xs text-dark-text space-y-4">
+                      <p className="italic">Last Updated: May 20, 2024</p>
+                      <div>
+                        <h4 className="font-bold text-white mb-1">1. Introduction</h4>
+                        <p>Oa is committed to protecting your privacy globally, including in Africa, East Africa, and other international regions.</p>
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-white mb-1">2. Information We Collect</h4>
+                        <p>We collect name, email, phone, photos, bio, location data (with permission), and messages.</p>
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-white mb-1">3. How We Use Information</h4>
+                        <p>To provide services, facilitate matches, verify identity, and prevent fraud.</p>
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-white mb-1">4. Global Data Transfers</h4>
+                        <p>Information may be processed in various countries with appropriate safeguards in place.</p>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
+            <div className="w-full">
+              <button
+                onClick={() => toggleSection('terms')}
+                className="w-full p-4 flex justify-between items-center hover:bg-white/5 transition-colors"
+              >
+                <span>Terms of Service</span>
+                <ChevronDown size={20} className={`text-dark-text transition-transform ${expandedSection === 'terms' ? 'rotate-180' : ''}`} />
+              </button>
+              <AnimatePresence>
+                {expandedSection === 'terms' && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    className="overflow-hidden bg-white/5"
+                  >
+                    <div className="p-6 text-xs text-dark-text space-y-4">
+                      <p className="italic">Last Updated: May 20, 2024</p>
+                      <div>
+                        <h4 className="font-bold text-white mb-1">1. Acceptance of Terms</h4>
+                        <p>By creating an Oa account, you agree to be bound by these Terms of Service.</p>
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-white mb-1">2. Eligibility</h4>
+                        <p>You must be at least 18 years of age to create an account on Oa.</p>
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-white mb-1">3. Prohibited Content</h4>
+                        <p>Offensive, sexually explicit, harassing, or illegal content is strictly prohibited.</p>
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-white mb-1">4. Termination</h4>
+                        <p>We reserve the right to terminate accounts that violate these Terms or harm other users.</p>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           </div>
         </section>
 
