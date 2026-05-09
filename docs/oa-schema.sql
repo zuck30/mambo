@@ -75,6 +75,9 @@ ON profiles FOR SELECT TO authenticated USING (true);
 CREATE POLICY "Users can update own profile"
 ON profiles FOR UPDATE TO authenticated USING (auth.uid() = id OR (SELECT role FROM profiles WHERE id = auth.uid()) = 'admin');
 
+CREATE POLICY "Users can delete own profile"
+ON profiles FOR DELETE TO authenticated USING (auth.uid() = id);
+
 CREATE POLICY "Admins can delete profiles"
 ON profiles FOR DELETE TO authenticated USING ((SELECT role FROM profiles WHERE id = auth.uid()) = 'admin');
 
@@ -85,13 +88,46 @@ ON swipes FOR SELECT TO authenticated USING (auth.uid() = swiper_id);
 CREATE POLICY "Users can insert their own swipes"
 ON swipes FOR INSERT TO authenticated WITH CHECK (auth.uid() = swiper_id);
 
+CREATE POLICY "Users can update their own swipes"
+ON swipes FOR UPDATE TO authenticated USING (auth.uid() = swiper_id);
+
+CREATE POLICY "Users can delete their own swipes"
+ON swipes FOR DELETE TO authenticated USING (auth.uid() = swiper_id);
+
 -- Matches: Users can see matches they are part of
 CREATE POLICY "Users can see their own matches"
 ON matches FOR SELECT TO authenticated USING (auth.uid() = user1_id OR auth.uid() = user2_id);
 
+CREATE POLICY "Users can create matches"
+ON matches FOR INSERT TO authenticated WITH CHECK (auth.uid() = user1_id OR auth.uid() = user2_id);
+
+CREATE POLICY "Users can update their own matches"
+ON matches FOR UPDATE TO authenticated USING (auth.uid() = user1_id OR auth.uid() = user2_id);
+
+CREATE POLICY "Users can delete their own matches"
+ON matches FOR DELETE TO authenticated USING (auth.uid() = user1_id OR auth.uid() = user2_id);
+
 -- Messages: Users can see/send messages in their matches
 CREATE POLICY "Users can see messages in their matches"
 ON messages FOR SELECT TO authenticated USING (
+  EXISTS (
+    SELECT 1 FROM matches
+    WHERE matches.id = messages.match_id
+    AND (matches.user1_id = auth.uid() OR matches.user2_id = auth.uid())
+  )
+);
+
+CREATE POLICY "Users can update messages in their matches"
+ON messages FOR UPDATE TO authenticated USING (
+  EXISTS (
+    SELECT 1 FROM matches
+    WHERE matches.id = messages.match_id
+    AND (matches.user1_id = auth.uid() OR matches.user2_id = auth.uid())
+  )
+);
+
+CREATE POLICY "Users can delete messages in their matches"
+ON messages FOR DELETE TO authenticated USING (
   EXISTS (
     SELECT 1 FROM matches
     WHERE matches.id = messages.match_id
