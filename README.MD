@@ -1,11 +1,9 @@
-# Oa - Dating App
+# Oa
 
-Oa is a premium, professional dating application built with React, Supabase, and Framer Motion. It features high-fidelity animations, real-time messaging, and a robust discovery engine.
+Oa is a dating app with robust discovery engine.
 
 ## Features
 
-- **Professional Branding**: High-end landing page and UI using `#ff79ac` primary color.
-- **Email OTP Authentication**: Secure, passwordless login using Supabase and Brevo (SMTP).
 - **Discovery Engine**: Swipe right to like, left to pass, and up to super like. Distance and age-based filtering.
 - **Real-time Messaging**: Instant chat with matches.
 - **Onboarding**: Comprehensive multi-step flow for a personalized experience.
@@ -41,52 +39,12 @@ To send professional OTP emails, configure Supabase to use Brevo's SMTP server:
    - **User**: Your Brevo login email.
    - **Pass**: Your generated SMTP key.
 
-### 3. Troubleshooting Email OTP (Brevo "Never Used" Issue)
-
-If Brevo shows your SMTP key as **"Never Used"**, it means Supabase is not attempting to connect to Brevo or the connection is failing before the key is exercised.
-
-#### Step 1: Check Supabase Logs (CRITICAL)
-Go to **Authentication > Logs** in your Supabase dashboard.
-- If you see **no logs** when you click "Continue" in your app, the request is being rate-limited or blocked by Supabase before it even tries to send an email.
-- If you see an error like `Error sending email: 535 Authentication Failed`, your **SMTP Key** is incorrect.
-
-#### Step 2: Verify Supabase SMTP Settings
-Go to **Settings > Authentication > SMTP Settings**:
-1. **Enable SMTP**: Ensure this toggle is **ON**.
-2. **Sender Email**: Must be exactly `mcveigh3691@gmail.com` (Verified in Brevo).
-3. **Host**: `smtp-relay.brevo.com`
-4. **Port**: `587`
-5. **User**: `aab538001@smtp-brevo.com`
-6. **Pass**: Use a **freshly generated SMTP key** from Brevo.
-   - *Note*: Ensure it is an **SMTP Key**, not an API Key.
-   - *Tip*: If the long key fails, try generating the **"Short SMTP key"** variant in Brevo.
-
-#### Step 3: Check Email Templates
-Go to **Authentication > Email Templates**:
-- Check "Magic Link" and "Change Email" templates.
-- Ensure the **"Sender email"** in the template settings also matches your verified Brevo sender.
-- Ensure `{{ .Token }}` is present in the body.
-
-#### Step 4: Rate Limiting
-Supabase has a **"Minimum interval per user"** (default 60 seconds). If you click the button twice within a minute, the second email will **never be sent**, and no error will be shown in the UI. Wait 2 minutes between tests.
-
-#### Step 5: Frontend Verification
-Ensure your code uses the correct verification type:
-```javascript
-// Verification must use 'magiclink' type for email OTP
-const { error } = await supabase.auth.verifyOtp({
-  email: email,
-  token: token,
-  type: 'magiclink'
-});
-```
-
-### 4. AI Insights Setup (Gemini)
+### AI Insights Setup (Gemini)
 
 1. Get a Gemini API key from [Google AI Studio](https://aistudio.google.com/).
 2. Set the secret in Supabase:
    ```bash
-   supabase secrets set GEMINI_API_KEY=your-api-key
+   supabase secrets set GEMINI_API_KEY=api-key
    ```
 3. Deploy the AI edge function:
    ```bash
