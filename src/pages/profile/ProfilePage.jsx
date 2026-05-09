@@ -79,6 +79,20 @@ const ProfilePage = () => {
          </div>
       </div>
 
+      {/* Subscription Banner */}
+      <div className="px-6 mb-8">
+        <div className="bg-gradient-to-r from-[#FFD700] to-[#FFA500] p-6 rounded-2xl text-dark-card">
+           <div className="flex justify-between items-center mb-2">
+             <h3 className="font-black text-xl">Get Oa Gold</h3>
+             <CreditCard size={24} />
+           </div>
+           <p className="text-sm font-medium mb-4">See who likes you & more!</p>
+           <button className="w-full bg-dark-card text-white py-2 rounded-full font-bold text-sm">
+             Upgrade from 5,000 TZS
+           </button>
+        </div>
+      </div>
+
       {/* Quick Menu */}
       <div className="px-6 space-y-2">
         {profile?.role === 'admin' && (
