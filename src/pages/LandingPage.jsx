@@ -1,180 +1,205 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Flame, Apple, PlayCircle, Menu, X } from 'lucide-react';
+import { Flame, Menu, X, Globe, Apple, PlayCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+
+const TypewriterText = ({ texts }) => {
+  const [index, setIndex] = useState(0);
+  const [displayText, setDisplayText] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  useEffect(() => {
+    const currentFullText = texts[index];
+    const timeout = setTimeout(() => {
+      if (!isDeleting) {
+        setDisplayText(currentFullText.slice(0, displayText.length + 1));
+        if (displayText.length === currentFullText.length) {
+          setTimeout(() => setIsDeleting(true), 2000);
+        }
+      } else {
+        setDisplayText(currentFullText.slice(0, displayText.length - 1));
+        if (displayText.length === 0) {
+          setIsDeleting(false);
+          setIndex((prev) => (prev + 1) % texts.length);
+        }
+      }
+    }, isDeleting ? 50 : 150);
+
+    return () => clearTimeout(timeout);
+  }, [displayText, isDeleting, index, texts]);
+
+  return (
+    <span className="text-[#ff79ac] drop-shadow-[0_0_15px_rgba(255,121,172,0.5)]">
+      {displayText}
+      <motion.span
+        animate={{ opacity: [0, 1, 0] }}
+        transition={{ duration: 0.8, repeat: Infinity }}
+        className="inline-block w-1 h-16 md:h-32 bg-[#ff79ac] ml-2 align-middle"
+      />
+    </span>
+  );
+};
 
 const LandingPage = () => {
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  
+  const swahiliPhrases = ["Mambo vipi?", "Tokelezea.", "Pata vibe.", "Noma sana."];
 
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col relative overflow-x-hidden">
-      {/* Background Image */}
-      <div 
-        className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-30"
-        style={{
-          backgroundImage: 'url("https://w.wallhaven.cc/full/21/wallhaven-218e6g.jpg")',
-        }}
-      />
+    <div className="h-screen w-full bg-black text-white overflow-hidden relative font-sans antialiased">
       
-      {/* Background Gradient / Image Placeholder */}
-      <div className="absolute inset-0 z-0 opacity-40">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#ff79ac]/20 via-transparent to-black" />
+      {/* Background Image with Ken Burns Effect */}
+      <div className="absolute inset-0 z-0">
+        <div className="absolute inset-0 bg-black/50 z-10" />
+        <motion.img 
+          initial={{ scale: 1.2 }}
+          animate={{ scale: 1 }}
+          transition={{ duration: 20, repeat: Infinity, repeatType: "reverse" }}
+          src="https://w.wallhaven.cc/full/6l/wallhaven-6lkzzq.png" 
+          alt="Background"
+          className="w-full h-full object-cover"
+        />
       </div>
 
-      {/* Header */}
-      <header className="relative z-50 flex items-center justify-between px-6 py-6 md:px-12">
-        <div className="flex items-center gap-2">
-          <Flame className="text-primary fill-current" size={40} />
-          <span className="text-3xl font-black tracking-tighter">oa</span>
-        </div>
+      {/* Navigation */}
+      <header className="absolute top-0 w-full z-50 flex items-center justify-between px-6 py-6 md:px-12 lg:px-20">
+        <motion.div 
+          initial={{ x: -20, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          className="flex items-center gap-2 cursor-pointer" 
+          onClick={() => navigate('/')}
+        >
+          <Flame className="text-[#ff79ac] fill-current" size={42} />
+          <span className="text-4xl font-black tracking-tighter">mambo</span>
+        </motion.div>
 
-        {/* Desktop Nav */}
-        <nav className="hidden md:flex gap-8 font-bold text-lg">
-          <Link to="/products" className="hover:text-primary transition-colors">Products</Link>
-          <Link to="/learn" className="hover:text-primary transition-colors">Learn</Link>
-          <Link to="/safety" className="hover:text-primary transition-colors">Safety</Link>
-          <Link to="/support" className="hover:text-primary transition-colors">Support</Link>
+        <nav className="hidden lg:flex gap-8 font-bold text-sm uppercase tracking-widest text-white/90">
+          {['Products', 'Learn', 'Safety', 'Support'].map((item) => (
+            <Link key={item} to={`/${item.toLowerCase()}`} className="hover:text-[#ff79ac] transition-colors relative group">
+              {item}
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#ff79ac] transition-all group-hover:w-full" />
+            </Link>
+          ))}
         </nav>
 
-        <div className="flex items-center gap-4">
+        <motion.div 
+          initial={{ x: 20, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          className="flex items-center gap-6"
+        >
           <button
             onClick={() => navigate('/login')}
-            className="hidden md:block bg-white text-black px-8 py-2 rounded-full font-bold hover:bg-white/90 transition-all"
+            className="bg-white text-black px-8 py-2.5 rounded-full font-bold text-sm uppercase hover:bg-[#ff79ac] hover:text-white transition-all shadow-xl active:scale-95"
           >
             Log in
           </button>
-
-          {/* Mobile Menu Toggle */}
-          <button
-            className="md:hidden text-white"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          >
-            {isMobileMenuOpen ? <X size={32} /> : <Menu size={32} />}
+          <button className="lg:hidden p-2 text-white" onClick={() => setIsMobileMenuOpen(true)}>
+            <Menu size={32} />
           </button>
-        </div>
+        </motion.div>
       </header>
 
-      {/* Mobile Menu */}
+      {/* Hero Section */}
+      <main className="relative z-20 h-full flex flex-col items-center justify-center text-center px-6">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="mb-12"
+        >
+          <h1 className="text-6xl md:text-[140px] font-black italic leading-none tracking-tighter uppercase select-none">
+            Start<br />
+            <TypewriterText texts={swahiliPhrases} />
+          </h1>
+        </motion.div>
+
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5, duration: 0.8 }}
+          className="flex flex-col items-center gap-8"
+        >
+          <button
+            onClick={() => navigate('/register')}
+            className="group relative bg-gradient-to-r from-[#ff79ac] to-[#ff4d8c] text-white px-16 py-5 rounded-full text-2xl font-black uppercase tracking-tighter shadow-2xl overflow-hidden"
+          >
+            <span className="relative z-10 transition-transform group-hover:scale-110 inline-block">Create account</span>
+            <motion.div 
+              className="absolute inset-0 bg-white/20"
+              initial={{ x: '-100%' }}
+              whileHover={{ x: '100%' }}
+              transition={{ duration: 0.5 }}
+            />
+          </button>
+
+          {/* App Stores Buttons */}
+          <div className="flex flex-wrap justify-center gap-4 mt-4">
+            {[
+              { Icon: Apple, label: 'Download on the', store: 'App Store' },
+              { Icon: PlayCircle, label: 'Get it on', store: 'Google Play' }
+            ].map((btn, i) => (
+              <motion.a 
+                key={btn.store}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.8 + (i * 0.2) }}
+                href="#" 
+                className="flex items-center gap-3 bg-black/40 backdrop-blur-md border border-white/10 px-6 py-3 rounded-xl hover:border-[#ff79ac]/50 hover:bg-black/60 transition-all group"
+              >
+                <btn.Icon size={28} className="text-white group-hover:text-[#ff79ac] transition-colors" />
+                <div className="text-left leading-tight">
+                  <span className="text-[10px] uppercase block font-bold opacity-60">{btn.label}</span>
+                  <span className="text-lg font-black tracking-tight">{btn.store}</span>
+                </div>
+              </motion.a>
+            ))}
+          </div>
+        </motion.div>
+      </main>
+
+      {/* Footer Links */}
+      <footer className="absolute bottom-0 w-full z-20 py-8 px-6 md:px-12 flex flex-col md:flex-row justify-between items-center gap-4 bg-gradient-to-t from-black/90 to-transparent">
+        <div className="flex flex-wrap justify-center gap-6 text-[11px] font-black uppercase tracking-widest text-white/60">
+          {['Terms', 'Privacy', 'Cookies', 'Safety'].map(link => (
+            <Link key={link} to={`/${link.toLowerCase()}`} className="hover:text-white transition-colors">{link}</Link>
+          ))}
+        </div>
+        <p className="text-[10px] font-black text-white/30 tracking-[0.2em]">
+          © {new Date().getFullYear()} MAMBO GROUP, LLC.
+        </p>
+      </footer>
+
+      {/* Mobile Nav Overlay */}
       <AnimatePresence>
         {isMobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="absolute inset-0 z-40 bg-black pt-24 px-6 flex flex-col gap-8 md:hidden"
+          <motion.div 
+            initial={{ x: '100%' }}
+            animate={{ x: 0 }}
+            exit={{ x: '100%' }}
+            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+            className="fixed inset-0 z-[100] bg-black p-8 flex flex-col items-center justify-center"
           >
-            <nav className="flex flex-col gap-6 text-2xl font-black italic">
-              <Link to="/products" onClick={() => setIsMobileMenuOpen(false)}>Products</Link>
-              <Link to="/learn" onClick={() => setIsMobileMenuOpen(false)}>Learn</Link>
-              <Link to="/safety" onClick={() => setIsMobileMenuOpen(false)}>Safety</Link>
-              <Link to="/support" onClick={() => setIsMobileMenuOpen(false)}>Support</Link>
+            <button onClick={() => setIsMobileMenuOpen(false)} className="absolute top-8 right-8 p-2 text-white">
+              <X size={40} />
+            </button>
+            <nav className="flex flex-col gap-10 text-center text-5xl font-black italic uppercase tracking-tighter">
+              {['Products', 'Learn', 'Safety', 'Support'].map((item, i) => (
+                <motion.div
+                  key={item}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.1 }}
+                >
+                  <Link to={`/${item.toLowerCase()}`} onClick={() => setIsMobileMenuOpen(false)} className="hover:text-[#ff79ac]">
+                    {item}
+                  </Link>
+                </motion.div>
+              ))}
             </nav>
-            <div className="flex flex-col gap-4 mt-auto mb-12">
-              <button
-                onClick={() => navigate('/login')}
-                className="w-full bg-white text-black py-4 rounded-full font-bold text-xl"
-              >
-                Log in
-              </button>
-              <button
-                onClick={() => navigate('/register')}
-                className="w-full primary-gradient text-white py-4 rounded-full font-bold text-xl"
-              >
-                Create account
-              </button>
-            </div>
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* Hero Section */}
-      <main className="relative z-10 flex-grow flex flex-col items-center justify-center text-center px-6">
-        <motion.h1
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.8 }}
-          className="text-6xl md:text-9xl font-black italic mb-8"
-        >
-          Swipe Right<span className="text-primary">®</span>
-        </motion.h1>
-
-        <motion.button
-          initial={{ scale: 0.9, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ delay: 0.5 }}
-          onClick={() => navigate('/register')}
-          className="primary-gradient text-white px-12 py-4 rounded-full text-xl font-bold hover:scale-105 transition-transform shadow-2xl"
-        >
-          Create account
-        </motion.button>
-      </main>
-
-
-{/* App Stores Banner */}
-<section className="relative z-10 py-12 px-6">
-  <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
-    <div className="text-center md:text-left">
-      <h2 className="text-3xl font-black mb-2">Get the app!</h2>
-      <p className="text-dark-text">Available on iOS and Android. Start swiping today.</p>
-    </div>
-    <div className="flex gap-4">
-      <button className="flex items-center gap-2 bg-white text-black px-6 py-3 rounded-xl font-bold">
-        <Apple size={24} />
-        <div className="text-left leading-none">
-          <span className="text-[10px] uppercase block">Download on the</span>
-          <span className="text-xl">App Store</span>
-        </div>
-      </button>
-      <button className="flex items-center gap-2 bg-white text-black px-6 py-3 rounded-xl font-bold">
-        <PlayCircle size={24} />
-        <div className="text-left leading-none">
-          <span className="text-[10px] uppercase block">Get it on</span>
-          <span className="text-xl">Google Play</span>
-        </div>
-      </button>
-    </div>
-  </div>
-</section>
-
-      {/* Footer */}
-      <footer className="relative z-10 bg-black py-16 px-6 md:px-12 border-t border-white/5">
-        <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-5 gap-12 mb-16">
-          <div className="col-span-2 md:col-span-1">
-            <h4 className="font-black text-xl mb-6">Legal</h4>
-            <ul className="space-y-4 text-dark-text font-medium">
-              <li><Link to="/privacy" className="hover:text-white transition-colors">Privacy</Link></li>
-              <li><Link to="/terms" className="hover:text-white transition-colors">Terms</Link></li>
-              <li><Link to="/cookie-policy" className="hover:text-white transition-colors">Cookie Policy</Link></li>
-            </ul>
-          </div>
-          <div>
-          </div>
-          <div>
-            <h4 className="font-black text-xl mb-6">Social</h4>
-            <ul className="space-y-4 text-dark-text font-medium">
-              <li><Link to="#" className="hover:text-white">Instagram</Link></li>
-              <li><Link to="#" className="hover:text-white">TikTok</Link></li>
-              <li><Link to="#" className="hover:text-white">YouTube</Link></li>
-              <li><Link to="#" className="hover:text-white">Twitter</Link></li>
-              <li><Link to="#" className="hover:text-white">Facebook</Link></li>
-            </ul>
-          </div>
-          <div className="col-span-2">
-            <h4 className="font-black text-xl mb-6">Download</h4>
-            <p className="text-dark-text mb-6">Oa connects you with people around the corner or across the globe.</p>
-          </div>
-        </div>
-        <div className="max-w-6xl mx-auto pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
-          <p className="text-sm text-dark-text">© {new Date().getFullYear()} Oa Group, LLC, All Rights Reserved.</p>
-          <div className="flex flex-wrap justify-center gap-6 text-sm text-dark-text">
-            <Link to="/support" className="hover:text-white transition-colors">FAQ</Link>
-            <Link to="/learn" className="hover:text-white transition-colors">Destinations</Link>
-            <Link to="/support" className="hover:text-white transition-colors">Press Room</Link>
-            <Link to="/support" className="hover:text-white transition-colors">Contact</Link>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 };
