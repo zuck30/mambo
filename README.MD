@@ -45,15 +45,20 @@ To send professional OTP emails, configure Supabase to use Brevo's SMTP server:
 
 If you are not receiving OTP emails or verification is failing, check the following:
 
-1. **Brevo Sender Verification**: Ensure the "Sender email" you configured in Supabase is a **verified sender** in your Brevo account.
-2. **Supabase Email Templates**:
+1. **Check Supabase Logs**: This is the most important step. Go to **Authentication > Logs** in your Supabase dashboard. If the SMTP connection is failing, you will see an error message here (e.g., `Error sending email: 535 Authentication Failed`).
+2. **Enable SMTP Toggle**: Ensure the **"Enable SMTP"** switch is turned **ON** in **Settings > Authentication > SMTP Settings**. If it's off, Supabase uses its default (highly limited) mailer.
+3. **Brevo Sender Verification**: Ensure the "Sender email" (e.g., `mcveigh3691@gmail.com`) is a **verified sender** in your Brevo account and matches exactly.
+4. **Supabase Email Templates**:
    - Go to **Authentication > Email Templates** in Supabase.
    - Ensure the "Magic Link" or "OTP" template contains the `{{ .Token }}` variable.
-   - If `{{ .ConfirmationURL }}` is used instead of `{{ .Token }}`, Supabase will send a link instead of a 6-digit code.
-3. **SMTP Port**: While `587` is standard for TLS, some environments might require port `465` with SSL.
-4. **Spam/Promotions**: Check your spam and promotions folders.
-5. **Rate Limits**: Supabase and Brevo have rate limits. If you've requested too many codes in a short time, you may be temporarily blocked.
-6. **Code Type**: In the frontend, Ensure `verifyOtp` uses `type: 'magiclink'` when verifying 6-digit codes sent via `signInWithOtp` (email).
+   - **Crucial**: Ensure there are no trailing spaces in the "Sender email" or "Sender name" fields in the template settings.
+5. **SMTP Port & Security**:
+   - Try Port `587` (TLS).
+   - If `587` fails, try Port `465` (SSL).
+6. **Rate Limits**:
+   - Check the **"Minimum interval per user"** setting in Supabase (default is 60s). If you try to send another OTP within 60 seconds, it will be silently ignored.
+   - Brevo also has daily limits on free accounts.
+7. **Code Type**: In the frontend code, `verifyOtp` must use `type: 'magiclink'` for email codes sent via `signInWithOtp`.
 
 ### 4. AI Insights Setup (Gemini)
 
