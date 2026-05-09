@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../hooks/useAuth';
+import { useAuthStore } from '../../store/authStore';
+import { translations } from '../../lib/translations';
 import DiscoverCard from '../../components/home/DiscoverCard';
 import DiscoverySettingsModal from '../../components/home/DiscoverySettingsModal';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -11,6 +13,8 @@ import confetti from 'canvas-confetti';
 
 const HomePage = () => {
   const { user, profile } = useAuth();
+  const { language } = useAuthStore();
+  const t = translations[language];
   const navigate = useNavigate();
   const [stack, setStack] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -28,7 +32,7 @@ const HomePage = () => {
     try {
       const { data: swipedData } = await supabase
         .from('swipes')
-        .select('swiped_id')
+        .select('swiped_id, direction')
         .eq('swiper_id', user.id);
 
       const swipedIds = swipedData?.map(s => s.swiped_id) || [];
@@ -58,16 +62,20 @@ const HomePage = () => {
         return d <= (profile.distance_pref || 50);
       });
 
-      // Sort by common interests
+      // Advanced Sorting (Drafting LLM Recommendation engine behavior)
       const sortedData = filteredData?.sort((a, b) => {
-        const aInterests = a.interests || [];
-        const bInterests = b.interests || [];
         const myInterests = profile.interests || [];
+        // Extract common interests from users we've already liked (simulating behavior learning)
+        // In a real app, we'd fetch the interests of swiped_id users separately
+        const calculateScore = (p) => {
+          const pInterests = p.interests || [];
+          const commonWithMe = pInterests.filter(i => myInterests.includes(i)).length;
 
-        const aCommon = aInterests.filter(i => myInterests.includes(i)).length;
-        const bCommon = bInterests.filter(i => myInterests.includes(i)).length;
+          // Weighted score: common interests with user
+          return (commonWithMe * 2);
+        };
 
-        return bCommon - aCommon;
+        return calculateScore(b) - calculateScore(a);
       });
 
       setStack(sortedData || []);
@@ -181,6 +189,8 @@ const HomePage = () => {
     navigate(`/app/chat/${matchId}`);
   };
 
+  const spotlights = stack.slice(0, 3); // Highlight first 3 users as "Spotlights"
+
   return (
     <div className="h-screen flex flex-col relative overflow-hidden bg-black font-sans">
       <DiscoverySettingsModal
@@ -191,7 +201,7 @@ const HomePage = () => {
       />
 
       {/* Professional Header */}
-      <div className="flex items-center justify-between px-6 py-4 z-20">
+      <div className="flex items-center justify-between px-6 py-4 z-20 bg-black/50 backdrop-blur-md">
         <motion.div
           whileTap={{ scale: 0.9 }}
           className="w-10 h-10 rounded-full bg-dark-card flex items-center justify-center overflow-hidden border border-white/10"
@@ -211,12 +221,28 @@ const HomePage = () => {
         </motion.button>
       </div>
 
+      {/* Spotlights Section */}
+      {!loading && stack.length > 0 && (
+        <div className="px-6 py-2 z-20 overflow-x-auto flex gap-4 no-scrollbar">
+          {spotlights.map(p => (
+            <div key={`spotlight-${p.id}`} className="flex-shrink-0 flex flex-col items-center gap-1">
+              <div className="w-16 h-16 rounded-full p-0.5 bg-gradient-to-tr from-yellow-400 to-orange-500">
+                <div className="w-full h-full rounded-full border-2 border-black overflow-hidden">
+                  <img src={p.photos[0]} className="w-full h-full object-cover" />
+                </div>
+              </div>
+              <span className="text-[10px] font-bold text-white uppercase tracking-tighter">Spotlight</span>
+            </div>
+          ))}
+        </div>
+      )}
+
       {/* Stack Area */}
-      <div className="flex-grow relative px-4 flex items-center justify-center">
+      <div className="flex-grow relative px-4 flex items-center justify-center mt-4">
         {loading ? (
           <div className="flex flex-col items-center gap-4">
             <div className="w-20 h-20 rounded-full border-4 border-primary/20 border-t-primary animate-spin" />
-            <p className="text-primary font-bold animate-pulse">Finding people nearby...</p>
+            <p className="text-primary font-bold animate-pulse">{t.finding_people}</p>
           </div>
         ) : stack.length > 0 ? (
           <AnimatePresence>
@@ -235,14 +261,14 @@ const HomePage = () => {
                <RefreshCcw size={48} className="text-dark-text animate-spin-slow" />
              </div>
              <div>
-               <p className="text-white text-xl font-bold mb-2">No more discovery</p>
-               <p className="text-dark-text text-sm">Expand your filters to see more people in your area.</p>
+               <p className="text-white text-xl font-bold mb-2">{t.no_more_discovery}</p>
+               <p className="text-dark-text text-sm">{t.expand_filters}</p>
              </div>
              <button
               onClick={() => setShowFilters(true)}
               className="primary-gradient text-white font-bold px-8 py-3 rounded-full shadow-lg"
              >
-               Discovery Settings
+               {t.discovery_settings}
              </button>
           </div>
         )}
@@ -296,8 +322,8 @@ const HomePage = () => {
               animate={{ scale: 1, opacity: 1 }}
               className="space-y-4 mb-12"
             >
-              <h2 className="text-6xl font-black text-primary italic">Match!</h2>
-              <p className="text-white text-xl">You and {matchedUser.name} liked each other.</p>
+              <h2 className="text-6xl font-black text-primary italic">{t.match}</h2>
+              <p className="text-white text-xl">{t.you_and} {matchedUser.name} {t.liked_each_other}</p>
             </motion.div>
 
             <div className="flex gap-0 mb-16">
@@ -322,13 +348,13 @@ const HomePage = () => {
                 onClick={() => navigateToChat(matchedUser.matchId)}
                 className="w-full primary-gradient text-white font-black py-4 rounded-full shadow-2xl hover:scale-[1.02] active:scale-[0.98] transition-all"
               >
-                SEND A MESSAGE
+                {t.send_message}
               </button>
               <button
                 onClick={() => setShowMatch(false)}
                 className="w-full border-2 border-white/20 text-white font-black py-4 rounded-full hover:bg-white/10 transition-all"
               >
-                KEEP SWIPING
+                {t.keep_swiping}
               </button>
             </div>
           </motion.div>

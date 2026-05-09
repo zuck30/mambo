@@ -1,14 +1,25 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 import BottomNav from './BottomNav';
+import Sidebar from './Sidebar';
 
 const AppLayout = () => {
   return (
-    <div className="min-h-screen bg-dark text-white pb-16">
-      <main className="max-w-md mx-auto min-h-[calc(100vh-64px)]">
-        <Outlet />
+    <div className="min-h-screen bg-dark text-white">
+      {/* Desktop Sidebar */}
+      <Sidebar />
+
+      {/* Main Content Area */}
+      <main className="md:ml-64 pb-16 md:pb-0">
+        <div className="max-w-md md:max-w-4xl mx-auto min-h-screen">
+          <Outlet />
+        </div>
       </main>
-      <BottomNav />
+
+      {/* Mobile Bottom Nav */}
+      <div className="md:hidden">
+        <BottomNav />
+      </div>
     </div>
   );
 };

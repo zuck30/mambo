@@ -4,7 +4,7 @@ import { Flame, Diamond, MessageCircle, User } from 'lucide-react';
 
 const BottomNav = () => {
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-dark-card/80 backdrop-blur-md border-t border-white/5 h-16 px-6 pb-safe">
+    <nav className="fixed bottom-0 left-0 right-0 bg-dark-card/80 backdrop-blur-md border-t border-white/5 h-16 px-6 pb-safe z-[100]">
       <div className="max-w-md mx-auto h-full flex items-center justify-between">
         <NavLink
           to="/app/home"
