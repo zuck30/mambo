@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../hooks/useAuth';
+import { useAuthStore } from '../../store/authStore';
+import { translations } from '../../lib/translations';
 import { supabase } from '../../lib/supabase';
-import { ChevronLeft, LogOut, Trash2, Bell, Shield, Phone , Flame} from 'lucide-react';
+import { ChevronLeft, LogOut, Trash2, Bell, Shield, Phone , Flame, Globe} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 
 const SettingsPage = () => {
   const { profile, signOut, fetchProfile } = useAuth();
+  const { language, setLanguage } = useAuthStore();
+  const t = translations[language];
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [isEditingPhone, setIsEditingPhone] = useState(false);
@@ -52,10 +56,37 @@ const SettingsPage = () => {
         <button onClick={() => navigate(-1)} className="p-2 text-dark-text">
           <ChevronLeft size={28} />
         </button>
-        <h1 className="text-xl font-black">Settings</h1>
+        <h1 className="text-xl font-black">{t.settings}</h1>
       </div>
 
       <div className="p-6 space-y-8">
+        {/* Language Settings */}
+        <section>
+          <h3 className="text-sm font-bold text-dark-text uppercase tracking-widest mb-4">{t.language}</h3>
+          <div className="bg-dark-card rounded-2xl border border-white/5 overflow-hidden divide-y divide-white/5">
+            <div className="p-4 flex justify-between items-center">
+              <div className="flex items-center gap-3">
+                <Globe size={20} className="text-dark-text" />
+                <span>{t.language}</span>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setLanguage('en')}
+                  className={`px-3 py-1 rounded-lg text-sm font-bold transition-colors ${language === 'en' ? 'bg-primary text-white' : 'bg-dark-surface text-dark-text'}`}
+                >
+                  EN
+                </button>
+                <button
+                  onClick={() => setLanguage('sw')}
+                  className={`px-3 py-1 rounded-lg text-sm font-bold transition-colors ${language === 'sw' ? 'bg-primary text-white' : 'bg-dark-surface text-dark-text'}`}
+                >
+                  SW
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Account Settings */}
         <section>
           <h3 className="text-sm font-bold text-dark-text uppercase tracking-widest mb-4">Account Settings</h3>
@@ -64,13 +95,13 @@ const SettingsPage = () => {
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-3">
                   <Phone size={20} className="text-dark-text" />
-                  <span>Phone Number</span>
+                  <span>{t.phone_number}</span>
                 </div>
                 <button
                   onClick={() => setIsEditingPhone(!isEditingPhone)}
                   className="text-primary font-bold text-sm"
                 >
-                  {isEditingPhone ? 'Cancel' : (profile?.phone ? 'Edit' : 'Add')}
+                  {isEditingPhone ? t.cancel : (profile?.phone ? 'Edit' : 'Add')}
                 </button>
               </div>
 
@@ -88,7 +119,7 @@ const SettingsPage = () => {
                     disabled={loading}
                     className="bg-primary text-white px-4 py-2 rounded-xl font-bold disabled:opacity-50"
                   >
-                    Save
+                    {t.save}
                   </button>
                 </div>
               ) : (
@@ -98,7 +129,7 @@ const SettingsPage = () => {
             <button className="w-full p-4 flex justify-between items-center hover:bg-white/5 transition-colors">
               <div className="flex items-center gap-3">
                 <Bell size={20} className="text-dark-text" />
-                <span>Notifications</span>
+                <span>{t.notifications}</span>
               </div>
               <div className="w-12 h-6 bg-primary rounded-full relative">
                 <div className="absolute right-1 top-1 w-4 h-4 bg-white rounded-full shadow-sm" />
@@ -107,7 +138,7 @@ const SettingsPage = () => {
             <button className="w-full p-4 flex justify-between items-center hover:bg-white/5 transition-colors">
               <div className="flex items-center gap-3">
                 <Shield size={20} className="text-dark-text" />
-                <span>Privacy & Safety</span>
+                <span>{t.privacy_safety}</span>
               </div>
             </button>
           </div>
@@ -128,7 +159,7 @@ const SettingsPage = () => {
             onClick={signOut}
             className="w-full bg-dark-card text-white font-bold py-4 rounded-2xl border border-white/5 flex items-center justify-center gap-2 hover:bg-white/5 transition-colors"
           >
-            <LogOut size={20} /> Logout
+            <LogOut size={20} /> {t.logout}
           </button>
 
           <button
@@ -136,7 +167,7 @@ const SettingsPage = () => {
             disabled={loading}
             className="w-full text-red-500 font-bold py-4 flex items-center justify-center gap-2"
           >
-            <Trash2 size={20} /> Delete Account
+            <Trash2 size={20} /> {t.delete_account}
           </button>
         </div>
 

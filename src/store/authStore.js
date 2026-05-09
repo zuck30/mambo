@@ -7,11 +7,13 @@ export const useAuthStore = create(
       user: null,
       profile: null,
       session: null,
+      language: 'en',
       setUser: (user) => set({ user }),
       setProfile: (profile) => set({ profile }),
       setSession: (session) => set({ session }),
+      setLanguage: (language) => set({ language }),
       logout: () => {
-        set({ user: null, profile: null, session: null });
+        set({ user: null, profile: null, session: null, language: 'en' });
         localStorage.removeItem('auth-storage');
       },
     }),
