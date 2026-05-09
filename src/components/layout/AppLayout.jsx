@@ -10,7 +10,7 @@ const AppLayout = () => {
       <Sidebar />
 
       {/* Main Content Area */}
-      <main className="md:ml-64 pb-16 md:pb-0">
+      <main className="md:ml-20 pb-16 md:pb-0">
         <div className="max-w-md md:max-w-4xl mx-auto min-h-screen">
           <Outlet />
         </div>
