@@ -21,6 +21,7 @@ const HomePage = () => {
   const [showMatch, setShowMatch] = useState(false);
   const [matchedUser, setMatchedUser] = useState(null);
   const [showFilters, setShowFilters] = useState(false);
+  const [lastSwipedProfile, setLastSwipedProfile] = useState(null);
 
   useEffect(() => {
     fetchDiscoveryStack();
@@ -106,6 +107,9 @@ const HomePage = () => {
   const handleSwipe = async (direction, swipedProfile) => {
     if (!swipedProfile) return;
 
+    // Track for rewind
+    setLastSwipedProfile(swipedProfile);
+
     // Optimistic update
     setStack(prev => prev.filter(p => p.id !== swipedProfile.id));
 
@@ -138,10 +142,27 @@ const HomePage = () => {
     // In a real app, this would update a 'boosted_until' timestamp in the DB
   };
 
-  const handleRewind = () => {
-    toast.error('Get Oa Gold to rewind your last swipe!', {
-      icon: '⏪'
-    });
+  const handleRewind = async () => {
+    if (!lastSwipedProfile) {
+      toast.error('Nothing to rewind');
+      return;
+    }
+
+    try {
+      // Remove the swipe from DB
+      await supabase
+        .from('swipes')
+        .delete()
+        .eq('swiper_id', user.id)
+        .eq('swiped_id', lastSwipedProfile.id);
+
+      // Add back to stack
+      setStack(prev => [lastSwipedProfile, ...prev]);
+      setLastSwipedProfile(null);
+      toast.success('Swipe undone!', { icon: '⏪' });
+    } catch (error) {
+      toast.error('Failed to undo swipe');
+    }
   };
 
   const checkMatch = async (otherProfile) => {
