@@ -50,16 +50,22 @@ const HomePage = () => {
         query = query.not('id', 'in', `(${swipedIds.join(',')})`);
       }
 
-      if (profile.show_gender !== 'everyone') {
+      if (profile.show_gender && profile.show_gender !== 'everyone') {
         const genderMap = { 'men': 'male', 'women': 'female' };
-        query = query.eq('gender', genderMap[profile.show_gender]);
+        const targetGender = genderMap[profile.show_gender];
+        if (targetGender) {
+          query = query.eq('gender', targetGender);
+        }
       }
 
-      query = query
-        .gte('birthday', formatDate(profile.max_age_pref))
-        .lte('birthday', formatDate(profile.min_age_pref));
+      const minAge = profile.min_age_pref || 18;
+      const maxAge = profile.max_age_pref || 100;
 
-      const { data, error } = await query.limit(100);
+      query = query
+        .gte('birthday', formatDate(maxAge))
+        .lte('birthday', formatDate(minAge));
+
+      const { data, error } = await query.limit(1000);
       if (error) throw error;
 
       const filteredData = data?.filter(p => {

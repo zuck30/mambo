@@ -63,7 +63,7 @@ const MessagesPage = () => {
           {matches.map(m => (
             <Link
               key={m.id}
-              to={`/chat/${m.id}`}
+              to={`/app/chat/${m.id}`}
               className="flex items-center gap-4 p-4 bg-dark-card rounded-2xl hover:bg-dark-surface transition-colors"
             >
               <div className="w-16 h-16 rounded-full overflow-hidden flex-shrink-0">
