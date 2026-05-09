@@ -77,7 +77,7 @@ const ProfilePage = () => {
            </div>
            <p className="text-sm font-medium mb-4">See who likes you & more!</p>
            <button className="w-full bg-dark-card text-white py-2 rounded-full font-bold text-sm">
-             Upgrade from $9.99
+             Upgrade from 5,000 TZS
            </button>
         </div>
       </div>

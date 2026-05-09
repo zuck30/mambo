@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { supabase } from '../../lib/supabase';
-import { ChevronLeft, LogOut, Trash2, Bell, Shield, Phone } from 'lucide-react';
+import { ChevronLeft, LogOut, Trash2, Bell, Shield, Phone , Flame} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 
