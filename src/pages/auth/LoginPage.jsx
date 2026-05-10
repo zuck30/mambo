@@ -72,76 +72,100 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-6 relative overflow-hidden font-sans antialiased">
-      {/* Background Section */}
-      <div 
-        className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: 'url("https://w.wallhaven.cc/full/6l/wallhaven-6lkzzq.png")' }}
-      >
-        {/* Dark overlay to keep text readable */}
-        <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px] z-10" />
+    <div className="min-h-screen flex items-center justify-center px-6 relative overflow-hidden font-sans antialiased bg-black">
+      {/* Dynamic Background */}
+      <div className="absolute inset-0 z-0">
+        <div
+          className="absolute inset-0 bg-cover bg-center scale-110 blur-sm opacity-40"
+          style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1516589174184-c68526674fd6?q=80&w=2000&auto=format&fit=crop")' }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/80 to-black z-10" />
       </div>
       
-      {/* Original Gradient Orbs & Brand Colors */}
-      <div className="absolute top-[-20%] right-[-10%] w-[400px] h-[400px] bg-[#ff79ac]/20 rounded-full blur-[100px] pointer-events-none z-0" />
-      <div className="absolute bottom-[-20%] left-[-10%] w-[400px] h-[400px] bg-[#ff79ac]/10 rounded-full blur-[100px] pointer-events-none z-0" />
+      {/* Interactive Orbs */}
+      <motion.div
+        animate={{
+          scale: [1, 1.2, 1],
+          opacity: [0.2, 0.3, 0.2]
+        }}
+        transition={{ duration: 8, repeat: Infinity }}
+        className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-primary/20 rounded-full blur-[120px] pointer-events-none z-0"
+      />
+      <motion.div
+        animate={{
+          scale: [1, 1.3, 1],
+          opacity: [0.1, 0.2, 0.1]
+        }}
+        transition={{ duration: 10, repeat: Infinity, delay: 1 }}
+        className="absolute bottom-[-10%] left-[-5%] w-[500px] h-[500px] bg-purple-500/10 rounded-full blur-[120px] pointer-events-none z-0"
+      />
 
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-[400px] relative z-10"
+        className="w-full max-w-[420px] relative z-10"
       >
-        <div className="text-center mb-10">
-          <div className="flex items-center justify-center gap-2 mb-6">
-            <Flame className="text-[#ff79ac] fill-current" size={48} />
-            <span className="text-4xl font-black tracking-tighter text-white">mambo</span>
-          </div>
-          <p className="text-white/60 text-[13px] px-6">
-            By clicking Continue, you agree to our <span className="underline cursor-pointer">Terms</span>. Learn how we process your data in our <span className="underline cursor-pointer">Privacy Policy</span>.
+        <div className="text-center mb-12">
+          <motion.div
+            whileHover={{ scale: 1.05, rotate: 5 }}
+            className="inline-flex items-center justify-center p-4 bg-white/5 backdrop-blur-2xl rounded-[2.5rem] border border-white/10 mb-8 shadow-2xl"
+          >
+            <Flame className="text-primary fill-current" size={48} />
+          </motion.div>
+          <h2 className="text-5xl font-black tracking-tighter text-white italic mb-4">mambo</h2>
+          <p className="text-zinc-400 text-sm font-medium px-8 leading-relaxed">
+            Premium dating for those who value <span className="text-white">authentic</span> connections.
           </p>
         </div>
 
-        <div className="space-y-4">
+        <div className="bg-white/5 backdrop-blur-3xl border border-white/10 rounded-[2.5rem] p-8 shadow-2xl">
           <AnimatePresence mode="wait">
             {!showOtp ? (
               <motion.div
                 key="step1"
-                initial={{ opacity: 0, x: 10 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -10 }}
-                className="space-y-4"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="space-y-6"
               >
-                <form onSubmit={handleSendOtp} className="space-y-3">
-                  <input
-                    type="email"
-                    required
-                    placeholder="Enter your email"
-                    className="w-full h-12 px-6 bg-white/10 backdrop-blur-md border border-white/10 rounded-full text-white placeholder:text-white/40 focus:border-[#ff79ac] focus:outline-none text-center transition-all"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                  <button
+                <form onSubmit={handleSendOtp} className="space-y-4">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 ml-4">Email Address</label>
+                    <input
+                      type="email"
+                      required
+                      placeholder="alex@example.com"
+                      className="w-full h-14 px-6 bg-white/5 border border-white/10 rounded-2xl text-white placeholder:text-zinc-600 focus:border-primary/50 focus:ring-1 focus:ring-primary/50 focus:outline-none transition-all font-medium"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
+                  </div>
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
                     type="submit"
                     disabled={loading}
-                    className="w-full h-12 bg-gradient-to-r from-[#ff79ac] to-[#ff4d8c] text-white rounded-full font-bold text-sm tracking-wide shadow-lg hover:opacity-90 transition-opacity flex items-center justify-center"
+                    className="w-full h-14 primary-gradient text-white rounded-2xl font-black text-sm tracking-[0.1em] shadow-xl shadow-primary/20 disabled:opacity-50 transition-all flex items-center justify-center"
                   >
-                    {loading ? <Loader2 className="animate-spin" size={20} /> : 'CONTINUE WITH EMAIL'}
-                  </button>
+                    {loading ? <Loader2 className="animate-spin" size={20} /> : 'CONTINUE'}
+                  </motion.button>
                 </form>
 
-                <div className="flex items-center gap-4 py-2">
-                  <div className="h-[1px] flex-1 bg-white/10" />
-                  <span className="text-white/30 text-[10px] font-bold tracking-widest">OR</span>
-                  <div className="h-[1px] flex-1 bg-white/10" />
+                <div className="flex items-center gap-4">
+                  <div className="h-[1px] flex-1 bg-white/5" />
+                  <span className="text-zinc-600 text-[10px] font-black tracking-[0.3em]">OR</span>
+                  <div className="h-[1px] flex-1 bg-white/5" />
                 </div>
 
-                <button
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   onClick={handleGoogleLogin}
-                  className="w-full h-12 bg-white text-black rounded-full font-bold text-sm flex items-center justify-center gap-3 hover:bg-neutral-100 transition-colors shadow-xl"
+                  className="w-full h-14 bg-white text-black rounded-2xl font-black text-sm flex items-center justify-center gap-3 shadow-xl transition-all"
                 >
-                  <img src="https://www.google.com/favicon.ico" alt="G" className="w-4 h-4" />
-                  LOG IN WITH GOOGLE
-                </button>
+                  <img src="https://www.google.com/favicon.ico" alt="G" className="w-5 h-5" />
+                  GOOGLE
+                </motion.button>
               </motion.div>
             ) : (
               <motion.div

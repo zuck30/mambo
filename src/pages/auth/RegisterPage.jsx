@@ -65,64 +65,91 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-6 relative overflow-hidden font-sans antialiased">
+    <div className="min-h-screen flex items-center justify-center px-6 relative overflow-hidden font-sans antialiased bg-black">
       {/* Background Section */}
-      <div 
-        className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: 'url("https://w.wallhaven.cc/full/6l/wallhaven-6lkzzq.png")' }}
-      >
-        <div className="absolute inset-0 bg-black/70 backdrop-blur-[2px] z-10" />
+      <div className="absolute inset-0 z-0">
+        <div
+          className="absolute inset-0 bg-cover bg-center scale-110 blur-sm opacity-40"
+          style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=2000&auto=format&fit=crop")' }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/80 to-black z-10" />
       </div>
       
       {/* Background Glows with Original Colors */}
-      <div className="absolute top-[-20%] left-[-10%] w-[400px] h-[400px] bg-[#ff79ac]/20 rounded-full blur-[100px] pointer-events-none z-0" />
-      <div className="absolute bottom-[-20%] right-[-10%] w-[400px] h-[400px] bg-[#ff79ac]/10 rounded-full blur-[100px] pointer-events-none z-0" />
+      <motion.div
+        animate={{
+          scale: [1, 1.2, 1],
+          opacity: [0.1, 0.2, 0.1]
+        }}
+        transition={{ duration: 10, repeat: Infinity }}
+        className="absolute top-[-10%] left-[-5%] w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] pointer-events-none z-0"
+      />
+      <motion.div
+        animate={{
+          scale: [1, 1.3, 1],
+          opacity: [0.05, 0.1, 0.05]
+        }}
+        transition={{ duration: 12, repeat: Infinity, delay: 2 }}
+        className="absolute bottom-[-10%] right-[-5%] w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-[120px] pointer-events-none z-0"
+      />
 
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-[400px] relative z-10"
+        className="w-full max-w-[420px] relative z-10"
       >
-        <div className="text-center mb-10">
-          <Flame className="text-[#ff79ac] fill-current mx-auto mb-4" size={52} />
-          <h1 className="text-white text-3xl font-black tracking-tight">Create Account</h1>
-          <p className="text-white/50 text-xs font-bold tracking-widest mt-2 uppercase">Join mambo Today</p>
+        <div className="text-center mb-12">
+          <motion.div
+             whileHover={{ scale: 1.05, rotate: -5 }}
+             className="inline-flex items-center justify-center p-4 bg-white/5 backdrop-blur-2xl rounded-[2.5rem] border border-white/10 mb-8 shadow-2xl"
+          >
+            <Flame className="text-primary fill-current" size={48} />
+          </motion.div>
+          <h1 className="text-4xl font-black tracking-tight text-white italic">Create Account</h1>
+          <p className="text-zinc-500 text-sm font-medium mt-3">Join thousands finding real love.</p>
         </div>
 
-        <div className="space-y-4">
+        <div className="bg-white/5 backdrop-blur-3xl border border-white/10 rounded-[2.5rem] p-8 shadow-2xl">
           <AnimatePresence mode="wait">
             {!showOtp ? (
-              <motion.div key="r1" className="space-y-4">
-                <button
+              <motion.div key="r1" className="space-y-6">
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   onClick={handleGoogleLogin}
-                  className="w-full h-12 bg-white text-black rounded-full font-bold text-sm flex items-center justify-center gap-3 shadow-xl transition-transform active:scale-95"
+                  className="w-full h-14 bg-white text-black rounded-2xl font-black text-sm flex items-center justify-center gap-3 shadow-xl transition-all"
                 >
-                  <img src="https://www.google.com/favicon.ico" alt="G" className="w-4 h-4" />
+                  <img src="https://www.google.com/favicon.ico" alt="G" className="w-5 h-5" />
                   SIGN UP WITH GOOGLE
-                </button>
+                </motion.button>
 
-                <div className="flex items-center gap-4 py-2">
-                  <div className="h-[1px] flex-1 bg-white/10" />
-                  <span className="text-white/20 text-[10px] font-bold tracking-widest uppercase">Or</span>
-                  <div className="h-[1px] flex-1 bg-white/10" />
+                <div className="flex items-center gap-4">
+                  <div className="h-[1px] flex-1 bg-white/5" />
+                  <span className="text-zinc-600 text-[10px] font-black tracking-[0.3em]">OR</span>
+                  <div className="h-[1px] flex-1 bg-white/5" />
                 </div>
 
-                <form onSubmit={handleSendOtp} className="space-y-3">
-                  <input
-                    type="email"
-                    required
-                    placeholder="Email Address"
-                    className="w-full h-12 px-6 bg-white/10 backdrop-blur-md border border-white/10 rounded-full text-white placeholder:text-white/30 text-center focus:border-[#ff79ac] focus:outline-none transition-all"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                  <button
+                <form onSubmit={handleSendOtp} className="space-y-4">
+                   <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 ml-4">Email Address</label>
+                    <input
+                      type="email"
+                      required
+                      placeholder="alex@example.com"
+                      className="w-full h-14 px-6 bg-white/5 border border-white/10 rounded-2xl text-white placeholder:text-zinc-600 focus:border-primary/50 focus:ring-1 focus:ring-primary/50 focus:outline-none transition-all font-medium"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
+                  </div>
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
                     type="submit"
                     disabled={loading}
-                    className="w-full h-12 bg-gradient-to-r from-[#ff79ac] to-[#ff4d8c] text-white rounded-full font-bold text-sm shadow-lg hover:opacity-90 transition-opacity"
+                    className="w-full h-14 primary-gradient text-white rounded-2xl font-black text-sm tracking-[0.1em] shadow-xl shadow-primary/20 transition-all flex items-center justify-center"
                   >
-                    {loading ? <Loader2 className="animate-spin mx-auto" size={20} /> : 'CONTINUE'}
-                  </button>
+                    {loading ? <Loader2 className="animate-spin" size={20} /> : 'CREATE ACCOUNT'}
+                  </motion.button>
                 </form>
               </motion.div>
             ) : (
