@@ -9,7 +9,7 @@ const AppLayout = () => {
       <Sidebar />
 
       {/* Main content with matching transition for the sidebar expansion */}
-      <main className="md:pl-20 transition-all duration-300">
+      <main className="md:pl-20 lg:pl-64 transition-all duration-300">
         <div className="max-w-4xl mx-auto min-h-screen">
           <Outlet />
         </div>

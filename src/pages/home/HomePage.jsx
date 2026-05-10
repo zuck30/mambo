@@ -22,10 +22,38 @@ const HomePage = () => {
   const [matchedUser, setMatchedUser] = useState(null);
   const [showFilters, setShowFilters] = useState(false);
   const [swipeHistory, setSwipeHistory] = useState([]);
+  const [recentMatches, setRecentMatches] = useState([]);
 
   useEffect(() => {
     fetchDiscoveryStack();
+    fetchRecentMatches();
   }, [profile]);
+
+  const fetchRecentMatches = async () => {
+    if (!user) return;
+    try {
+      const { data, error } = await supabase
+        .from('matches')
+        .select(`
+          id,
+          user1:profiles!matches_user1_id_fkey(id, name, photos),
+          user2:profiles!matches_user2_id_fkey(id, name, photos)
+        `)
+        .or(`user1_id.eq.${user.id},user2_id.eq.${user.id}`)
+        .order('created_at', { ascending: false })
+        .limit(10);
+
+      if (error) throw error;
+
+      const formatted = data.map(m => {
+        const otherUser = m.user1.id === user.id ? m.user2 : m.user1;
+        return { id: m.id, ...otherUser };
+      });
+      setRecentMatches(formatted);
+    } catch (err) {
+      console.error('Error fetching recent matches:', err);
+    }
+  };
 
   const fetchDiscoveryStack = async (isRefresh = false) => {
     if (!profile) return;
@@ -78,7 +106,7 @@ const HomePage = () => {
         return d <= (profile.distance_pref || 80); // Default to 80km if not set
       });
 
-      // Advanced Sorting with Location and Interests
+      // Advanced Sorting with Location, Interests, and Randomness
       const sortedData = filteredData?.sort((a, b) => {
         const myInterests = profile.interests || [];
 
@@ -93,6 +121,9 @@ const HomePage = () => {
             // Higher score for closer users (Inverse distance weighting)
             score += Math.max(0, 50 - (distance / 2));
           }
+
+          // Add some randomness to keep feed fresh (0-10 points)
+          score += Math.random() * 10;
 
           return score;
         };
@@ -268,7 +299,7 @@ const HomePage = () => {
   const spotlights = stack.slice(0, 3);
 
   return (
-    <div className="h-screen flex flex-col relative overflow-hidden bg-black font-sans">
+    <div className="h-screen flex flex-col relative overflow-hidden bg-black font-sans pb-20 md:pb-0">
       <DiscoverySettingsModal
         isOpen={showFilters}
         onClose={() => setShowFilters(false)}
@@ -277,17 +308,20 @@ const HomePage = () => {
       />
 
       {/* Header */}
-      <div className="flex items-center justify-between px-6 py-4 z-20 bg-black/50 backdrop-blur-md">
-        <motion.div
+      <header className="flex items-center justify-between px-6 py-4 z-20 bg-black/50 backdrop-blur-md shrink-0">
+        <motion.button
           whileTap={{ scale: 0.9 }}
+          onClick={() => navigate('/app/profile')}
           className="w-10 h-10 rounded-full bg-dark-card flex items-center justify-center overflow-hidden border border-white/10"
         >
            {profile?.photos?.[0] ? <img src={profile.photos[0]} className="w-full h-full object-cover" /> : <Flame className="text-primary" />}
-        </motion.div>
+        </motion.button>
+
         <div className="flex items-center gap-1">
           <Flame size={28} className="text-primary fill-current" />
           <span className="font-black text-2xl italic tracking-tighter">mambo</span>
         </div>
+
         <motion.button
           whileTap={{ scale: 0.9 }}
           onClick={() => setShowFilters(true)}
@@ -295,11 +329,33 @@ const HomePage = () => {
         >
           <Filter size={24} />
         </motion.button>
-      </div>
+      </header>
 
-      {/* Spotlights */}
-      {!loading && stack.length > 0 && (
-        <div className="px-6 py-2 z-20 overflow-x-auto flex gap-4 no-scrollbar">
+      {/* New Matches & Spotlights Bar */}
+      {recentMatches.length > 0 && (
+        <div className="px-6 py-2 z-20 overflow-x-auto flex gap-4 no-scrollbar shrink-0">
+          {recentMatches.map(m => (
+            <motion.button
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              key={`match-${m.id}`}
+              onClick={() => navigate(`/app/chat/${m.id}`)}
+              className="flex-shrink-0 flex flex-col items-center gap-1"
+            >
+              <div className="w-16 h-16 rounded-full p-0.5 bg-gradient-to-tr from-primary to-purple-500">
+                <div className="w-full h-full rounded-full border-2 border-black overflow-hidden">
+                  <img src={m.photos[0]} className="w-full h-full object-cover" />
+                </div>
+              </div>
+              <span className="text-[10px] font-bold text-white uppercase tracking-tighter truncate w-16 text-center">
+                {m.name}
+              </span>
+            </motion.button>
+          ))}
+
+          {/* Divider */}
+          <div className="w-[1px] h-12 bg-white/10 self-center" />
+
           {spotlights.map(p => (
             <div key={`spotlight-${p.id}`} className="flex-shrink-0 flex flex-col items-center gap-1">
               <div className="w-16 h-16 rounded-full p-0.5 bg-gradient-to-tr from-yellow-400 to-orange-500">
@@ -314,7 +370,7 @@ const HomePage = () => {
       )}
 
       {/* Stack Area */}
-      <div className="flex-grow relative px-4 flex items-center justify-center mt-4">
+      <div className="flex-grow relative px-4 flex items-center justify-center">
         {loading ? (
           <div className="flex flex-col items-center gap-4">
             <div className="w-20 h-20 rounded-full border-4 border-primary/20 border-t-primary animate-spin" />
@@ -351,8 +407,10 @@ const HomePage = () => {
       </div>
 
       {/* Action Row */}
-      <div className="px-6 py-8 flex items-center justify-center gap-4 z-20">
-        <button
+      <div className="px-6 py-6 md:py-8 flex items-center justify-center gap-3 md:gap-4 z-20 shrink-0">
+        <motion.button
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
           onClick={() => {
             if (swipeHistory.length > 0) {
               handleRewind();
@@ -360,34 +418,46 @@ const HomePage = () => {
               fetchDiscoveryStack(true);
             }
           }}
-          className="w-12 h-12 rounded-full bg-dark-card border border-white/5 flex items-center justify-center text-yellow-500 shadow-lg hover:scale-110 active:scale-95 transition-transform"
+          className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-dark-card border border-white/5 flex items-center justify-center text-yellow-500 shadow-lg"
         >
-          <RefreshCcw size={20} className={loading ? 'animate-spin' : ''} />
-        </button>
-        <button
+          <RefreshCcw size={18} className={loading ? 'animate-spin' : ''} />
+        </motion.button>
+
+        <motion.button
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
           onClick={() => stack[0] && handleSwipe('pass', stack[0])}
-          className="w-16 h-16 rounded-full bg-dark-card border border-white/5 flex items-center justify-center text-red-500 shadow-xl hover:scale-110 active:scale-95 transition-transform"
+          className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-dark-card border border-white/5 flex items-center justify-center text-red-500 shadow-xl"
         >
-          <X size={32} />
-        </button>
-        <button
+          <X className="w-7 h-7 md:w-8 md:h-8" />
+        </motion.button>
+
+        <motion.button
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
           onClick={() => stack[0] && handleSwipe('superlike', stack[0])}
-          className="w-12 h-12 rounded-full bg-dark-card border border-white/5 flex items-center justify-center text-blue-400 shadow-lg hover:scale-110 active:scale-95 transition-transform"
+          className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-dark-card border border-white/5 flex items-center justify-center text-blue-400 shadow-lg"
         >
-          <Star size={24} fill="currentColor" />
-        </button>
-        <button
+          <Star className="w-5 h-5 md:w-6 md:h-6" fill="currentColor" />
+        </motion.button>
+
+        <motion.button
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
           onClick={() => stack[0] && handleSwipe('like', stack[0])}
-          className="w-16 h-16 rounded-full bg-dark-card border border-white/5 flex items-center justify-center text-green-500 shadow-xl hover:scale-110 active:scale-95 transition-transform"
+          className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-dark-card border border-white/5 flex items-center justify-center text-green-500 shadow-xl"
         >
-          <Heart size={32} fill="currentColor" />
-        </button>
-        <button
+          <Heart className="w-7 h-7 md:w-8 md:h-8" fill="currentColor" />
+        </motion.button>
+
+        <motion.button
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
           onClick={handleBoost}
-          className="w-12 h-12 rounded-full bg-dark-card border border-white/5 flex items-center justify-center text-purple-500 shadow-lg hover:scale-110 active:scale-95 transition-transform"
+          className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-dark-card border border-white/5 flex items-center justify-center text-purple-500 shadow-lg"
         >
-          <Zap size={24} fill="currentColor" />
-        </button>
+          <Zap className="w-5 h-5 md:w-6 md:h-6" fill="currentColor" />
+        </motion.button>
       </div>
 
       {/* Match Modal */}
