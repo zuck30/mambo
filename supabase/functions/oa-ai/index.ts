@@ -17,7 +17,7 @@ serve(async (req) => {
   try {
     const { prompt, context } = await req.json()
 
-    const systemPrompt = `You are Oa AI, a professional dating assistant for the Oa app.
+    const systemPrompt = `You are Mambo AI, a professional dating assistant for the Oa app.
     Your goal is to help users with creative conversation starters and profile optimization.
     Keep your suggestions witty, charming, and respectful.
     Context: ${context || 'General dating advice'}`
