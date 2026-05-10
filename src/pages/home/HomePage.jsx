@@ -66,18 +66,25 @@ const HomePage = () => {
     if (isRefresh) setStack([]);
 
     try {
-      const { data: swipedData, error: swipesError } = await supabase
+      // 1. Fetch our swipes to exclude them
+      const { data: swipedData } = await supabase
         .from('swipes')
         .select('swiped_id')
         .eq('swiper_id', user.id);
 
-      if (swipesError) {
-        console.warn('Could not fetch previous swipes (this is normal for new accounts):', swipesError);
-      }
-
       const swipedIds = swipedData?.map(s => s.swiped_id) || [];
       swipedIds.push(user.id);
 
+      // 2. Fetch people who liked us (to prioritize them for faster matches)
+      const { data: likersData } = await supabase
+        .from('swipes')
+        .select('swiper_id')
+        .eq('swiped_id', user.id)
+        .in('direction', ['like', 'superlike']);
+
+      const likerIds = likersData?.map(s => s.swiper_id) || [];
+
+      // 3. Build main query
       let query = supabase
         .from('profiles')
         .select('*')
@@ -111,21 +118,26 @@ const HomePage = () => {
         return d <= (profile.distance_pref || 80); // Default to 80km if not set
       });
 
-      // Advanced Sorting with Location, Interests, and Randomness
+      // Advanced Sorting with Likers, Location, Interests, and Randomness
       const myInterests = profile.interests || [];
       const dataWithScores = filteredData?.map(p => {
         const pInterests = p.interests || [];
         const commonInterestsCount = pInterests.filter(i => myInterests.includes(i)).length;
 
-        let score = (commonInterestsCount * 10); // Interests are high priority
+        let score = (commonInterestsCount * 15); // Interests are very high priority
 
         if (profile.latitude && profile.longitude && p.latitude && p.longitude) {
           const distance = calculateDistance(profile.latitude, profile.longitude, p.latitude, p.longitude);
-          // Higher score for closer users
+          // Higher score for closer users (up to 50 points)
           score += Math.max(0, 50 - (distance / 2));
         }
 
-        // Stable randomness (0-10 points)
+        // Prioritize people who already liked us (+100 points)
+        if (likerIds.includes(p.id)) {
+          score += 100;
+        }
+
+        // Stable randomness (0-10 points) to keep it fresh
         score += Math.random() * 10;
 
         return { ...p, _score: score };
@@ -305,6 +317,25 @@ const HomePage = () => {
   const navigateToChat = (matchId) => {
     setShowMatch(false);
     navigate(`/app/chat/${matchId}`);
+  };
+
+  const sendQuickHello = async (matchId, otherUserName) => {
+    try {
+      const { error } = await supabase
+        .from('messages')
+        .insert({
+          match_id: matchId,
+          sender_id: user.id,
+          content: `Hey ${otherUserName}! 👋 Just saw your profile and thought we'd match well.`,
+        });
+
+      if (error) throw error;
+      navigateToChat(matchId);
+    } catch (err) {
+      console.error('Error sending quick hello:', err);
+      toast.error('Could not send message, but you can still chat!');
+      navigateToChat(matchId);
+    }
   };
 
   const spotlights = stack.slice(0, 3);
@@ -506,14 +537,21 @@ const HomePage = () => {
 
             <div className="space-y-4 w-full max-w-xs">
               <button
+                onClick={() => sendQuickHello(matchedUser.matchId, matchedUser.name)}
+                className="w-full primary-gradient text-white font-black py-4 rounded-full shadow-2xl hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+              >
+                <Zap size={20} className="fill-current" />
+                SAY HELLO 👋
+              </button>
+              <button
                 onClick={() => navigateToChat(matchedUser.matchId)}
-                className="w-full primary-gradient text-white font-black py-4 rounded-full shadow-2xl hover:scale-[1.02] active:scale-[0.98] transition-all"
+                className="w-full bg-white/10 text-white font-black py-4 rounded-full hover:bg-white/20 transition-all"
               >
                 {t.send_message}
               </button>
               <button
                 onClick={() => setShowMatch(false)}
-                className="w-full border-2 border-white/20 text-white font-black py-4 rounded-full hover:bg-white/10 transition-all"
+                className="w-full text-white/40 font-bold py-2 hover:text-white transition-all text-xs uppercase tracking-widest"
               >
                 {t.keep_swiping}
               </button>
