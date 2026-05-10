@@ -46,8 +46,8 @@ const ChatPage = () => {
         .from('matches')
         .select(`
           id,
-          user1:profiles!matches_user1_id_fkey(id, name, photos, interests),
-          user2:profiles!matches_user2_id_fkey(id, name, photos, interests)
+          user1:profiles!user1_id(id, name, photos, interests),
+          user2:profiles!user2_id(id, name, photos, interests)
         `)
         .eq('id', matchId)
         .single();

@@ -20,8 +20,8 @@ const MessagesPage = () => {
         .select(`
           id,
           created_at,
-          user1:profiles!matches_user1_id_fkey(id, name, photos),
-          user2:profiles!matches_user2_id_fkey(id, name, photos),
+          user1:profiles!user1_id(id, name, photos),
+          user2:profiles!user2_id(id, name, photos),
           messages(content, created_at, is_read)
         `)
         .or(`user1_id.eq.${user.id},user2_id.eq.${user.id}`)
