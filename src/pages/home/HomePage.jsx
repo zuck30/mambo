@@ -78,6 +78,15 @@ const HomePage = () => {
       const swipedIds = swipedData?.map(s => s.swiped_id) || [];
       swipedIds.push(user.id);
 
+      // Fetch users who liked me to prioritize them
+      const { data: likedMeData } = await supabase
+        .from('swipes')
+        .select('swiper_id')
+        .eq('swiped_id', user.id)
+        .in('direction', ['like', 'superlike']);
+
+      const likedMeIds = likedMeData?.map(s => s.swiper_id) || [];
+
       let query = supabase
         .from('profiles')
         .select('*')
@@ -119,6 +128,11 @@ const HomePage = () => {
 
         let score = (commonInterestsCount * 10); // Interests are high priority
 
+        // Priority boost for people who already liked you
+        if (likedMeIds.includes(p.id)) {
+          score += 100;
+        }
+
         if (profile.latitude && profile.longitude && p.latitude && p.longitude) {
           const distance = calculateDistance(profile.latitude, profile.longitude, p.latitude, p.longitude);
           // Higher score for closer users
@@ -128,7 +142,7 @@ const HomePage = () => {
         // Stable randomness (0-10 points)
         score += Math.random() * 10;
 
-        return { ...p, _score: score };
+        return { ...p, _score: score, commonInterestsCount };
       });
 
       const sortedData = dataWithScores?.sort((a, b) => b._score - a._score);
@@ -305,6 +319,26 @@ const HomePage = () => {
   const navigateToChat = (matchId) => {
     setShowMatch(false);
     navigate(`/app/chat/${matchId}`);
+  };
+
+  const handleSayHello = async (matchId) => {
+    try {
+      const helloMessage = language === 'sw' ? 'Jambo! Nimefurahi kupata pacha hapa.' : "Hey! Glad we matched. How's it going?";
+      const { error } = await supabase
+        .from('messages')
+        .insert({
+          match_id: matchId,
+          sender_id: user.id,
+          content: helloMessage
+        });
+
+      if (error) throw error;
+      navigateToChat(matchId);
+    } catch (error) {
+      console.error('Error sending hello message:', error);
+      toast.error('Failed to send message');
+      navigateToChat(matchId);
+    }
   };
 
   const spotlights = stack.slice(0, 3);
@@ -506,8 +540,14 @@ const HomePage = () => {
 
             <div className="space-y-4 w-full max-w-xs">
               <button
+                onClick={() => handleSayHello(matchedUser.matchId)}
+                className="w-full primary-gradient text-white font-black py-4 rounded-full shadow-2xl hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+              >
+                {t.say_hello}
+              </button>
+              <button
                 onClick={() => navigateToChat(matchedUser.matchId)}
-                className="w-full primary-gradient text-white font-black py-4 rounded-full shadow-2xl hover:scale-[1.02] active:scale-[0.98] transition-all"
+                className="w-full border-2 border-white/20 text-white font-black py-4 rounded-full hover:bg-white/10 transition-all"
               >
                 {t.send_message}
               </button>

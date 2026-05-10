@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, useMotionValue, useTransform } from 'framer-motion';
-import { MapPin, Info, Sparkles } from 'lucide-react';
+import { MapPin, Info, Sparkles, Heart } from 'lucide-react';
 
 const DiscoverCard = ({ profile, onSwipe, onClick }) => {
   const x = useMotionValue(0);
@@ -80,13 +80,21 @@ const DiscoverCard = ({ profile, onSwipe, onClick }) => {
                 <span className="text-2xl font-bold text-white/50">{calculateAge(profile.birthday)}</span>
               </div>
               
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 flex-wrap">
                 <div className="flex items-center gap-1.5 px-3 py-1 bg-white/5 backdrop-blur-md border border-white/10 rounded-full">
                   <MapPin size={12} className="text-zinc-400" />
                   <span className="text-[10px] font-black uppercase tracking-widest text-zinc-300">
                     {profile.location_name || 'Nearby'}
                   </span>
                 </div>
+                {profile.commonInterestsCount > 0 && (
+                  <div className="flex items-center gap-1.5 px-3 py-1 bg-primary/20 backdrop-blur-md border border-primary/30 rounded-full">
+                    <Heart size={12} className="text-primary fill-current" />
+                    <span className="text-[10px] font-black uppercase tracking-widest text-primary">
+                      {profile.commonInterestsCount} Shared
+                    </span>
+                  </div>
+                )}
                 {profile.job && (
                   <div className="flex items-center gap-1.5 px-3 py-1 bg-white/5 backdrop-blur-md border border-white/10 rounded-full">
                     <span className="text-[10px] font-black uppercase tracking-widest text-zinc-300">
