@@ -17,7 +17,7 @@ const LikesPage = () => {
     try {
       const { data, error } = await supabase
         .from('swipes')
-        .select('swiper:profiles!swipes_swiper_id_fkey(*)')
+        .select('swiper:profiles!swiper_id(*)')
         .eq('swiped_id', user.id)
         .in('direction', ['like', 'superlike']);
 

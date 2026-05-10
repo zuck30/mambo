@@ -43,8 +43,8 @@ const HomePage = () => {
           id,
           user1_id,
           user2_id,
-          user1:profiles!matches_user1_id_fkey(id, name, photos),
-          user2:profiles!matches_user2_id_fkey(id, name, photos)
+          user1:profiles!user1_id(id, name, photos),
+          user2:profiles!user2_id(id, name, photos)
         `)
         .or(`user1_id.eq.${user.id},user2_id.eq.${user.id}`)
         .order('created_at', { ascending: false })
@@ -53,9 +53,10 @@ const HomePage = () => {
       if (error) throw error;
 
       const formatted = data.map(m => {
+        if (!m.user1 || !m.user2) return null;
         const otherUser = m.user1.id === user.id ? m.user2 : m.user1;
         return { id: m.id, ...otherUser };
-      });
+      }).filter(Boolean);
       setRecentMatches(formatted);
     } catch (err) {
       console.error('Error fetching recent matches:', err);
@@ -103,6 +104,8 @@ const HomePage = () => {
         .eq('is_onboarded', true);
 
       if (swipedIds.length > 0) {
+        // Use a chunked approach or limit if swipedIds is extremely large
+        // For now, ensure it's a valid parenthesized list
         query = query.not('id', 'in', `(${swipedIds.join(',')})`);
       }
 
@@ -124,15 +127,21 @@ const HomePage = () => {
       const { data, error } = await query.limit(1000);
       if (error) throw error;
 
+      console.log(`Found ${data?.length || 0} potential profiles after SQL filtering.`);
+
       const filteredData = data?.filter(p => {
         if (!profile.latitude || !p.latitude) return true;
         const d = calculateDistance(profile.latitude, profile.longitude, p.latitude, p.longitude);
-        return d <= (profile.distance_pref || 80); // Default to 80km if not set
+        const isWithinDistance = d <= (profile.distance_pref || 80);
+        return isWithinDistance;
       });
+
+      console.log(`Remaining ${filteredData?.length || 0} profiles after distance filtering.`);
 
       // Advanced Sorting with Location, Interests, and Randomness
       const myInterests = profile.interests || [];
       const dataWithScores = filteredData?.map(p => {
+        if (!p || !p.id) return null;
         const pInterests = p.interests || [];
         const commonInterestsCount = pInterests.filter(i => myInterests.includes(i)).length;
 
@@ -153,7 +162,7 @@ const HomePage = () => {
         score += Math.random() * 10;
 
         return { ...p, _score: score, commonInterestsCount };
-      });
+      }).filter(Boolean);
 
       const sortedData = dataWithScores?.sort((a, b) => b._score - a._score);
 
@@ -200,7 +209,7 @@ const HomePage = () => {
           swiped_id: swipedProfile.id,
           direction,
           created_at: new Date().toISOString()
-        }, { onConflict: 'swiper_id, swiped_id' });
+        }, { onConflict: 'swiper_id,swiped_id' });
 
       if (error) {
         console.error('Swipe DB Error:', error);
@@ -272,12 +281,13 @@ const HomePage = () => {
       }
 
       if (otherSwipe) {
+        console.log('Match detected! Creating match record...');
         const [u1, u2] = [user.id, otherProfile.id].sort();
         const { data: matchData, error: matchError } = await supabase
           .from('matches')
           .upsert(
             { user1_id: u1, user2_id: u2, is_active: true, created_at: new Date().toISOString() },
-            { onConflict: 'user1_id, user2_id' }
+            { onConflict: 'user1_id,user2_id' }
           )
           .select('id, user1_id, user2_id')
           .single();
