@@ -5,18 +5,16 @@ import Sidebar from './Sidebar';
 
 const AppLayout = () => {
   return (
-    <div className="min-h-screen bg-dark text-white">
-      {/* Desktop Sidebar */}
+    <div className="min-h-screen bg-black text-white antialiased">
       <Sidebar />
 
-      {/* Main Content Area */}
-      <main className="md:ml-20 pb-16 md:pb-0">
-        <div className="max-w-md md:max-w-4xl mx-auto min-h-screen">
+      {/* Main content with matching transition for the sidebar expansion */}
+      <main className="md:pl-20 transition-all duration-300">
+        <div className="max-w-4xl mx-auto min-h-screen">
           <Outlet />
         </div>
       </main>
 
-      {/* Mobile Bottom Nav */}
       <div className="md:hidden">
         <BottomNav />
       </div>

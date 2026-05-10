@@ -4,42 +4,22 @@ import { Flame, Diamond, MessageCircle, User } from 'lucide-react';
 
 const BottomNav = () => {
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-dark-card/80 backdrop-blur-md border-t border-white/5 h-16 px-6 pb-safe z-[100]">
+    <nav className="fixed bottom-0 left-0 right-0 bg-black/80 backdrop-blur-3xl border-t border-white/5 h-20 px-10 pb-safe z-[100]">
       <div className="max-w-md mx-auto h-full flex items-center justify-between">
-        <NavLink
-          to="/app/home"
-          className={({ isActive }) =>
-            `p-2 transition-colors ${isActive ? 'text-primary' : 'text-dark-text'}`
-          }
-        >
-          <Flame size={28} className={({ isActive }) => isActive ? 'fill-current' : ''} />
+        <NavLink to="/app/home" className={({ isActive }) => `p-2 ${isActive ? 'text-white' : 'text-zinc-600'}`}>
+          <Flame size={26} className={({ isActive }) => isActive ? 'fill-current' : ''} />
         </NavLink>
 
-        <NavLink
-          to="/app/likes"
-          className={({ isActive }) =>
-            `p-2 transition-colors ${isActive ? 'text-primary' : 'text-dark-text'}`
-          }
-        >
-          <Diamond size={28} className={({ isActive }) => isActive ? 'fill-current' : ''} />
+        <NavLink to="/app/likes" className={({ isActive }) => `p-2 ${isActive ? 'text-amber-400' : 'text-zinc-600'}`}>
+          <Diamond size={26} className={({ isActive }) => isActive ? 'fill-current' : ''} />
         </NavLink>
 
-        <NavLink
-          to="/app/messages"
-          className={({ isActive }) =>
-            `p-2 transition-colors ${isActive ? 'text-primary' : 'text-dark-text'}`
-          }
-        >
-          <MessageCircle size={28} className={({ isActive }) => isActive ? 'fill-current' : ''} />
+        <NavLink to="/app/messages" className={({ isActive }) => `p-2 ${isActive ? 'text-white' : 'text-zinc-600'}`}>
+          <MessageCircle size={26} className={({ isActive }) => isActive ? 'fill-current' : ''} />
         </NavLink>
 
-        <NavLink
-          to="/app/profile"
-          className={({ isActive }) =>
-            `p-2 transition-colors ${isActive ? 'text-primary' : 'text-dark-text'}`
-          }
-        >
-          <User size={28} className={({ isActive }) => isActive ? 'fill-current' : ''} />
+        <NavLink to="/app/profile" className={({ isActive }) => `p-2 ${isActive ? 'text-white' : 'text-zinc-600'}`}>
+          <User size={26} className={({ isActive }) => isActive ? 'fill-current' : ''} />
         </NavLink>
       </div>
     </nav>
