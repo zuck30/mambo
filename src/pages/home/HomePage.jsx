@@ -36,8 +36,8 @@ const HomePage = () => {
         .from('matches')
         .select(`
           id,
-          user1:profiles!matches_user1_id_fkey(id, name, photos),
-          user2:profiles!matches_user2_id_fkey(id, name, photos)
+          user1:profiles!user1_id(id, name, photos),
+          user2:profiles!user2_id(id, name, photos)
         `)
         .or(`user1_id.eq.${user.id},user2_id.eq.${user.id}`)
         .order('created_at', { ascending: false })
@@ -107,29 +107,26 @@ const HomePage = () => {
       });
 
       // Advanced Sorting with Location, Interests, and Randomness
-      const sortedData = filteredData?.sort((a, b) => {
-        const myInterests = profile.interests || [];
+      const myInterests = profile.interests || [];
+      const dataWithScores = filteredData?.map(p => {
+        const pInterests = p.interests || [];
+        const commonInterestsCount = pInterests.filter(i => myInterests.includes(i)).length;
 
-        const calculateScore = (p) => {
-          const pInterests = p.interests || [];
-          const commonInterestsCount = pInterests.filter(i => myInterests.includes(i)).length;
+        let score = (commonInterestsCount * 10); // Interests are high priority
 
-          let score = (commonInterestsCount * 10); // Interests are high priority
+        if (profile.latitude && profile.longitude && p.latitude && p.longitude) {
+          const distance = calculateDistance(profile.latitude, profile.longitude, p.latitude, p.longitude);
+          // Higher score for closer users
+          score += Math.max(0, 50 - (distance / 2));
+        }
 
-          if (profile.latitude && profile.longitude && p.latitude && p.longitude) {
-            const distance = calculateDistance(profile.latitude, profile.longitude, p.latitude, p.longitude);
-            // Higher score for closer users (Inverse distance weighting)
-            score += Math.max(0, 50 - (distance / 2));
-          }
+        // Stable randomness (0-10 points)
+        score += Math.random() * 10;
 
-          // Add some randomness to keep feed fresh (0-10 points)
-          score += Math.random() * 10;
-
-          return score;
-        };
-
-        return calculateScore(b) - calculateScore(a);
+        return { ...p, _score: score };
       });
+
+      const sortedData = dataWithScores?.sort((a, b) => b._score - a._score);
 
       setStack(sortedData || []);
     } catch (error) {
@@ -183,6 +180,10 @@ const HomePage = () => {
 
       if (direction === 'like' || direction === 'superlike') {
         checkMatch(swipedProfile);
+        toast.success(direction === 'superlike' ? 'Super Liked!' : 'Liked!', {
+          icon: direction === 'superlike' ? '⭐' : '❤️',
+          position: 'top-center'
+        });
       }
     } catch (error) {
       console.error('Swipe error caught:', error);
@@ -245,11 +246,16 @@ const HomePage = () => {
         const [u1, u2] = [user.id, otherProfile.id].sort();
         const { data: matchData, error: matchError } = await supabase
           .from('matches')
-          .upsert({ user1_id: u1, user2_id: u2, is_active: true }, { onConflict: 'user1_id, user2_id' })
+          .upsert(
+            { user1_id: u1, user2_id: u2, is_active: true, created_at: new Date().toISOString() },
+            { onConflict: 'user1_id, user2_id' }
+          )
           .select()
           .single();
 
         if (!matchError && matchData) {
+          // Immediately update recent matches to show the new match
+          fetchRecentMatches();
           setMatchedUser({ ...otherProfile, matchId: matchData.id });
           setShowMatch(true);
           confetti({
@@ -332,42 +338,40 @@ const HomePage = () => {
       </header>
 
       {/* New Matches & Spotlights Bar */}
-      {recentMatches.length > 0 && (
-        <div className="px-6 py-2 z-20 overflow-x-auto flex gap-4 no-scrollbar shrink-0">
-          {recentMatches.map(m => (
-            <motion.button
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              key={`match-${m.id}`}
-              onClick={() => navigate(`/app/chat/${m.id}`)}
-              className="flex-shrink-0 flex flex-col items-center gap-1"
-            >
-              <div className="w-16 h-16 rounded-full p-0.5 bg-gradient-to-tr from-primary to-purple-500">
-                <div className="w-full h-full rounded-full border-2 border-black overflow-hidden">
-                  <img src={m.photos[0]} className="w-full h-full object-cover" />
-                </div>
+      <div className="px-6 py-2 z-20 overflow-x-auto flex gap-4 no-scrollbar shrink-0">
+        {recentMatches.map(m => (
+          <motion.button
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            key={`match-${m.id}`}
+            onClick={() => navigate(`/app/chat/${m.id}`)}
+            className="flex-shrink-0 flex flex-col items-center gap-1"
+          >
+            <div className="w-16 h-16 rounded-full p-0.5 bg-gradient-to-tr from-primary to-purple-500">
+              <div className="w-full h-full rounded-full border-2 border-black overflow-hidden">
+                <img src={m.photos[0]} className="w-full h-full object-cover" />
               </div>
-              <span className="text-[10px] font-bold text-white uppercase tracking-tighter truncate w-16 text-center">
-                {m.name}
-              </span>
-            </motion.button>
-          ))}
-
-          {/* Divider */}
-          <div className="w-[1px] h-12 bg-white/10 self-center" />
-
-          {spotlights.map(p => (
-            <div key={`spotlight-${p.id}`} className="flex-shrink-0 flex flex-col items-center gap-1">
-              <div className="w-16 h-16 rounded-full p-0.5 bg-gradient-to-tr from-yellow-400 to-orange-500">
-                <div className="w-full h-full rounded-full border-2 border-black overflow-hidden">
-                  <img src={p.photos[0]} className="w-full h-full object-cover" />
-                </div>
-              </div>
-              <span className="text-[10px] font-bold text-white uppercase tracking-tighter">Spotlight</span>
             </div>
-          ))}
-        </div>
-      )}
+            <span className="text-[10px] font-bold text-white uppercase tracking-tighter truncate w-16 text-center">
+              {m.name}
+            </span>
+          </motion.button>
+        ))}
+
+        {/* Divider */}
+        {recentMatches.length > 0 && <div className="w-[1px] h-12 bg-white/10 self-center" />}
+
+        {spotlights.map(p => (
+          <div key={`spotlight-${p.id}`} className="flex-shrink-0 flex flex-col items-center gap-1">
+            <div className="w-16 h-16 rounded-full p-0.5 bg-gradient-to-tr from-yellow-400 to-orange-500">
+              <div className="w-full h-full rounded-full border-2 border-black overflow-hidden">
+                <img src={p.photos[0]} className="w-full h-full object-cover" />
+              </div>
+            </div>
+            <span className="text-[10px] font-bold text-white uppercase tracking-tighter">Spotlight</span>
+          </div>
+        ))}
+      </div>
 
       {/* Stack Area */}
       <div className="flex-grow relative px-4 flex items-center justify-center">

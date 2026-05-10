@@ -19,7 +19,7 @@ const Sidebar = () => {
   return (
     <aside 
       className="fixed left-0 top-0 bottom-0 z-[200] flex flex-col bg-black border-r border-white/10
-                 w-20 lg:w-64 transition-all duration-300 ease-in-out hidden md:flex overflow-hidden"
+                 w-20 md:hover:w-64 transition-all duration-300 ease-in-out hidden md:flex overflow-hidden group"
     >
       {/* Brand Section */}
       <div className="h-20 flex items-center px-6 mb-8 mt-4">
@@ -30,7 +30,7 @@ const Sidebar = () => {
           >
             <Flame size={24} className="text-white fill-current flex-shrink-0" />
           </motion.div>
-          <span className="font-black text-2xl italic tracking-tighter text-white hidden lg:block">
+          <span className="font-black text-2xl italic tracking-tighter text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             mambo
           </span>
         </div>
@@ -43,7 +43,7 @@ const Sidebar = () => {
             key={item.to}
             to={item.to}
             className={({ isActive }) =>
-              `flex items-center gap-4 p-3.5 rounded-2xl transition-all group relative ${
+              `flex items-center gap-4 p-3.5 rounded-2xl transition-all relative ${
                 isActive
                   ? 'bg-white/5 text-white'
                   : 'text-zinc-500 hover:text-white hover:bg-white/5'
@@ -65,7 +65,7 @@ const Sidebar = () => {
                     }`}
                   />
                 </motion.div>
-                <span className={`text-sm font-bold tracking-tight hidden lg:block transition-all duration-200 ${isActive ? 'translate-x-1' : ''}`}>
+                <span className={`text-sm font-bold tracking-tight opacity-0 group-hover:opacity-100 transition-all duration-300 whitespace-nowrap ${isActive ? 'translate-x-1' : ''}`}>
                   {item.label}
                 </span>
 
@@ -73,7 +73,7 @@ const Sidebar = () => {
                 {isActive && (
                   <motion.div
                     layoutId="active-pill"
-                    className="absolute left-0 w-1 h-6 bg-primary rounded-r-full lg:hidden"
+                    className="absolute left-0 w-1 h-6 bg-primary rounded-r-full"
                   />
                 )}
               </>
@@ -87,7 +87,7 @@ const Sidebar = () => {
         <NavLink
           to="/app/settings"
           className={({ isActive }) =>
-            `flex items-center gap-4 p-3.5 rounded-2xl transition-all hover:bg-white/5 group ${
+            `flex items-center gap-4 p-3.5 rounded-2xl transition-all hover:bg-white/5 ${
               isActive ? 'text-white bg-white/5' : 'text-zinc-500 hover:text-white'
             }`
           }
@@ -98,7 +98,7 @@ const Sidebar = () => {
           >
             <Settings size={24} className="transition-transform duration-300" />
           </motion.div>
-          <div className="hidden lg:flex flex-col min-w-0">
+          <div className="flex flex-col min-w-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
              <span className="text-sm font-bold text-white truncate">Settings</span>
              <span className="text-[10px] text-zinc-500 truncate">Account & Privacy</span>
           </div>
@@ -114,7 +114,7 @@ const Sidebar = () => {
               <div className="w-full h-full bg-zinc-800" />
             )}
          </div>
-         <div className="hidden lg:flex flex-col min-w-0">
+         <div className="flex flex-col min-w-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             <span className="text-xs font-bold text-white truncate">{profile?.name}</span>
             <span className="text-[10px] text-zinc-500 truncate">{profile?.job || 'User'}</span>
          </div>
