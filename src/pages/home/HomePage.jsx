@@ -286,7 +286,7 @@ const HomePage = () => {
         </motion.div>
         <div className="flex items-center gap-1">
           <Flame size={28} className="text-primary fill-current" />
-          <span className="font-black text-2xl italic tracking-tighter">oa</span>
+          <span className="font-black text-2xl italic tracking-tighter">mambo</span>
         </div>
         <motion.button
           whileTap={{ scale: 0.9 }}

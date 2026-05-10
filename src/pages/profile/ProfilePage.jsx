@@ -1,7 +1,6 @@
 import React from 'react';
 import { useAuth } from '../../hooks/useAuth';
-import { supabase } from '../../lib/supabase';
-import { Settings, Edit2, Shield, CreditCard, ChevronRight, ShieldCheck } from 'lucide-react';
+import { Settings, Edit2, Shield, CreditCard, ChevronRight, ShieldCheck, Crown, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const ProfilePage = () => {
@@ -11,112 +10,109 @@ const ProfilePage = () => {
   const calculateAge = (birthday) => {
     if (!birthday) return '';
     const ageDifMs = Date.now() - new Date(birthday).getTime();
-    const ageDate = new Date(ageDifMs);
-    return Math.abs(ageDate.getUTCFullYear() - 1970);
+    return Math.abs(new Date(ageDifMs).getUTCFullYear() - 1970);
   };
 
   return (
-    <div className="flex flex-col h-full bg-dark overflow-y-auto pb-10">
-      {/* Profile Header */}
-      <div className="relative h-[40vh] flex flex-col items-center justify-center pt-10">
-        <div className="w-32 h-32 rounded-full p-1 bg-gradient-to-tr from-primary to-primary-dark">
-          <div className="w-full h-full rounded-full border-4 border-dark overflow-hidden">
-             <img
-               src={profile?.photos?.[0] || 'https://via.placeholder.com/150'}
-               className="w-full h-full object-cover"
-               alt=""
-             />
+    <div className="min-h-screen bg-black text-white font-sans antialiased pb-20">
+      <div className="max-w-2xl mx-auto">
+        
+        {/* Header/Cover Area */}
+        <div className="relative pt-12 pb-8 px-6 flex flex-col items-center border-b border-white/5 bg-gradient-to-b from-zinc-900/50 to-transparent">
+          <div className="relative">
+            <div className="w-32 h-32 rounded-full p-[3px] bg-gradient-to-tr from-primary to-rose-500">
+              <div className="w-full h-full rounded-full border-4 border-black overflow-hidden bg-zinc-900">
+                <img 
+                  src={profile?.photos?.[0] || 'https://via.placeholder.com/150'} 
+                  className="w-full h-full object-cover" 
+                  alt="" 
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="text-center mt-5">
+            <h2 className="text-3xl font-black tracking-tight">
+              {profile?.name}{profile?.birthday && `, ${calculateAge(profile.birthday)}`}
+            </h2>
+            <p className="text-zinc-400 font-medium">{profile?.job || 'Add Job Title'}</p>
+            {profile?.school && <p className="text-zinc-500 text-sm">{profile.school}</p>}
+          </div>
+
+          {/* Core Actions */}
+          <div className="flex items-center gap-4 mt-8 w-full max-w-sm">
+            <button 
+              onClick={() => navigate('/app/settings')}
+              className="flex-1 h-12 bg-zinc-900 border border-white/10 rounded-2xl flex items-center justify-center text-zinc-300 hover:bg-zinc-800 transition-colors"
+            >
+              <Settings size={20} className="mr-2" />
+              <span className="font-bold text-sm">Settings</span>
+            </button>
+            <button 
+              onClick={() => navigate('/app/profile/edit')}
+              className="flex-[2] h-12 bg-white text-black rounded-2xl flex items-center justify-center font-bold text-sm hover:bg-zinc-200 transition-colors"
+            >
+              <Edit2 size={18} className="mr-2" />
+              Edit Profile
+            </button>
           </div>
         </div>
-        <h2 className="mt-4 text-2xl font-black text-white">
-          {profile?.name}, {calculateAge(profile?.birthday)}
-        </h2>
-        <p className="text-dark-text">{profile?.job || 'Add job title'}</p>
-        {profile?.school && <p className="text-dark-text text-sm">{profile.school}</p>}
 
-        <div className="flex gap-4 mt-8">
-           <button
-             onClick={() => navigate('/app/settings')}
-             className="w-12 h-12 rounded-full bg-dark-card border border-white/5 flex items-center justify-center text-dark-text hover:text-white"
-           >
-             <Settings size={20} />
-           </button>
-           <button
-             onClick={() => navigate('/app/profile/edit')}
-             className="px-8 py-3 rounded-full bg-gradient-to-r from-primary to-primary-dark text-white font-bold flex items-center gap-2"
-           >
-             <Edit2 size={18} /> Edit Profile
-           </button>
-           <button className="w-12 h-12 rounded-full bg-dark-card border border-white/5 flex items-center justify-center text-dark-text hover:text-white">
-             <Shield size={20} />
-           </button>
+        <div className="px-6 py-8 space-y-6">
+          {/* Subscription Card */}
+          <div className="bg-gradient-to-br from-amber-400 to-orange-500 p-6 rounded-[2rem] text-black shadow-xl shadow-orange-500/10">
+            <div className="flex justify-between items-start mb-4">
+              <div>
+                <h3 className="text-2xl font-black leading-none uppercase italic">Premium</h3>
+                <p className="text-xs font-bold opacity-80 mt-1">SEE WHO LIKES YOU & MORE</p>
+              </div>
+              <Crown size={28} />
+            </div>
+            <button className="w-full bg-black text-white h-11 rounded-xl font-bold text-sm">
+              Upgrade from 5,000 TZS
+            </button>
+          </div>
+
+          {/* Bio Section */}
+          {profile?.bio && (
+            <div className="space-y-3">
+              <h4 className="text-[11px] font-black text-zinc-500 uppercase tracking-widest px-1">About Me</h4>
+              <div className="bg-zinc-900/50 border border-white/5 p-5 rounded-3xl text-zinc-200 leading-relaxed">
+                {profile.bio}
+              </div>
+            </div>
+          )}
+
+          {/* Secondary Menu */}
+          <div className="bg-zinc-900/50 border border-white/5 rounded-[2rem] overflow-hidden">
+            {profile?.role === 'admin' && (
+              <button 
+                onClick={() => navigate('/app/admin')}
+                className="w-full flex items-center justify-between p-5 hover:bg-white/5 transition-colors border-b border-white/5 text-primary"
+              >
+                <div className="flex items-center gap-4">
+                  <ShieldCheck size={20} />
+                  <span className="font-bold text-sm">Admin Dashboard</span>
+                </div>
+                <ChevronRight size={18} />
+              </button>
+            )}
+            <button className="w-full flex items-center justify-between p-5 hover:bg-white/5 transition-colors border-b border-white/5 text-zinc-300">
+              <div className="flex items-center gap-4">
+                <Shield size={20} />
+                <span className="font-bold text-sm">Safety Center</span>
+              </div>
+              <ChevronRight size={18} />
+            </button>
+            <button 
+              onClick={signOut}
+              className="w-full flex items-center gap-4 p-5 text-rose-500 hover:bg-rose-500/5 transition-colors font-bold text-sm"
+            >
+              <LogOut size={20} />
+              Logout
+            </button>
+          </div>
         </div>
-      </div>
-
-      {/* Bio Section */}
-      {profile?.bio && (
-        <div className="px-6 mb-8">
-          <h3 className="text-sm font-bold text-dark-text uppercase tracking-widest mb-2">About Me</h3>
-          <p className="text-white bg-dark-card p-4 rounded-2xl border border-white/5">
-            {profile.bio}
-          </p>
-        </div>
-      )}
-
-      {/* Stats Section */}
-      <div className="px-6 grid grid-cols-3 gap-4 mb-8">
-         <div className="bg-dark-card p-4 rounded-2xl border border-white/5 text-center">
-            <span className="block text-primary font-bold text-xl">∞</span>
-            <span className="text-[10px] text-dark-text uppercase font-bold tracking-wider">Swipes</span>
-         </div>
-         <div className="bg-dark-card p-4 rounded-2xl border border-white/5 text-center">
-            <span className="block text-blue-400 font-bold text-xl">∞</span>
-            <span className="text-[10px] text-dark-text uppercase font-bold tracking-wider">Super Likes</span>
-         </div>
-         <div className="bg-dark-card p-4 rounded-2xl border border-white/5 text-center">
-            <span className="block text-purple-400 font-bold text-xl">∞</span>
-            <span className="text-[10px] text-dark-text uppercase font-bold tracking-wider">Boosts</span>
-         </div>
-      </div>
-
-      {/* Subscription Banner */}
-      <div className="px-6 mb-8">
-        <div className="bg-gradient-to-r from-[#FFD700] to-[#FFA500] p-6 rounded-2xl text-dark-card">
-           <div className="flex justify-between items-center mb-2">
-             <h3 className="font-black text-xl">Get Oa Gold</h3>
-             <CreditCard size={24} />
-           </div>
-           <p className="text-sm font-medium mb-4">See who likes you & more!</p>
-           <button className="w-full bg-dark-card text-white py-2 rounded-full font-bold text-sm">
-             Upgrade from 5,000 TZS
-           </button>
-        </div>
-      </div>
-
-      {/* Quick Menu */}
-      <div className="px-6 space-y-2">
-        {profile?.role === 'admin' && (
-          <button
-            onClick={() => navigate('/app/admin')}
-            className="w-full flex justify-between items-center p-4 bg-primary/10 rounded-2xl border border-primary/20 text-primary"
-          >
-             <div className="flex items-center gap-3">
-               <ShieldCheck size={20} />
-               <span className="font-bold">Admin Dashboard</span>
-             </div>
-             <ChevronRight size={20} />
-          </button>
-        )}
-        <button className="w-full flex justify-between items-center p-4 bg-dark-card rounded-2xl border border-white/5">
-           <span className="font-bold">Discovery Settings</span>
-           <ChevronRight size={20} className="text-dark-text" />
-        </button>
-        <button
-          onClick={signOut}
-          className="w-full p-4 bg-dark-card rounded-2xl border border-white/5 text-red-500 font-bold"
-        >
-          Logout
-        </button>
       </div>
     </div>
   );
