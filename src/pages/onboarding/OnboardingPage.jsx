@@ -96,7 +96,7 @@ const OnboardingPage = () => {
       if (error) throw error;
       await fetchProfile(user.id);
       navigate('/app/home');
-      toast.success('Welcome to Oa!');
+      toast.success('Welcome to mambo!');
     } catch (error) {
       toast.error(error.message);
     } finally {
