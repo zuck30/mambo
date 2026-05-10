@@ -1,14 +1,14 @@
-# Oa
+# mambo
 
-Oa is a dating app with robust discovery engine.
+mambo is a dating app with robust discovery engine.
 
 ## Features
 
 - **Discovery Engine**: Swipe right to like, left to pass, and up to super like. Distance and age-based filtering.
 - **Real-time Messaging**: Instant chat with matches.
 - **Onboarding**: Comprehensive multi-step flow for a personalized experience.
-- **Premium Features**: Oa Gold reveals who liked you; Super Likes and Boosts for increased visibility.
-- **Oa AI**: Get creative conversation starters and profile optimization tips powered by Gemini.
+- **Premium Features**: mambo Gold reveals who liked you; Super Likes and Boosts for increased visibility.
+- **Mambo AI**: Get creative conversation starters and profile optimization tips powered by Gemini.
 - **Admin Dashboard**: Comprehensive management for users, matches, and system stats.
 
 ## Prerequisites
@@ -22,7 +22,7 @@ Oa is a dating app with robust discovery engine.
 ### 1. Supabase Backend
 
 1. Create a new Supabase project.
-2. Run the SQL schema found in `docs/oa-schema.sql` in the Supabase SQL Editor.
+2. Run the SQL schema found in `docs/mambo-schema.sql` in the Supabase SQL Editor.
 3. Enable **Email Auth** in Authentication > Providers.
 4. Disable "Confirm Email" if you want instant OTP access, or configure it as per your security needs.
 
@@ -48,7 +48,7 @@ To send professional OTP emails, configure Supabase to use Brevo's SMTP server:
    ```
 3. Deploy the AI edge function:
    ```bash
-   supabase functions deploy oa-ai
+   supabase functions deploy mambo-ai
    ```
 
 ### 4. Admin Setup
@@ -89,7 +89,7 @@ To create your first admin account:
 - `src/pages`: Main routes including Landing, Login, Onboarding, and Home.
 - `src/components/home`: Discover cards and settings modals.
 - `src/hooks`: Custom hooks for Auth and Realtime.
-- `docs/oa-schema.sql`: Database schema and RLS policies.
+- `docs/mambo-schema.sql`: Database schema and RLS policies.
 
 ## Commands Reference
 
@@ -101,4 +101,4 @@ To create your first admin account:
 | `npm run lint` | Runs ESLint for code quality |
 
 ---
-© 2026 Oa Group, LLC. All Rights Reserved.
+© 2026 Mambo Group, LLC. All Rights Reserved.
