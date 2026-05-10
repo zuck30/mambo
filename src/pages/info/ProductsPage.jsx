@@ -1,138 +1,164 @@
 import React from 'react';
-import { Crown, Sparkles, Star, Diamond } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { Crown, ArrowLeft, Zap, ShieldCheck, Globe } from 'lucide-react';
 
 const ProductsPage = () => {
+  const navigate = useNavigate();
+
   const products = [
     {
-      icon: Sparkles,
-      name: "Oa Core",
-      color: "from-[#ff79ac] to-[#ff4d8c]",
-      description: "Our flagship dating experience, designed for meaningful connections. With a global reach spanning. Oa Core brings people together based on shared interests, values, and location.",
-      features: ["Global Reach", "Smart Matching", "Real Connections"]
+      name: "mambo Core",
+      id: "BASIC",
+      color: "text-[#ff79ac]",
+      glow: "shadow-[0_0_50px_rgba(255,121,172,0.2)]",
+      description: "Our flagship foundation for high-energy Tanzanian connections.",
+      features: ["Global Reach", "Smart Matching", "Daily Vibe Checks"],
+      buttonText: "Join the Vibe",
+      icon: (
+        <svg viewBox="0 0 100 100" className="w-24 h-24 drop-shadow-[0_0_15px_rgba(255,121,172,0.4)]">
+          <circle cx="50" cy="50" r="40" fill="none" stroke="#ff79ac" strokeWidth="1" strokeDasharray="4 4" />
+          <path d="M30 50 Q50 20 70 50 T30 50" fill="#ff79ac" fillOpacity="0.2" stroke="#ff79ac" strokeWidth="3" />
+          <circle cx="50" cy="50" r="8" fill="#ff79ac" />
+        </svg>
+      )
     },
     {
-      icon: Star,
-      name: "Oa Gold",
-      color: "from-amber-500 to-yellow-500",
-      description: "Elevate your experience with premium features including unlimited likes, see who likes you, and passport mode to connect with people anywhere in the world.",
-      features: ["Unlimited Likes", "See Who Likes You", "Passport Mode"]
+      name: "mambo Gold",
+      id: "ELITE",
+      color: "text-amber-400",
+      glow: "shadow-[0_0_50px_rgba(251,191,36,0.2)]",
+      description: "Elevate your status. Unlimited likes and global passport access.",
+      features: ["Unlimited Likes", "See Who Likes You", "Passport Mode"],
+      buttonText: "Go Gold",
+      popular: true,
+      icon: (
+        <svg viewBox="0 0 100 100" className="w-24 h-24 drop-shadow-[0_0_15px_rgba(251,191,36,0.4)]">
+          <rect x="25" y="25" width="50" height="50" rx="12" fill="none" stroke="#fbbf24" strokeWidth="2" transform="rotate(45 50 50)" />
+          <path d="M50 30 L60 50 L80 55 L65 70 L70 90 L50 80 L30 90 L35 70 L20 55 L40 50 Z" fill="#fbbf24" />
+        </svg>
+      )
     },
     {
-      icon: Diamond,
-      name: "Oa Platinum",
-      color: "from-cyan-500 to-blue-500",
-      description: "The ultimate Oa experience. Priority likes, message before matching, and all the benefits of Gold. Designed for those serious about finding their perfect match.",
-      features: ["Priority Likes", "Message Before Match", "All Gold Benefits"]
+      name: "mambo Platinum",
+      id: "ULTIMATE",
+      color: "text-cyan-400",
+      glow: "shadow-[0_0_50px_rgba(34,211,238,0.2)]",
+      description: "The peak of the ecosystem. Priority messaging and exclusive matching.",
+      features: ["Priority Likes", "Message Before Match", "Full Invisible Mode"],
+      buttonText: "Get Platinum",
+      icon: (
+        <svg viewBox="0 0 100 100" className="w-24 h-24 drop-shadow-[0_0_20px_rgba(34,211,238,0.4)]">
+          <path d="M50 15 L85 40 L70 85 L30 85 L15 40 Z" fill="none" stroke="#22d3ee" strokeWidth="2" />
+          <path d="M50 25 L75 45 L50 80 L25 45 Z" fill="#22d3ee" />
+        </svg>
+      )
     }
   ];
 
   return (
-    <div className="min-h-screen bg-black flex flex-col relative overflow-hidden">
-      {/* Decorative Crown Watermarks */}
-      <div className="absolute -right-20 -top-20 opacity-[0.03] pointer-events-none">
-        <Crown size={350} />
+    <div className="min-h-screen bg-black text-white selection:bg-[#ff79ac] overflow-x-hidden font-sans antialiased">
+      {/* Cinematic Background */}
+      <div className="fixed inset-0 z-0">
+        <div className="absolute inset-0 bg-black/90 backdrop-blur-3xl z-10" />
+        <img 
+          src="https://w.wallhaven.cc/full/6l/wallhaven-6lkzzq.png" 
+          alt="Backdrop"
+          className="w-full h-full object-cover opacity-20 grayscale"
+        />
       </div>
-      <div className="absolute -left-20 -bottom-20 opacity-[0.03] pointer-events-none">
-        <Crown size={300} />
-      </div>
-      
-      {/* Subtle gradient orbs */}
-      <div className="absolute top-[-20%] right-[-10%] w-[400px] h-[400px] bg-[#ff79ac]/10 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-[-20%] left-[-10%] w-[400px] h-[400px] bg-[#ff79ac]/5 rounded-full blur-[120px] pointer-events-none" />
 
-      {/* Header */}
-      <header className="relative z-10 flex items-center justify-between px-6 py-6 md:px-12">
-        <div className="flex items-center gap-2">
-          <div className="bg-gradient-to-br from-[#ff79ac] to-[#ff4d8c] p-2 rounded-xl">
-            <Crown size={24} className="text-white" />
-          </div>
-          <span className="text-2xl font-black tracking-tighter text-white">Products</span>
+      <header className="relative z-50 flex items-center justify-between px-8 py-10">
+        <div className="flex items-center gap-3 cursor-pointer group" onClick={() => navigate('/')}>
+          <Crown className="text-[#ff79ac] fill-current group-hover:rotate-12 transition-transform" size={30} />
+          <span className="text-3xl font-black tracking-tighter uppercase italic">mambo</span>
         </div>
-        <button
-          onClick={() => window.history.back()}
-          className="text-white/60 hover:text-white transition-colors text-sm font-medium"
+        <button 
+          onClick={() => navigate(-1)}
+          className="text-white/40 hover:text-[#ff79ac] transition-all font-black text-[10px] uppercase tracking-[0.4em] flex items-center gap-2"
         >
-          ← Back
+          <ArrowLeft size={14} /> [Exit ]
         </button>
       </header>
 
-      {/* Hero Section */}
-      <section className="relative z-10 text-center px-6 py-12">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          <h1 className="text-5xl md:text-6xl font-bold mb-4">
-            Our <span className="bg-gradient-to-r from-[#ff79ac] to-[#ff4d8c] bg-clip-text text-transparent">Products</span>
-          </h1>
-          <p className="text-white/60 text-lg max-w-2xl mx-auto">
-            Choose the experience that's right for you
-          </p>
-        </motion.div>
-      </section>
+      <main className="relative z-10 max-w-7xl mx-auto px-6">
+        <section className="pt-10 pb-20 text-center">
+          <motion.h1 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="text-[12vw] md:text-[10rem] font-black italic tracking-tighter uppercase leading-[0.8] mb-6"
+          >
+            Tier <span className="text-[#ff79ac]">Up.</span>
+          </motion.h1>
+          <p className="text-white/30 text-xs font-black uppercase tracking-[0.8em]">Select Your Access Level</p>
+        </section>
 
-      {/* Products Grid */}
-      <main className="relative z-10 flex-grow max-w-6xl mx-auto w-full px-6 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {products.map((product, index) => {
-            const Icon = product.icon;
-            return (
-              <motion.div
-                key={product.name}
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="group relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden hover:border-white/20 transition-all duration-300"
-              >
-                {/* Gradient background on hover */}
-                <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                
-                <div className="relative p-8">
-                  {/* Icon */}
-                  <div className={`w-16 h-16 rounded-2xl bg-gradient-to-r ${product.color} p-3 mb-6 shadow-lg`}>
-                    <Icon size={40} className="text-white" />
-                  </div>
-                  
-                  {/* Title */}
-                  <h2 className="text-2xl font-bold mb-3 text-white">
-                    {product.name}
-                  </h2>
-                  
-                  {/* Description */}
-                  <p className="text-white/60 text-sm leading-relaxed mb-6">
-                    {product.description}
-                  </p>
-                  
-                  {/* Features */}
-                  <div className="space-y-2">
-                    {product.features.map((feature) => (
-                      <div key={feature} className="flex items-center gap-2 text-white/40 text-xs">
-                        <div className="w-1 h-1 rounded-full bg-[#ff79ac]" />
-                        <span>{feature}</span>
-                      </div>
-                    ))}
-                  </div>
-                  
-                  {/* Decorative crown in card */}
-                  <div className="absolute -bottom-6 -right-6 opacity-[0.03] pointer-events-none">
-                    <Crown size={80} />
-                  </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 pb-40">
+          {products.map((product, i) => (
+            <motion.div
+              key={product.name}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.1 }}
+              viewport={{ once: true }}
+              className={`group bg-white/5 backdrop-blur-3xl border ${product.popular ? 'border-[#ff79ac]/50' : 'border-white/10'} p-12 rounded-[3.5rem] relative overflow-hidden hover:bg-white/[0.08] transition-all duration-700 ${product.glow}`}
+            >
+              {product.popular && (
+                <div className="absolute top-0 right-0 bg-[#ff79ac] text-black font-black text-[10px] uppercase tracking-widest px-8 py-3 rounded-bl-3xl">
+                  Recommended
                 </div>
-              </motion.div>
-            );
-          })}
+              )}
+
+              <span className="text-[10px] font-black tracking-[0.4em] text-white/30 uppercase block mb-8 underline underline-offset-8 decoration-[#ff79ac]/40">
+                {product.id} // SECURE
+              </span>
+
+              <div className="mb-10 transform group-hover:scale-110 transition-transform duration-700">
+                {product.icon}
+              </div>
+
+              <h2 className={`text-4xl font-black italic uppercase tracking-tighter mb-4 ${product.color}`}>
+                {product.name}
+              </h2>
+              
+              <p className="text-white/50 text-sm font-medium mb-12 leading-relaxed">
+                {product.description}
+              </p>
+              
+              <div className="space-y-6 mb-16">
+                {product.features.map((feature) => (
+                  <div key={feature} className="flex items-center gap-4 text-[10px] font-black uppercase tracking-[0.2em] text-white/70">
+                    <Zap size={14} className={product.color} />
+                    {feature}
+                  </div>
+                ))}
+              </div>
+
+              <button className={`w-full py-6 rounded-2xl font-black text-xs uppercase tracking-[0.3em] transition-all duration-500 ${
+                product.popular 
+                ? 'bg-[#ff79ac] text-black hover:scale-105 shadow-2xl' 
+                : 'bg-white/10 text-white hover:bg-[#ff79ac] hover:text-black'
+              }`}>
+                {product.buttonText}
+              </button>
+
+              <div className="absolute -bottom-10 -right-10 text-white/[0.02] text-9xl font-black italic pointer-events-none group-hover:text-white/[0.05] transition-colors">
+                {i + 1}
+              </div>
+            </motion.div>
+          ))}
         </div>
       </main>
 
-      {/* Footer */}
-      <footer className="relative z-10 bg-black/50 border-t border-white/10 py-8 px-6 mt-12">
-        <div className="max-w-6xl mx-auto text-center">
-          <p className="text-white/40 text-xs">
-            © {new Date().getFullYear()} Oa Group, LLC. All rights reserved.
-          </p>
+      <footer className="relative z-10 py-16 px-8 border-t border-white/5 flex flex-col items-center">
+        <div className="flex gap-12 mb-8 opacity-20">
+          <ShieldCheck size={20} />
+          <Globe size={20} />
+          <Zap size={20} />
         </div>
+        <p className="text-white/20 text-[10px] font-black uppercase tracking-[0.5em]">
+          © {new Date().getFullYear()} MAMBO LLC.
+        </p>
       </footer>
     </div>
   );

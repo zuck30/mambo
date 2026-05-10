@@ -73,7 +73,7 @@ const LoginPage = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center px-6 relative overflow-hidden font-sans antialiased">
-      {/* Updated Background Section */}
+      {/* Background Section */}
       <div 
         className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
         style={{ backgroundImage: 'url("https://w.wallhaven.cc/full/6l/wallhaven-6lkzzq.png")' }}
