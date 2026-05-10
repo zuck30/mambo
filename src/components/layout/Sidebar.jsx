@@ -10,7 +10,6 @@ const Sidebar = () => {
 
   const navItems = [
     { to: '/app/home', icon: Flame, label: 'Home' },
-    { to: '/app/search', icon: Search, label: 'Search' },
     { to: '/app/likes', icon: Diamond, label: 'Likes', premium: true },
     { to: '/app/messages', icon: MessageCircle, label: 'Messages' },
     { to: '/app/profile', icon: User, label: 'Profile' },

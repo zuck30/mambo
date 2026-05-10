@@ -32,10 +32,15 @@ const HomePage = () => {
   const fetchRecentMatches = async () => {
     if (!user) return;
     try {
+      // Fetch matches with associated profiles.
+      // We use generic joins to avoid dependency on specific foreign key names if possible,
+      // but Supabase usually requires them if there are multiple.
       const { data, error } = await supabase
         .from('matches')
         .select(`
           id,
+          user1_id,
+          user2_id,
           user1:profiles!user1_id(id, name, photos),
           user2:profiles!user2_id(id, name, photos)
         `)
