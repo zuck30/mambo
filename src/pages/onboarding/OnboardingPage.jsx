@@ -108,7 +108,7 @@ const OnboardingPage = () => {
     {
       id: 1,
       title: "What's your name?",
-      subtitle: "This is how you'll appear on Oa.",
+      subtitle: "This is how you'll appear on mambo.",
       content: (
         <input
           type="text"
