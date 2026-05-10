@@ -1,125 +1,141 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Flame, Diamond, MessageCircle, User, Search, Settings } from 'lucide-react';
+import { Flame, Diamond, MessageCircle, User, Search, Settings, Heart, Compass, Home } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
-
 import { motion } from 'framer-motion';
 
 const Sidebar = () => {
   const { profile } = useAuth();
+  const [isHovered, setIsHovered] = useState(false);
 
   const navItems = [
-    { to: '/app/home', icon: Flame, label: 'Home' },
+    { to: '/app/home', icon: Home, label: 'Home' },
     { to: '/app/search', icon: Search, label: 'Search' },
-    { to: '/app/likes', icon: Diamond, label: 'Likes', premium: true },
+    { to: '/app/explore', icon: Compass, label: 'Explore' },
     { to: '/app/messages', icon: MessageCircle, label: 'Messages' },
+    { to: '/app/likes', icon: Heart, label: 'Likes', premium: true },
     { to: '/app/profile', icon: User, label: 'Profile' },
   ];
 
   return (
-    <aside 
-      className="fixed left-0 top-0 bottom-0 z-[200] flex flex-col bg-black border-r border-white/10
-                 w-20 md:hover:w-64 transition-all duration-300 ease-in-out hidden md:flex overflow-hidden group"
-    >
-      {/* Brand Section */}
-      <div className="h-20 flex items-center px-6 mb-8 mt-4">
-        <div className="flex items-center gap-4">
-          <motion.div
-            whileHover={{ rotate: 10, scale: 1.1 }}
-            className="w-10 h-10 rounded-xl primary-gradient flex items-center justify-center shadow-lg shadow-primary/20"
-          >
-            <Flame size={24} className="text-white fill-current flex-shrink-0" />
-          </motion.div>
-          <span className="font-black text-2xl italic tracking-tighter text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            mambo
-          </span>
+    <>
+      {/* Mobile Header */}
+      <div className="fixed top-0 left-0 right-0 h-14 bg-black border-b border-white/10 flex items-center justify-between px-4 z-40 md:hidden">
+        <div className="flex items-center gap-2">
+          <Flame size={28} className="text-[#ff79ac] fill-current" />
+          <span className="text-xl font-bold text-white">mambo</span>
         </div>
       </div>
 
-      {/* Navigation Items */}
-      <nav className="flex-grow px-3 space-y-4">
-        {navItems.map((item) => (
+      {/* Desktop Sidebar - Collapsible on Hover */}
+      <motion.aside
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        animate={{ width: isHovered ? 240 : 72 }}
+        transition={{ duration: 0.2, ease: "easeInOut" }}
+        className="fixed left-0 top-0 bottom-0 bg-black border-r border-white/10 hidden md:flex flex-col z-40 overflow-hidden"
+      >
+        {/* Logo */}
+        <div className="flex items-center h-16 px-4 mb-8 mt-2 overflow-hidden">
+          <div className="flex items-center gap-3">
+            <Flame size={32} className="text-[#ff79ac] fill-current flex-shrink-0" />
+            <motion.span
+              animate={{ opacity: isHovered ? 1 : 0 }}
+              transition={{ duration: 0.15 }}
+              className="text-2xl font-bold text-white whitespace-nowrap"
+            >
+              mambo
+            </motion.span>
+          </div>
+        </div>
+
+        {/* Navigation */}
+        <nav className="flex-1 px-3 space-y-1">
+          {navItems.map((item) => (
+            <NavLink
+              key={item.to}
+              to={item.to}
+              className={({ isActive }) =>
+                `flex items-center gap-4 px-3 py-3 rounded-lg transition-all ${
+                  isActive
+                    ? 'bg-white/10 text-white'
+                    : 'text-white/70 hover:text-white hover:bg-white/5'
+                }`
+              }
+            >
+              {({ isActive }) => (
+                <>
+                  <item.icon size={24} strokeWidth={isActive ? 2.5 : 2} className="flex-shrink-0" />
+                  <motion.span
+                    animate={{ opacity: isHovered ? 1 : 0, x: isHovered ? 0 : -10 }}
+                    transition={{ duration: 0.15 }}
+                    className="text-base whitespace-nowrap"
+                  >
+                    {item.label}
+                  </motion.span>
+                </>
+              )}
+            </NavLink>
+          ))}
+        </nav>
+
+        {/* Bottom Section */}
+        <div className="pt-6 pb-8 px-3 border-t border-white/10">
           <NavLink
-            key={item.to}
-            to={item.to}
+            to="/app/settings"
             className={({ isActive }) =>
-              `flex items-center gap-4 p-3.5 rounded-2xl transition-all relative ${
+              `flex items-center gap-4 px-3 py-3 rounded-lg transition-all ${
                 isActive
-                  ? 'bg-white/5 text-white'
-                  : 'text-zinc-500 hover:text-white hover:bg-white/5'
+                  ? 'bg-white/10 text-white'
+                  : 'text-white/70 hover:text-white hover:bg-white/5'
               }`
             }
           >
-            {({ isActive }) => (
-              <>
-                <motion.div
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                >
-                  <item.icon
-                    size={24}
-                    className={`flex-shrink-0 transition-colors duration-200 ${
-                      isActive
-                        ? (item.premium ? 'text-amber-400 fill-amber-400' : 'text-primary fill-current')
-                        : 'group-hover:text-white'
-                    }`}
-                  />
-                </motion.div>
-                <span className={`text-sm font-bold tracking-tight opacity-0 group-hover:opacity-100 transition-all duration-300 whitespace-nowrap ${isActive ? 'translate-x-1' : ''}`}>
-                  {item.label}
-                </span>
-
-                {/* Active Indicator */}
-                {isActive && (
-                  <motion.div
-                    layoutId="active-pill"
-                    className="absolute left-0 w-1 h-6 bg-primary rounded-r-full"
-                  />
-                )}
-              </>
-            )}
+            <Settings size={24} className="flex-shrink-0" />
+            <motion.span
+              animate={{ opacity: isHovered ? 1 : 0, x: isHovered ? 0 : -10 }}
+              transition={{ duration: 0.15 }}
+              className="text-base whitespace-nowrap"
+            >
+              Settings
+            </motion.span>
           </NavLink>
-        ))}
-      </nav>
 
-      {/* Profile Section */}
-      <div className="p-4 mb-4">
-        <NavLink
-          to="/app/settings"
-          className={({ isActive }) =>
-            `flex items-center gap-4 p-3.5 rounded-2xl transition-all hover:bg-white/5 ${
-              isActive ? 'text-white bg-white/5' : 'text-zinc-500 hover:text-white'
-            }`
-          }
-        >
-          <motion.div
-            whileHover={{ rotate: 90 }}
-            className="flex-shrink-0"
-          >
-            <Settings size={24} className="transition-transform duration-300" />
-          </motion.div>
-          <div className="flex flex-col min-w-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-             <span className="text-sm font-bold text-white truncate">Settings</span>
-             <span className="text-[10px] text-zinc-500 truncate">Account & Privacy</span>
+          {/* User Info */}
+          <div className="flex items-center gap-3 px-3 pt-4 mt-2 overflow-hidden">
+            <div className="w-8 h-8 rounded-full overflow-hidden bg-white/10 flex-shrink-0">
+              {profile?.photos?.[0] ? (
+                <img src={profile.photos[0]} className="w-full h-full object-cover" />
+              ) : (
+                <User size={16} className="w-full h-full p-1.5 text-white/40" />
+              )}
+            </div>
+            <motion.div
+              animate={{ opacity: isHovered ? 1 : 0, x: isHovered ? 0 : -10 }}
+              transition={{ duration: 0.15 }}
+              className="flex-1 min-w-0"
+            >
+              <p className="text-sm font-medium text-white truncate">
+                {profile?.name || 'User'}
+              </p>
+              <p className="text-xs text-white/50 truncate">
+                {profile?.name?.toLowerCase() || 'user'}
+              </p>
+            </motion.div>
           </div>
-        </NavLink>
+        </div>
+      </motion.aside>
+
+      {/* Offset content for desktop */}
+      <div className="hidden md:block md:pl-[72px]">
+        {/* Your main content goes here */}
       </div>
 
-      {/* User Info */}
-      <div className="px-6 py-6 border-t border-white/5 flex items-center gap-3">
-         <div className="w-8 h-8 rounded-full border border-white/10 overflow-hidden shrink-0">
-            {profile?.photos?.[0] ? (
-              <img src={profile.photos[0]} className="w-full h-full object-cover" />
-            ) : (
-              <div className="w-full h-full bg-zinc-800" />
-            )}
-         </div>
-         <div className="flex flex-col min-w-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <span className="text-xs font-bold text-white truncate">{profile?.name}</span>
-            <span className="text-[10px] text-zinc-500 truncate">{profile?.job || 'User'}</span>
-         </div>
+      {/* Mobile content (no sidebar offset) */}
+      <div className="md:hidden pt-14">
+        {/* Your main content goes here */}
       </div>
-    </aside>
+    </>
   );
 };
 
