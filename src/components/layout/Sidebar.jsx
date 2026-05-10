@@ -23,7 +23,7 @@ const Sidebar = () => {
         <div className="flex items-center gap-4">
           <Flame size={28} className="text-primary fill-current flex-shrink-0" />
           <span className="font-black text-2xl italic tracking-tighter text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
-            oa
+            mambo
           </span>
         </div>
       </div>

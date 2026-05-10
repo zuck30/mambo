@@ -10,7 +10,7 @@ const InfoLayout = ({ title, children }) => {
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
             <Flame className="text-primary fill-current" size={32} />
-            <span className="text-2xl font-black tracking-tighter">oa</span>
+            <span className="text-2xl font-black tracking-tighter">mambo</span>
           </Link>
           <Link
             to="/"
@@ -33,7 +33,7 @@ const InfoLayout = ({ title, children }) => {
       {/* Footer */}
       <footer className="border-t border-white/5 py-12 px-6">
         <div className="max-w-4xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6 text-dark-text text-sm">
-          <p>© {new Date().getFullYear()} Oa Group, LLC.</p>
+          <p>© {new Date().getFullYear()} Mambo Group, LLC.</p>
           <div className="flex gap-6">
             <Link to="/privacy" className="hover:text-white">Privacy</Link>
             <Link to="/terms" className="hover:text-white">Terms</Link>

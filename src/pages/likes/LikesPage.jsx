@@ -81,9 +81,9 @@ const LikesPage = () => {
 
           <div className="mt-8 text-center bg-dark-card p-6 rounded-2xl border border-white/5">
              <h3 className="text-lg font-black mb-2 italic">See who likes you!</h3>
-             <p className="text-dark-text text-sm mb-6">Upgrade to Oa Gold to reveal everyone who's already liked you.</p>
+             <p className="text-dark-text text-sm mb-6">Upgrade to Mambo Gold to reveal everyone who's already liked you.</p>
              <button className="bg-gradient-to-r from-[#FFD700] to-[#FFA500] text-dark-card font-black px-8 py-3 rounded-full">
-               Get Oa Gold
+               Get Mambo Gold
              </button>
           </div>
         </div>
