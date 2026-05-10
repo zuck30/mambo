@@ -25,9 +25,11 @@ const HomePage = () => {
   const [recentMatches, setRecentMatches] = useState([]);
 
   useEffect(() => {
-    fetchDiscoveryStack();
-    fetchRecentMatches();
-  }, [profile]);
+    if (profile?.id) {
+      fetchDiscoveryStack();
+      fetchRecentMatches();
+    }
+  }, [profile?.id, profile?.show_gender, profile?.distance_pref, profile?.min_age_pref, profile?.max_age_pref]);
 
   const fetchRecentMatches = async () => {
     if (!user) return;
@@ -41,8 +43,8 @@ const HomePage = () => {
           id,
           user1_id,
           user2_id,
-          user1:profiles!user1_id(id, name, photos),
-          user2:profiles!user2_id(id, name, photos)
+          user1:profiles!matches_user1_id_fkey(id, name, photos),
+          user2:profiles!matches_user2_id_fkey(id, name, photos)
         `)
         .or(`user1_id.eq.${user.id},user2_id.eq.${user.id}`)
         .order('created_at', { ascending: false })
@@ -75,17 +77,25 @@ const HomePage = () => {
         console.warn('Could not fetch previous swipes (this is normal for new accounts):', swipesError);
       }
 
-      const swipedIds = swipedData?.map(s => s.swiped_id) || [];
-      swipedIds.push(user.id);
+      // Sanitize swiped IDs and ensure uniqueness
+      const swipedIds = Array.from(new Set([
+        ...(swipedData?.map(s => s.swiped_id) || []),
+        user.id
+      ])).filter(Boolean);
 
       // Fetch users who liked me to prioritize them
-      const { data: likedMeData } = await supabase
-        .from('swipes')
-        .select('swiper_id')
-        .eq('swiped_id', user.id)
-        .in('direction', ['like', 'superlike']);
+      let likedMeIds = [];
+      try {
+        const { data: likedMeData } = await supabase
+          .from('swipes')
+          .select('swiper_id')
+          .eq('swiped_id', user.id)
+          .in('direction', ['like', 'superlike']);
 
-      const likedMeIds = likedMeData?.map(s => s.swiper_id) || [];
+        likedMeIds = likedMeData?.map(s => s.swiper_id) || [];
+      } catch (e) {
+        console.warn('Error fetching reciprocal likes:', e);
+      }
 
       let query = supabase
         .from('profiles')
@@ -269,7 +279,7 @@ const HomePage = () => {
             { user1_id: u1, user2_id: u2, is_active: true, created_at: new Date().toISOString() },
             { onConflict: 'user1_id, user2_id' }
           )
-          .select()
+          .select('id, user1_id, user2_id')
           .single();
 
         if (!matchError && matchData) {
@@ -379,22 +389,24 @@ const HomePage = () => {
       {/* New Matches & Spotlights Bar */}
       <div className="px-6 py-2 z-20 overflow-x-auto flex gap-4 no-scrollbar shrink-0">
         {recentMatches.map(m => (
-          <motion.button
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            key={`match-${m.id}`}
-            onClick={() => navigate(`/app/chat/${m.id}`)}
-            className="flex-shrink-0 flex flex-col items-center gap-1"
-          >
-            <div className="w-16 h-16 rounded-full p-0.5 bg-gradient-to-tr from-primary to-purple-500">
-              <div className="w-full h-full rounded-full border-2 border-black overflow-hidden">
-                <img src={m.photos[0]} className="w-full h-full object-cover" />
+          m.photos?.[0] && (
+            <motion.button
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              key={`match-${m.id}`}
+              onClick={() => navigate(`/app/chat/${m.id}`)}
+              className="flex-shrink-0 flex flex-col items-center gap-1"
+            >
+              <div className="w-16 h-16 rounded-full p-0.5 bg-gradient-to-tr from-primary to-purple-500">
+                <div className="w-full h-full rounded-full border-2 border-black overflow-hidden">
+                  <img src={m.photos[0]} className="w-full h-full object-cover" />
+                </div>
               </div>
-            </div>
-            <span className="text-[10px] font-bold text-white uppercase tracking-tighter truncate w-16 text-center">
-              {m.name}
-            </span>
-          </motion.button>
+              <span className="text-[10px] font-bold text-white uppercase tracking-tighter truncate w-16 text-center">
+                {m.name}
+              </span>
+            </motion.button>
+          )
         ))}
 
         {/* Divider */}

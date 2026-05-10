@@ -1,8 +1,12 @@
 import React from 'react';
 import { motion, useMotionValue, useTransform } from 'framer-motion';
 import { MapPin, Info, Sparkles, Heart } from 'lucide-react';
+import { useAuthStore } from '../../store/authStore';
+import { translations } from '../../lib/translations';
 
 const DiscoverCard = ({ profile, onSwipe, onClick }) => {
+  const { language } = useAuthStore();
+  const t = translations[language];
   const x = useMotionValue(0);
   const y = useMotionValue(0);
 
@@ -91,7 +95,7 @@ const DiscoverCard = ({ profile, onSwipe, onClick }) => {
                   <div className="flex items-center gap-1.5 px-3 py-1 bg-primary/20 backdrop-blur-md border border-primary/30 rounded-full">
                     <Heart size={12} className="text-primary fill-current" />
                     <span className="text-[10px] font-black uppercase tracking-widest text-primary">
-                      {profile.commonInterestsCount} Shared
+                      {profile.commonInterestsCount} {t.shared}
                     </span>
                   </div>
                 )}
