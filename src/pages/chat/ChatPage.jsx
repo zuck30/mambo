@@ -315,8 +315,8 @@ const ChatPage = () => {
                     <div
                       className={`px-4 py-2 text-sm font-medium leading-relaxed tracking-tight whitespace-pre-wrap break-words ${
                         isOwn
-                          ? 'bg-white text-black rounded-[1.5rem] rounded-br-none shadow-xl shadow-white/5'
-                          : 'bg-zinc-900 text-zinc-200 border border-white/5 rounded-[1.5rem] rounded-bl-none'
+                          ? 'bg-white text-black rounded-[1.5rem] shadow-xl shadow-white/5'
+                          : 'bg-zinc-900 text-zinc-200 border border-white/5 rounded-[1.5rem]'
                       }`}
                     >
                       {msg.content}
@@ -334,7 +334,7 @@ const ChatPage = () => {
         {/* Typing Indicator */}
         {otherUserTyping && (
           <div className="flex justify-start mt-2">
-            <div className="bg-zinc-900 text-zinc-400 px-4 py-2.5 rounded-[1.5rem] rounded-bl-none border border-white/5 flex items-center gap-1">
+            <div className="bg-zinc-900 text-zinc-400 px-4 py-2.5 rounded-[1.5rem] border border-white/5 flex items-center gap-1">
               <span className="w-1.5 h-1.5 bg-zinc-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
               <span className="w-1.5 h-1.5 bg-zinc-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
               <span className="w-1.5 h-1.5 bg-zinc-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
