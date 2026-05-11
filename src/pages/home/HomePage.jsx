@@ -343,7 +343,7 @@ const HomePage = () => {
 
   const handleSayHello = async (matchId) => {
     try {
-      const helloMessage = language === 'sw' ? 'Jambo! Nimefurahi kupata pacha hapa.' : "Hey! Glad we matched. Mambo vipi?";
+      const helloMessage = language === 'sw' ? 'Mambo! Nimefurahi kupata pacha hapa.' : "Hey! Glad we matched. Mambo vipi?";
       const { error } = await supabase
         .from('messages')
         .insert({
