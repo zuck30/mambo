@@ -1,14 +1,24 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../hooks/useAuth';
-import { ChevronLeft, Send, Phone, Video, Sparkles, MoreVertical, Smile } from 'lucide-react';
+import { 
+  ChevronLeft, 
+  Send, 
+  Phone, 
+  Video, 
+  Brain, 
+  MoreVertical, 
+  Smile
+} from 'lucide-react';
 import { toast } from 'react-hot-toast';
+import EmojiPicker from 'emoji-picker-react';
 
 const ChatPage = () => {
   const { matchId } = useParams();
   const { user } = useAuth();
   const navigate = useNavigate();
+
   const [match, setMatch] = useState(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
@@ -17,18 +27,34 @@ const ChatPage = () => {
   const [loading, setLoading] = useState(true);
   const [aiLoading, setAiLoading] = useState(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  const scrollRef = useRef();
+
   const typingTimeoutRef = useRef(null);
   const channelRef = useRef(null);
+  const inputRef = useRef(null);
+  const pickerRef = useRef(null);
+  const messagesEndRef = useRef(null);
+
+  // Close emoji picker when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (pickerRef.current && !pickerRef.current.contains(e.target)) {
+        setShowEmojiPicker(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const scrollToBottom = useCallback(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, []);
 
   useEffect(() => {
     fetchMatchAndMessages();
 
     const channel = supabase
       .channel(`chat:${matchId}`, {
-        config: {
-          broadcast: { self: false }
-        }
+        config: { broadcast: { self: false } }
       })
       .on('postgres_changes', {
         event: 'INSERT',
@@ -50,15 +76,13 @@ const ChatPage = () => {
       });
 
     return () => {
-      if (channel) {
-        supabase.removeChannel(channel);
-      }
+      if (channel) supabase.removeChannel(channel);
     };
   }, [matchId, user.id]);
 
   useEffect(() => {
-    scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+    scrollToBottom();
+  }, [messages, scrollToBottom]);
 
   const fetchMatchAndMessages = async () => {
     try {
@@ -127,7 +151,6 @@ const ChatPage = () => {
     e.preventDefault();
     if (!newMessage.trim()) return;
 
-    // Stop typing indicator on send
     setIsTyping(false);
     if (channelRef.current) {
       channelRef.current.send({
@@ -137,8 +160,10 @@ const ChatPage = () => {
       });
     }
 
-    const content = newMessage;
+    const content = newMessage.trim();
     setNewMessage('');
+    setShowEmojiPicker(false);
+    if (inputRef.current) inputRef.current.style.height = 'auto';
 
     try {
       const { error } = await supabase
@@ -156,12 +181,10 @@ const ChatPage = () => {
     }
   };
 
-  const addEmoji = (emoji) => {
-    setNewMessage(prev => prev + emoji);
-    setShowEmojiPicker(false);
+  const onEmojiClick = (emojiData) => {
+    setNewMessage(prev => prev + emojiData.emoji);
+    inputRef.current?.focus();
   };
-
-  const commonEmojis = ['❤️', '😂', '😍', '🔥', '✨', '👋', '😊', '🙌', '💯', '🥂'];
 
   const handleAiIcebreaker = async () => {
     setAiLoading(true);
@@ -174,12 +197,42 @@ const ChatPage = () => {
       });
       if (error) throw error;
       setNewMessage(data.response);
+      setTimeout(() => {
+        if (inputRef.current) {
+          inputRef.current.style.height = 'auto';
+          inputRef.current.style.height = Math.min(inputRef.current.scrollHeight, 160) + 'px';
+        }
+        inputRef.current?.focus();
+      }, 0);
     } catch (error) {
       toast.error('Intelligence service unavailable');
     } finally {
       setAiLoading(false);
     }
   };
+
+  const formatMessageTime = (timestamp) => {
+    const date = new Date(timestamp);
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
+
+  const formatMessageDate = (timestamp) => {
+    const date = new Date(timestamp);
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    if (date.toDateString() === today.toDateString()) return 'Today';
+    if (date.toDateString() === yesterday.toDateString()) return 'Yesterday';
+    return date.toLocaleDateString([], { month: 'short', day: 'numeric' });
+  };
+
+  const groupedMessages = messages.reduce((groups, msg) => {
+    const date = new Date(msg.created_at).toDateString();
+    if (!groups[date]) groups[date] = [];
+    groups[date].push(msg);
+    return groups;
+  }, {});
 
   if (loading) return (
     <div className="h-screen bg-black flex items-center justify-center">
@@ -188,22 +241,27 @@ const ChatPage = () => {
   );
 
   return (
-    <div className="h-screen flex flex-col bg-black overflow-hidden fixed inset-0 z-[60] font-sans">
-      {/* Precision Header */}
-      <header className="flex items-center gap-4 px-6 h-20 border-b border-white/5 bg-black/60 backdrop-blur-2xl">
-        <button onClick={() => navigate(-1)} className="p-2 -ml-2 text-zinc-500 hover:text-white transition-colors">
+    <div className="h-screen w-full flex flex-col bg-black overflow-hidden fixed inset-0 z-[60] font-sans">
+      {/* Header */}
+      <header className="flex-shrink-0 flex items-center gap-4 px-6 h-20 border-b border-white/5 bg-black/60 backdrop-blur-2xl z-50">
+        <button 
+          onClick={() => navigate(-1)} 
+          className="p-2 -ml-2 text-zinc-500 hover:text-white transition-colors"
+        >
           <ChevronLeft size={24} />
         </button>
-        
+
         <div className="flex items-center gap-3 flex-grow">
           <div className="w-10 h-10 rounded-2xl overflow-hidden border border-white/10 ring-2 ring-white/5">
-            <img src={match?.otherUser.photos[0]} alt="" className="w-full h-full object-cover" />
+            <img 
+              src={match?.otherUser.photos?.[0] || '/default-avatar.png'} 
+              alt={match?.otherUser.name}
+              className="w-full h-full object-cover"
+              onError={(e) => { e.target.src = '/default-avatar.png'; }}
+            />
           </div>
           <div>
             <h3 className="text-sm font-black uppercase tracking-widest italic">{match?.otherUser.name}</h3>
-            <div className="flex items-center gap-1.5">
-              <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
-            </div>
           </div>
         </div>
 
@@ -214,91 +272,158 @@ const ChatPage = () => {
         </div>
       </header>
 
-      {/* Message Stream */}
-      <div className="flex-grow overflow-y-auto p-6 space-y-6 scrollbar-hide">
-        {messages.map((msg, i) => {
-          const isOwn = msg.sender_id === user.id;
-          return (
-            <div key={msg.id || i} className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}>
-              <div
-                className={`max-w-[80%] px-5 py-3 text-sm font-medium leading-relaxed tracking-tight ${
-                  isOwn
-                    ? 'bg-white text-black rounded-[1.5rem] rounded-br-none shadow-xl shadow-white/5'
-                    : 'bg-zinc-900 text-zinc-200 border border-white/5 rounded-[1.5rem] rounded-bl-none'
-                }`}
-              >
-                {msg.content}
+      {/* Messages */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-1 scrollbar-hide">
+        {/* Chat Info Card */}
+        <div className="flex flex-col items-center py-4 space-y-2">
+          <div className="w-16 h-16 rounded-full overflow-hidden border border-white/10 ring-2 ring-white/5">
+            <img 
+              src={match?.otherUser.photos?.[0] || '/default-avatar.png'} 
+              alt={match?.otherUser.name}
+              className="w-full h-full object-cover"
+              onError={(e) => { e.target.src = '/default-avatar.png'; }}
+            />
+          </div>
+          <div className="text-center">
+            <h2 className="text-base font-black uppercase tracking-widest italic text-white">{match?.otherUser.name}</h2>
+            <p className="text-[10px] text-zinc-600 mt-0.5 uppercase tracking-wider">
+              {match?.otherUser.interests?.slice(0, 3).join(' · ') || 'No interests listed'}
+            </p>
+          </div>
+        </div>
+
+        {/* Messages by Date */}
+        {Object.entries(groupedMessages).map(([date, dayMessages]) => (
+          <div key={date} className="space-y-1">
+            <div className="flex items-center justify-center py-3">
+              <div className="text-[10px] text-zinc-700 font-bold uppercase tracking-[0.2em]">
+                {formatMessageDate(dayMessages[0].created_at)}
               </div>
             </div>
-          );
-        })}
+
+            {dayMessages.map((msg, i) => {
+              const isOwn = msg.sender_id === user.id;
+              const prevMsg = dayMessages[i - 1];
+              const isFirstInGroup = !prevMsg || prevMsg.sender_id !== msg.sender_id;
+
+              return (
+                <div 
+                  key={msg.id || i} 
+                  className={`flex ${isOwn ? 'justify-end' : 'justify-start'} ${isFirstInGroup ? 'mt-2' : 'mt-0.5'}`}
+                >
+                  <div className={`max-w-[80%] sm:max-w-[70%] relative group`}>
+                    <div
+                      className={`px-4 py-2 text-sm font-medium leading-relaxed tracking-tight whitespace-pre-wrap break-words ${
+                        isOwn
+                          ? 'bg-white text-black rounded-[1.5rem] rounded-br-none shadow-xl shadow-white/5'
+                          : 'bg-zinc-900 text-zinc-200 border border-white/5 rounded-[1.5rem] rounded-bl-none'
+                      }`}
+                    >
+                      {msg.content}
+                    </div>
+                    <div className={`text-[10px] text-zinc-700 mt-0.5 ${isOwn ? 'text-right' : 'text-left'} opacity-0 group-hover:opacity-100 transition-opacity`}>
+                      {formatMessageTime(msg.created_at)}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        ))}
+
+        {/* Typing Indicator */}
         {otherUserTyping && (
-          <div className="flex justify-start">
-            <div className="bg-zinc-900 text-zinc-400 px-5 py-3 rounded-[1.5rem] rounded-bl-none border border-white/5 flex items-center gap-1">
+          <div className="flex justify-start mt-2">
+            <div className="bg-zinc-900 text-zinc-400 px-4 py-2.5 rounded-[1.5rem] rounded-bl-none border border-white/5 flex items-center gap-1">
               <span className="w-1.5 h-1.5 bg-zinc-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
               <span className="w-1.5 h-1.5 bg-zinc-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
               <span className="w-1.5 h-1.5 bg-zinc-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
             </div>
           </div>
         )}
-        <div ref={scrollRef} />
+
+        <div ref={messagesEndRef} />
       </div>
 
-      {/* High-End Input Console */}
-      <footer className="p-6 bg-gradient-to-t from-black via-black/90 to-transparent relative">
-        {showEmojiPicker && (
-          <div className="absolute bottom-full left-6 mb-4 p-4 bg-zinc-900 border border-white/10 rounded-2xl shadow-2xl flex gap-2 flex-wrap max-w-[280px] z-50 animate-in fade-in slide-in-from-bottom-2">
-            {commonEmojis.map(emoji => (
-              <button
-                key={emoji}
-                onClick={() => addEmoji(emoji)}
-                className="text-2xl hover:scale-125 transition-transform p-1"
-              >
-                {emoji}
-              </button>
-            ))}
+      {/* Emoji Picker */}
+      {showEmojiPicker && (
+        <div ref={pickerRef} className="absolute bottom-[88px] left-4 z-50">
+          <div className="shadow-2xl rounded-2xl overflow-hidden border border-white/10">
+            <EmojiPicker
+              onEmojiClick={onEmojiClick}
+              theme="dark"
+              width={320}
+              height={380}
+              lazyLoadEmojis={true}
+              searchDisabled={false}
+              skinTonesDisabled={false}
+            />
           </div>
-        )}
+        </div>
+      )}
+
+      {/* Input Area */}
+      <footer className="flex-shrink-0 p-4 bg-gradient-to-t from-black via-black/90 to-transparent relative z-40">
         <form 
           onSubmit={handleSendMessage} 
-          className="max-w-4xl mx-auto flex gap-3 items-center bg-zinc-900/50 backdrop-blur-xl border border-white/5 p-2 rounded-[2rem]"
+          className="max-w-4xl mx-auto flex gap-2 items-end bg-zinc-900/50 backdrop-blur-xl border border-white/5 p-2 rounded-[2rem]"
         >
           <button
             type="button"
             onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-            className="w-12 h-12 rounded-full flex items-center justify-center text-zinc-500 hover:text-white hover:bg-white/5 transition-all"
+            className={`flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center transition-all ${
+              showEmojiPicker 
+                ? 'text-yellow-400 bg-white/10' 
+                : 'text-zinc-500 hover:text-white hover:bg-white/5'
+            }`}
           >
             <Smile size={20} />
           </button>
 
-          <button
-            type="button"
-            onClick={handleAiIcebreaker}
-            disabled={aiLoading}
-            className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${
-              aiLoading ? 'bg-white/5 text-white animate-pulse' : 'text-zinc-500 hover:text-white hover:bg-white/5'
-            }`}
-          >
-            <Sparkles size={20} className={aiLoading ? 'fill-current' : ''} />
-          </button>
-          
-          <input
-            type="text"
+          <textarea
+            ref={inputRef}
             value={newMessage}
-            onChange={handleTyping}
+            onChange={(e) => {
+              handleTyping(e);
+              e.target.style.height = 'auto';
+              e.target.style.height = Math.min(e.target.scrollHeight, 160) + 'px';
+            }}
+            onFocus={() => setShowEmojiPicker(false)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleSendMessage(e);
+              }
+            }}
             placeholder="Initialize response..."
-            className="flex-grow bg-transparent border-none px-2 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:ring-0"
+            rows={1}
+            className="flex-1 bg-transparent border-none px-2 py-3 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:ring-0 resize-none max-h-[160px] leading-relaxed whitespace-pre-wrap break-words"
           />
 
-          <button
-            type="submit"
-            disabled={!newMessage.trim()}
-            className="w-12 h-12 rounded-full bg-white text-black flex items-center justify-center transition-all hover:scale-105 active:scale-95 disabled:opacity-50 disabled:grayscale"
-          >
-            <Send size={18} className="fill-current" />
-          </button>
+          {/* Brain on the RIGHT */}
+          {!newMessage.trim() && (
+            <button
+              type="button"
+              onClick={handleAiIcebreaker}
+              disabled={aiLoading}
+              className={`flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center transition-all ${
+                aiLoading ? 'bg-white/5 text-white animate-pulse' : 'text-zinc-500 hover:text-white hover:bg-white/5'
+              }`}
+            >
+              <Brain size={20} className={aiLoading ? 'fill-current' : ''} />
+            </button>
+          )}
+
+          {/* Send button */}
+          {newMessage.trim() && (
+            <button
+              type="submit"
+              className="flex-shrink-0 w-12 h-12 rounded-full bg-white text-black flex items-center justify-center transition-all hover:scale-105 active:scale-95"
+            >
+              <Send size={18} className="fill-current" />
+            </button>
+          )}
         </form>
-        {/* Safe Area Spacer */}
         <div className="h-safe-bottom" />
       </footer>
     </div>

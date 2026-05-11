@@ -382,11 +382,6 @@ const HomePage = () => {
            {profile?.photos?.[0] ? <img src={profile.photos[0]} className="w-full h-full object-cover" /> : <Flame className="text-primary" />}
         </motion.button>
 
-        <div className="flex items-center gap-1">
-          <Flame size={28} className="text-primary fill-current" />
-          <span className="font-black text-2xl italic tracking-tighter">mambo</span>
-        </div>
-
         <motion.button
           whileTap={{ scale: 0.9 }}
           onClick={() => setShowFilters(true)}
