@@ -63,7 +63,7 @@ const ProfilePage = () => {
           <div className="bg-gradient-to-br from-amber-400 to-orange-500 p-6 rounded-[2rem] text-black shadow-xl shadow-orange-500/10">
             <div className="flex justify-between items-start mb-4">
               <div>
-                <h3 className="text-2xl font-black leading-none uppercase italic">Premium</h3>
+                <h3 className="text-2xl font-black leading-none uppercase ">Premium</h3>
                 <p className="text-xs font-bold opacity-80 mt-1">SEE WHO LIKES YOU & MORE</p>
               </div>
               <Crown size={28} />
