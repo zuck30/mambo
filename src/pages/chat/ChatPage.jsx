@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../hooks/useAuth';
-import { ChevronLeft, Send, Phone, Video, Sparkles, MoreVertical } from 'lucide-react';
+import { ChevronLeft, Send, Phone, Video, Sparkles, MoreVertical, Smile } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 
 const ChatPage = () => {
@@ -12,15 +12,24 @@ const ChatPage = () => {
   const [match, setMatch] = useState(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
+  const [otherUserTyping, setOtherUserTyping] = useState(false);
   const [loading, setLoading] = useState(true);
   const [aiLoading, setAiLoading] = useState(false);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const scrollRef = useRef();
+  const typingTimeoutRef = useRef(null);
+  const channelRef = useRef(null);
 
   useEffect(() => {
     fetchMatchAndMessages();
 
     const channel = supabase
-      .channel(`chat:${matchId}`)
+      .channel(`chat:${matchId}`, {
+        config: {
+          broadcast: { self: false }
+        }
+      })
       .on('postgres_changes', {
         event: 'INSERT',
         schema: 'public',
@@ -29,12 +38,23 @@ const ChatPage = () => {
       }, (payload) => {
         setMessages(prev => [...prev, payload.new]);
       })
-      .subscribe();
+      .on('broadcast', { event: 'typing' }, ({ payload }) => {
+        if (payload.userId !== user.id) {
+          setOtherUserTyping(payload.isTyping);
+        }
+      })
+      .subscribe((status) => {
+        if (status === 'SUBSCRIBED') {
+          channelRef.current = channel;
+        }
+      });
 
     return () => {
-      supabase.removeChannel(channel);
+      if (channel) {
+        supabase.removeChannel(channel);
+      }
     };
-  }, [matchId]);
+  }, [matchId, user.id]);
 
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -54,7 +74,10 @@ const ChatPage = () => {
 
       if (matchError) throw matchError;
 
-      const otherUser = matchData.user1.id === user.id ? matchData.user2 : matchData.user1;
+      const otherUser = matchData.user1?.id === user.id ? matchData.user2 : matchData.user1;
+      if (!otherUser) {
+        throw new Error('Other user profile not found or restricted');
+      }
       setMatch({ ...matchData, otherUser });
 
       const { data: msgData, error: msgError } = await supabase
@@ -66,6 +89,7 @@ const ChatPage = () => {
       if (msgError) throw msgError;
       setMessages(msgData || []);
     } catch (error) {
+      console.error('Chat Sync Error:', error);
       toast.error('Failed to sync chat');
       navigate('/app/messages');
     } finally {
@@ -73,9 +97,45 @@ const ChatPage = () => {
     }
   };
 
+  const handleTyping = (e) => {
+    setNewMessage(e.target.value);
+
+    if (!isTyping && channelRef.current) {
+      setIsTyping(true);
+      channelRef.current.send({
+        type: 'broadcast',
+        event: 'typing',
+        payload: { userId: user.id, isTyping: true }
+      });
+    }
+
+    if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+
+    typingTimeoutRef.current = setTimeout(() => {
+      setIsTyping(false);
+      if (channelRef.current) {
+        channelRef.current.send({
+          type: 'broadcast',
+          event: 'typing',
+          payload: { userId: user.id, isTyping: false }
+        });
+      }
+    }, 3000);
+  };
+
   const handleSendMessage = async (e) => {
     e.preventDefault();
     if (!newMessage.trim()) return;
+
+    // Stop typing indicator on send
+    setIsTyping(false);
+    if (channelRef.current) {
+      channelRef.current.send({
+        type: 'broadcast',
+        event: 'typing',
+        payload: { userId: user.id, isTyping: false }
+      });
+    }
 
     const content = newMessage;
     setNewMessage('');
@@ -95,6 +155,13 @@ const ChatPage = () => {
       setNewMessage(content);
     }
   };
+
+  const addEmoji = (emoji) => {
+    setNewMessage(prev => prev + emoji);
+    setShowEmojiPicker(false);
+  };
+
+  const commonEmojis = ['❤️', '😂', '😍', '🔥', '✨', '👋', '😊', '🙌', '💯', '🥂'];
 
   const handleAiIcebreaker = async () => {
     setAiLoading(true);
@@ -165,15 +232,45 @@ const ChatPage = () => {
             </div>
           );
         })}
+        {otherUserTyping && (
+          <div className="flex justify-start">
+            <div className="bg-zinc-900 text-zinc-400 px-5 py-3 rounded-[1.5rem] rounded-bl-none border border-white/5 flex items-center gap-1">
+              <span className="w-1.5 h-1.5 bg-zinc-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+              <span className="w-1.5 h-1.5 bg-zinc-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+              <span className="w-1.5 h-1.5 bg-zinc-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+            </div>
+          </div>
+        )}
         <div ref={scrollRef} />
       </div>
 
       {/* High-End Input Console */}
-      <footer className="p-6 bg-gradient-to-t from-black via-black/90 to-transparent">
+      <footer className="p-6 bg-gradient-to-t from-black via-black/90 to-transparent relative">
+        {showEmojiPicker && (
+          <div className="absolute bottom-full left-6 mb-4 p-4 bg-zinc-900 border border-white/10 rounded-2xl shadow-2xl flex gap-2 flex-wrap max-w-[280px] z-50 animate-in fade-in slide-in-from-bottom-2">
+            {commonEmojis.map(emoji => (
+              <button
+                key={emoji}
+                onClick={() => addEmoji(emoji)}
+                className="text-2xl hover:scale-125 transition-transform p-1"
+              >
+                {emoji}
+              </button>
+            ))}
+          </div>
+        )}
         <form 
           onSubmit={handleSendMessage} 
           className="max-w-4xl mx-auto flex gap-3 items-center bg-zinc-900/50 backdrop-blur-xl border border-white/5 p-2 rounded-[2rem]"
         >
+          <button
+            type="button"
+            onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+            className="w-12 h-12 rounded-full flex items-center justify-center text-zinc-500 hover:text-white hover:bg-white/5 transition-all"
+          >
+            <Smile size={20} />
+          </button>
+
           <button
             type="button"
             onClick={handleAiIcebreaker}
@@ -188,7 +285,7 @@ const ChatPage = () => {
           <input
             type="text"
             value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
+            onChange={handleTyping}
             placeholder="Initialize response..."
             className="flex-grow bg-transparent border-none px-2 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:ring-0"
           />
