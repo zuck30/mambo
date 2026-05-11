@@ -65,7 +65,7 @@ const MessagesPage = () => {
 
   return (
     <div className="p-6 pb-24">
-      <h1 className="text-2xl font-black mb-6 uppercase tracking-tighter italic">Messages</h1>
+      <h1 className="text-lg font-semibold mb-4 tracking-tight">Messages</h1>
 
       {/* Search Bar */}
       <div className="relative mb-6">
