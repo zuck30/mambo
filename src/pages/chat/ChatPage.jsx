@@ -241,34 +241,36 @@ const ChatPage = () => {
   );
 
   return (
-    <div className="h-screen w-full flex flex-col bg-black overflow-hidden fixed inset-0 z-[60] font-sans">
+    <div className="fixed inset-0 flex flex-col bg-black overflow-hidden z-[60] font-sans h-[100dvh] w-full">
       {/* Header */}
-      <header className="flex-shrink-0 flex items-center gap-4 px-6 h-20 border-b border-white/5 bg-black/60 backdrop-blur-2xl z-50">
-        <button 
-          onClick={() => navigate(-1)} 
-          className="p-2 -ml-2 text-zinc-500 hover:text-white transition-colors"
-        >
-          <ChevronLeft size={24} />
-        </button>
-
-        <div className="flex items-center gap-3 flex-grow">
-          <div className="w-10 h-10 rounded-2xl overflow-hidden border border-white/10 ring-2 ring-white/5">
-            <img 
-              src={match?.otherUser.photos?.[0] || '/default-avatar.png'} 
-              alt={match?.otherUser.name}
-              className="w-full h-full object-cover"
-              onError={(e) => { e.target.src = '/default-avatar.png'; }}
-            />
-          </div>
-          <div>
-            <h3 className="text-sm font-black uppercase tracking-widest italic">{match?.otherUser.name}</h3>
+      <header className="flex-shrink-0 flex items-center justify-between px-4 h-16 border-b border-white/5 bg-black/60 backdrop-blur-2xl z-50">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => navigate(-1)}
+            className="p-2 -ml-2 text-zinc-500 hover:text-white transition-colors"
+          >
+            <ChevronLeft size={24} />
+          </button>
+          <div className="flex items-center gap-3" onClick={() => navigate(`/app/profile/${match?.otherUser.id}`)}>
+            <div className="w-10 h-10 rounded-xl overflow-hidden border border-white/10">
+              <img
+                src={match?.otherUser.photos?.[0] || '/default-avatar.png'}
+                alt={match?.otherUser.name}
+                className="w-full h-full object-cover"
+                onError={(e) => { e.target.src = '/default-avatar.png'; }}
+              />
+            </div>
+            <div>
+              <h3 className="text-sm font-black uppercase tracking-widest italic leading-none">{match?.otherUser.name}</h3>
+              <p className="text-[9px] text-green-500 font-bold uppercase tracking-tighter mt-1">Active Now</p>
+            </div>
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          <button className="p-3 text-zinc-500 hover:text-white transition-colors"><Phone size={18} /></button>
-          <button className="p-3 text-zinc-500 hover:text-white transition-colors"><Video size={18} /></button>
-          <button className="p-3 text-zinc-500 hover:text-white transition-colors"><MoreVertical size={18} /></button>
+        <div className="flex items-center gap-1">
+          <button className="p-2 text-zinc-500 hover:text-white transition-colors"><Phone size={18} /></button>
+          <button className="p-2 text-zinc-500 hover:text-white transition-colors"><Video size={18} /></button>
+          <button className="p-2 text-zinc-500 hover:text-white transition-colors"><MoreVertical size={18} /></button>
         </div>
       </header>
 
@@ -363,7 +365,7 @@ const ChatPage = () => {
       )}
 
       {/* Input Area */}
-      <footer className="flex-shrink-0 p-4 bg-gradient-to-t from-black via-black/90 to-transparent relative z-40">
+      <footer className="flex-shrink-0 p-4 bg-gradient-to-t from-black via-black/90 to-transparent relative z-40 pb-safe">
         <form 
           onSubmit={handleSendMessage} 
           className="max-w-4xl mx-auto flex gap-2 items-end bg-zinc-900/50 backdrop-blur-xl border border-white/5 p-2 rounded-[2rem]"
@@ -424,7 +426,6 @@ const ChatPage = () => {
             </button>
           )}
         </form>
-        <div className="h-safe-bottom" />
       </footer>
     </div>
   );
