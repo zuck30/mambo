@@ -261,7 +261,7 @@ const ChatPage = () => {
               />
             </div>
             <div>
-              <h3 className="text-sm font-black uppercase tracking-widest leading-none">{match?.otherUser.name}</h3>
+              <h3 className="text-sm font-black uppercase tracking-widest italic leading-none">{match?.otherUser.name}</h3>
             </div>
           </div>
         </div>
