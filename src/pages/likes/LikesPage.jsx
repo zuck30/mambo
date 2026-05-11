@@ -117,7 +117,7 @@ const LikesPage = () => {
                 <div className="bg-black rounded-[2.5rem] p-10 text-center relative overflow-hidden">
                   <div className="relative z-10">
                     <Crown size={40} className="mx-auto text-amber-500 mb-4" />
-                    <h3 className="text-2xl font-black italic uppercase tracking-tighter mb-2">Reveal Everyone</h3>
+                    <h3 className="text-2xl font-black uppercase tracking-tighter mb-2">Reveal Everyone</h3>
                     <p className="text-zinc-400 text-sm mb-8 px-4 font-medium leading-relaxed">
                       Upgrade to <span className="text-amber-500 font-bold">Mambo Gold</span> to see all {likers.length} people who already liked you.
                     </p>
