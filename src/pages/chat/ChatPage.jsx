@@ -136,7 +136,6 @@ const ChatPage = () => {
             <h3 className="text-sm font-black uppercase tracking-widest italic">{match?.otherUser.name}</h3>
             <div className="flex items-center gap-1.5">
               <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
-              <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-tighter">Active Link</span>
             </div>
           </div>
         </div>
