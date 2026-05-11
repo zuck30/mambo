@@ -3,11 +3,13 @@ import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../hooks/useAuth';
 import { Link } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
+import { Search } from 'lucide-react';
 
 const MessagesPage = () => {
   const { user } = useAuth();
   const [matches, setMatches] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     fetchMatches();
@@ -57,19 +59,37 @@ const MessagesPage = () => {
     }
   };
 
+  const filteredMatches = matches.filter(m =>
+    m.otherUser.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-black mb-6">Messages</h1>
+    <div className="p-6 pb-24">
+      <h1 className="text-2xl font-black mb-6 uppercase tracking-tighter italic">Messages</h1>
+
+      {/* Search Bar */}
+      <div className="relative mb-6">
+        <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-zinc-500">
+          <Search size={18} />
+        </div>
+        <input
+          type="text"
+          placeholder="Search matches..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full bg-zinc-900/50 border border-white/5 rounded-2xl py-4 pl-12 pr-4 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:ring-1 focus:ring-white/10 transition-all"
+        />
+      </div>
 
       {loading ? (
         <div className="space-y-4">
           {[...Array(5)].map((_, i) => (
-            <div key={i} className="h-20 bg-dark-surface rounded-2xl animate-pulse" />
+            <div key={i} className="h-20 bg-white/5 rounded-2xl animate-pulse" />
           ))}
         </div>
-      ) : matches.length > 0 ? (
+      ) : filteredMatches.length > 0 ? (
         <div className="space-y-4">
-          {matches.map(m => (
+          {filteredMatches.map(m => (
             <Link
               key={m.id}
               to={`/app/chat/${m.id}`}

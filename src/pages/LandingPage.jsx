@@ -63,15 +63,15 @@ const LandingPage = () => {
       </div>
 
       {/* Navigation */}
-      <header className="absolute top-0 w-full z-50 flex items-center justify-between px-6 py-6 md:px-12 lg:px-20">
+      <header className="absolute top-0 w-full z-50 flex items-center justify-between px-4 py-4 md:px-12 lg:px-20">
         <motion.div 
           initial={{ x: -20, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
-          className="flex items-center gap-2 cursor-pointer" 
+          className="flex items-center gap-1.5 cursor-pointer"
           onClick={() => navigate('/')}
         >
-          <Flame className="text-[#ff79ac] fill-current" size={42} />
-          <span className="text-4xl font-black tracking-tighter">mambo</span>
+          <Flame className="text-[#ff79ac] fill-current w-8 h-8 md:w-10 md:h-10" size={32} />
+          <span className="text-2xl md:text-4xl font-black tracking-tighter">mambo</span>
         </motion.div>
 
         <nav className="hidden lg:flex gap-8 font-bold text-sm uppercase tracking-widest text-white/90">
@@ -86,16 +86,16 @@ const LandingPage = () => {
         <motion.div 
           initial={{ x: 20, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
-          className="flex items-center gap-6"
+          className="flex items-center gap-3 md:gap-6"
         >
           <button
             onClick={() => navigate('/login')}
-            className="bg-white text-black px-8 py-2.5 rounded-full font-bold text-sm uppercase hover:bg-[#ff79ac] hover:text-white transition-all shadow-xl active:scale-95"
+            className="bg-white text-black px-4 md:px-8 py-2 md:py-2.5 rounded-full font-bold text-xs md:text-sm uppercase hover:bg-[#ff79ac] hover:text-white transition-all shadow-xl active:scale-95 whitespace-nowrap"
           >
             Log in
           </button>
-          <button className="lg:hidden p-2 text-white" onClick={() => setIsMobileMenuOpen(true)}>
-            <Menu size={32} />
+          <button className="lg:hidden p-1 text-white" onClick={() => setIsMobileMenuOpen(true)}>
+            <Menu size={28} />
           </button>
         </motion.div>
       </header>
@@ -108,7 +108,7 @@ const LandingPage = () => {
           transition={{ duration: 0.8 }}
           className="mb-12"
         >
-          <h1 className="text-6xl md:text-[140px] font-black italic leading-none tracking-tighter uppercase select-none">
+          <h1 className="text-5xl md:text-[140px] font-black italic leading-none tracking-tighter uppercase select-none">
             Start<br />
             <TypewriterText texts={swahiliPhrases} />
           </h1>
@@ -118,11 +118,11 @@ const LandingPage = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5, duration: 0.8 }}
-          className="flex flex-col items-center gap-8"
+          className="flex flex-col items-center gap-8 w-full max-w-sm"
         >
           <button
             onClick={() => navigate('/register')}
-            className="group relative bg-gradient-to-r from-[#ff79ac] to-[#ff4d8c] text-white px-16 py-5 rounded-full text-2xl font-black uppercase tracking-tighter shadow-2xl overflow-hidden"
+            className="group relative bg-gradient-to-r from-[#ff79ac] to-[#ff4d8c] text-white px-8 md:px-16 py-4 md:py-5 rounded-full text-xl md:text-2xl font-black uppercase tracking-tighter shadow-2xl overflow-hidden w-full md:w-auto"
           >
             <span className="relative z-10 transition-transform group-hover:scale-110 inline-block">Create account</span>
             <motion.div 
@@ -134,7 +134,7 @@ const LandingPage = () => {
           </button>
 
           {/* App Stores Buttons */}
-          <div className="flex flex-wrap justify-center gap-4 mt-4">
+          <div className="flex flex-wrap justify-center gap-3 mt-4">
             {[
               { Icon: Apple, label: 'Download on the', store: 'App Store' },
               { Icon: PlayCircle, label: 'Get it on', store: 'Google Play' }
@@ -145,12 +145,12 @@ const LandingPage = () => {
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.8 + (i * 0.2) }}
                 href="#" 
-                className="flex items-center gap-3 bg-black/40 backdrop-blur-md border border-white/10 px-6 py-3 rounded-xl hover:border-[#ff79ac]/50 hover:bg-black/60 transition-all group"
+                className="flex items-center gap-2 bg-black/40 backdrop-blur-md border border-white/10 px-4 md:px-6 py-2 md:py-3 rounded-xl hover:border-[#ff79ac]/50 hover:bg-black/60 transition-all group"
               >
-                <btn.Icon size={28} className="text-white group-hover:text-[#ff79ac] transition-colors" />
+                <btn.Icon size={24} className="text-white group-hover:text-[#ff79ac] transition-colors" />
                 <div className="text-left leading-tight">
-                  <span className="text-[10px] uppercase block font-bold opacity-60">{btn.label}</span>
-                  <span className="text-lg font-black tracking-tight">{btn.store}</span>
+                  <span className="text-[8px] md:text-[10px] uppercase block font-bold opacity-60">{btn.label}</span>
+                  <span className="text-base md:text-lg font-black tracking-tight">{btn.store}</span>
                 </div>
               </motion.a>
             ))}
