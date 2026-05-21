@@ -261,7 +261,7 @@ const ChatPage = () => {
               />
             </div>
             <div>
-              <h3 className="text-sm font-black uppercase tracking-widest italic leading-none">{match?.otherUser.name}</h3>
+              <h3 className="text-sm font-black uppercase tracking-widest leading-none">{match?.otherUser.name}</h3>
             </div>
           </div>
         </div>
@@ -286,7 +286,7 @@ const ChatPage = () => {
             />
           </div>
           <div className="text-center">
-            <h2 className="text-base font-black uppercase tracking-widest italic text-white">{match?.otherUser.name}</h2>
+            <h2 className="text-base font-black uppercase tracking-widest text-white">{match?.otherUser.name}</h2>
             <p className="text-[10px] text-zinc-600 mt-0.5 uppercase tracking-wider">
               {match?.otherUser.interests?.slice(0, 3).join(' · ') || 'No interests listed'}
             </p>
