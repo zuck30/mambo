@@ -101,4 +101,4 @@ To create your first admin account:
 | `npm run lint` | Runs ESLint for code quality |
 
 ---
-© 2026 Mambo Group, LLC. All Rights Reserved.
+© 2026 Mambo Group. All Rights Reserved.
