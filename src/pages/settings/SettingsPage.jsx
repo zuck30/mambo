@@ -18,7 +18,7 @@ const SettingsPage = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [isEditingPhone, setIsEditingPhone] = useState(false);
-  const [phoneNumber, setPhoneNumber] = useState(profile?.phone || '');
+  const [phoneNumber, setPhoneNumber] = useState(profile?.phone_number || '');
   const [expandedSection, setExpandedSection] = useState(null);
 
   const handleUpdatePhone = async () => {
@@ -26,7 +26,7 @@ const SettingsPage = () => {
     try {
       const { error } = await supabase
         .from('profiles')
-        .update({ phone: phoneNumber })
+        .update({ phone_number: phoneNumber })
         .eq('id', profile.id);
       if (error) throw error;
       await fetchProfile(profile.id);
@@ -124,13 +124,14 @@ const SettingsPage = () => {
                   />
                   <button
                     onClick={handleUpdatePhone}
-                    className="bg-white text-black px-5 rounded-xl font-bold text-xs uppercase"
+                    disabled={loading}
+                    className="bg-white text-black px-5 rounded-xl font-bold text-xs uppercase disabled:opacity-50"
                   >
-                    {t.save}
+                    {loading ? '...' : t.save}
                   </button>
                 </div>
               ) : (
-                <p className="text-zinc-500 text-sm ml-14">{profile?.phone || 'Not linked'}</p>
+                <p className="text-zinc-500 text-sm ml-14">{profile?.phone_number || 'Not linked'}</p>
               )}
             </div>
 
