@@ -181,7 +181,7 @@ const HomePage = () => {
   };
 
   const calculateDistance = (lat1, lon1, lat2, lon2) => {
-    const R = 6371;
+    const R = 6371; // Radius of the earth in km
     const dLat = (lat2 - lat1) * Math.PI / 180;
     const dLon = (lon2 - lon1) * Math.PI / 180;
     const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
@@ -274,6 +274,7 @@ const HomePage = () => {
   };
 
   const checkMatch = async (otherProfile) => {
+    console.log(`Checking match with user: ${otherProfile.id}`);
     try {
       // maybeSingle avoids 406 if no match found
       const { data: otherSwipe, error: checkError } = await supabase
@@ -285,9 +286,11 @@ const HomePage = () => {
         .maybeSingle();
 
       if (checkError) {
-         console.warn('Error checking for match:', checkError);
+         console.warn('Error checking for reciprocal swipe:', checkError);
          return;
       }
+
+      console.log('Reciprocal swipe search result:', otherSwipe);
 
       if (otherSwipe) {
         console.log('Match detected! Creating match record...');
@@ -302,10 +305,12 @@ const HomePage = () => {
           .single();
 
         if (!matchError && matchData) {
+          console.log('Match record created/updated:', matchData.id);
           // Immediately update recent matches to show the new match
           fetchRecentMatches();
           setMatchedUser({ ...otherProfile, matchId: matchData.id });
           setShowMatch(true);
+          console.log('ShowMatch state set to TRUE');
           confetti({
             particleCount: 150,
             spread: 70,

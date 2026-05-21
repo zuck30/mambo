@@ -127,14 +127,13 @@ BEGIN
     AND p.birthday >= (CURRENT_DATE - (p_max_age || ' years')::INTERVAL)
     AND p.birthday <= (CURRENT_DATE - (p_min_age || ' years')::INTERVAL)
     -- Distance Filter (Haversine Formula)
-    -- Simplified to allow cross-checking client vs server
     AND (
-      p_latitude IS NULL OR p_longitude IS NULL OR p.latitude IS NULL OR p.longitude IS NULL OR
+      p_latitude IS NULL OR p_longitude IS NULL OR
       (6371 * acos(
         least(1.0,
+          sin(radians(p_latitude)) * sin(radians(p.latitude)) +
           cos(radians(p_latitude)) * cos(radians(p.latitude)) *
-          cos(radians(p_longitude) - radians(p.longitude)) +
-          sin(radians(p_latitude)) * sin(radians(p.latitude))
+          cos(radians(p.longitude) - radians(p.longitude))
         )
       )) <= p_distance_pref
     )
