@@ -64,6 +64,7 @@ const HomePage = () => {
           user1:profiles!user1_id(id, name, photos),
           user2:profiles!user2_id(id, name, photos)
         `)
+        .eq('is_active', true)
         .or(`user1_id.eq.${user.id},user2_id.eq.${user.id}`)
         .order('created_at', { ascending: false })
         .limit(10);
@@ -201,8 +202,29 @@ const HomePage = () => {
     return d.toISOString().split('T')[0];
   };
 
+  const triggerHaptic = (type = 'light') => {
+    if (!window.navigator.vibrate) return;
+
+    switch(type) {
+      case 'match':
+        window.navigator.vibrate([100, 50, 100]);
+        break;
+      case 'superlike':
+        window.navigator.vibrate([50, 30, 50]);
+        break;
+      case 'light':
+      default:
+        window.navigator.vibrate(10);
+        break;
+    }
+  };
+
   const handleSwipe = async (direction, swipedProfile) => {
     if (!swipedProfile || loading) return;
+
+    if (direction === 'like' || direction === 'superlike') {
+      triggerHaptic(direction === 'superlike' ? 'superlike' : 'light');
+    }
 
     // Optimistic UI update
     setStack(prev => prev.filter(p => p.id !== swipedProfile.id));
@@ -225,6 +247,7 @@ const HomePage = () => {
       if (direction === 'like' || direction === 'superlike') {
         const matchId = await checkMatch(swipedProfile);
         if (matchId) {
+          triggerHaptic('match');
           setMatchedUser({ ...swipedProfile, matchId });
           setShowMatch(true);
           fetchRecentMatches();

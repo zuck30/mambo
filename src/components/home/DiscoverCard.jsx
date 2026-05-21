@@ -19,11 +19,14 @@ const DiscoverCard = ({ profile, onSwipe, onClick }) => {
   const superLikeOpacity = useTransform(y, [-120, -60], [1, 0]);
 
   const handleDragEnd = (event, info) => {
-    if (info.offset.x > 120) {
+    const threshold = 120;
+    const velocityThreshold = 500;
+
+    if (info.offset.x > threshold || info.velocity.x > velocityThreshold) {
       onSwipe('like');
-    } else if (info.offset.x < -120) {
+    } else if (info.offset.x < -threshold || info.velocity.x < -velocityThreshold) {
       onSwipe('pass');
-    } else if (info.offset.y < -120) {
+    } else if (info.offset.y < -threshold || info.velocity.y < -velocityThreshold) {
       onSwipe('superlike');
     }
   };

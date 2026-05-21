@@ -22,10 +22,12 @@ const MessagesPage = () => {
         .select(`
           id,
           created_at,
+          is_active,
           user1:profiles!user1_id(id, name, photos),
           user2:profiles!user2_id(id, name, photos),
           messages(content, created_at, is_read, sender_id)
         `)
+        .eq('is_active', true)
         .or(`user1_id.eq.${user.id},user2_id.eq.${user.id}`)
         .order('created_at', { ascending: false })
         .order('created_at', { ascending: false, referencedTable: 'messages' });
