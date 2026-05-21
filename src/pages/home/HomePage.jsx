@@ -278,36 +278,58 @@ const HomePage = () => {
   const checkMatch = async (otherProfile) => {
     console.log(`Checking match with user: ${otherProfile.id}`);
     try {
-      // maybeSingle avoids 406 if no match found
-      const { data: otherSwipe, error: checkError } = await supabase
+      // Use select() instead of maybeSingle() to avoid 406 errors and handle duplicates gracefully
+      const { data: otherSwipes, error: checkError } = await supabase
         .from('swipes')
         .select('direction')
         .eq('swiper_id', otherProfile.id)
         .eq('swiped_id', user.id)
-        .in('direction', ['like', 'superlike'])
-        .maybeSingle();
+        .in('direction', ['like', 'superlike']);
 
       if (checkError) {
-         console.warn('Error checking for reciprocal swipe:', checkError);
+         console.error('Error checking for reciprocal swipe:', checkError);
          return false;
       }
 
-      console.log('Reciprocal swipe search result:', otherSwipe);
+      const hasReciprocalSwipe = otherSwipes && otherSwipes.length > 0;
+      console.log('Reciprocal swipe search result:', otherSwipes);
 
-      if (otherSwipe) {
-        console.log('Match detected! Creating match record...');
+      if (hasReciprocalSwipe) {
+        console.log('Match detected! Processing match record...');
         const [u1, u2] = [user.id, otherProfile.id].sort();
-        const { data: matchData, error: matchError } = await supabase
+
+        // 1. Check if match already exists
+        const { data: existingMatch, error: existingError } = await supabase
           .from('matches')
-          .upsert(
-            { user1_id: u1, user2_id: u2, is_active: true, created_at: new Date().toISOString() },
-            { onConflict: 'user1_id,user2_id' }
-          )
           .select('id, user1_id, user2_id')
-          .single();
+          .eq('user1_id', u1)
+          .eq('user2_id', u2)
+          .maybeSingle();
+
+        if (existingError) {
+          console.error('Error checking for existing match:', existingError);
+        }
+
+        let matchData = existingMatch;
+        let matchError = null;
+
+        // 2. Create match if it doesn't exist
+        if (!matchData) {
+          const { data, error } = await supabase
+            .from('matches')
+            .upsert(
+              { user1_id: u1, user2_id: u2, is_active: true, created_at: new Date().toISOString() },
+              { onConflict: 'user1_id,user2_id' }
+            )
+            .select('id, user1_id, user2_id')
+            .single();
+
+          matchData = data;
+          matchError = error;
+        }
 
         if (!matchError && matchData) {
-          console.log('Match record created/updated:', matchData.id);
+          console.log('Match confirmed:', matchData.id);
           // Immediately update recent matches to show the new match
           fetchRecentMatches();
           setMatchedUser({ ...otherProfile, matchId: matchData.id });
@@ -321,14 +343,15 @@ const HomePage = () => {
           });
           return true;
         } else {
-           console.error('Match creation error:', matchError);
-           toast.error('Failed to create match record');
+           console.error('Match creation/retrieval error:', matchError);
+           toast.error('Could not finalize match. Please try again.');
            return false;
         }
       }
       return false;
     } catch (err) {
       console.error('Internal match check error:', err);
+      toast.error('An unexpected error occurred during match check.');
       return false;
     }
   };
