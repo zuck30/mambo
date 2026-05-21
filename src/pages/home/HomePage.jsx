@@ -29,7 +29,7 @@ const HomePage = () => {
       fetchDiscoveryStack();
       fetchRecentMatches();
     }
-  }, [profile?.id, profile?.show_gender, profile?.distance_pref, profile?.min_age_pref, profile?.max_age_pref]);
+  }, [profile?.id, profile?.gender, profile?.show_gender, profile?.distance_pref, profile?.min_age_pref, profile?.max_age_pref]);
 
   const fetchRecentMatches = async () => {
     if (!user) return;
@@ -104,7 +104,8 @@ const HomePage = () => {
         .eq('is_onboarded', true);
 
       if (swipedIds.length > 0) {
-        query = query.not('id', 'in', swipedIds);
+        // Explicitly format for PostgREST: (val1,val2,...)
+        query = query.filter('id', 'not.in', `(${swipedIds.join(',')})`);
       }
 
       // Bidirectional gender filter
@@ -116,9 +117,11 @@ const HomePage = () => {
         }
       }
 
-      // Ensure the other person wants to see current user's gender
+      // Ensure the candidate also wants to see the current user's gender
       if (profile.gender) {
-        const myGenderAsPref = profile.gender === 'male' ? 'men' : profile.gender === 'female' ? 'women' : 'everyone';
+        const myGenderAsPref = profile.gender === 'male' ? 'men' :
+                               profile.gender === 'female' ? 'women' : 'everyone';
+        // Only filter if user identifies as male or female; otherwise 'everyone' should cover them
         if (myGenderAsPref !== 'everyone') {
           query = query.or(`show_gender.eq.${myGenderAsPref},show_gender.eq.everyone`);
         }
@@ -137,10 +140,12 @@ const HomePage = () => {
       console.log(`Found ${data?.length || 0} potential profiles after SQL filtering.`);
 
       const filteredData = data?.filter(p => {
-        if (!profile.latitude || !p.latitude) return true;
+        if (profile.latitude === null || p.latitude === null || profile.latitude === undefined || p.latitude === undefined) return true;
         const d = calculateDistance(profile.latitude, profile.longitude, p.latitude, p.longitude);
-        const isWithinDistance = d <= (profile.distance_pref || 80);
-        return isWithinDistance;
+
+        // If distance_pref is set, respect it. Default to 80km.
+        const maxDistance = profile.distance_pref || 80;
+        return d <= maxDistance;
       });
 
       console.log(`Remaining ${filteredData?.length || 0} profiles after distance filtering.`);
@@ -160,7 +165,7 @@ const HomePage = () => {
         }
 
         // Bonus for same school
-        if (profile.school && p.school && profile.school.toLowerCase() === p.school.toLowerCase()) {
+        if (profile.school && p.school && profile.school.trim().toLowerCase() === p.school.trim().toLowerCase()) {
           score += 50;
         }
 
@@ -180,8 +185,8 @@ const HomePage = () => {
 
       setStack(sortedData || []);
     } catch (error) {
-      console.error('Error fetching stack:', error);
-      toast.error('Failed to load discovery feed');
+      console.error('Detailed error fetching stack:', error);
+      toast.error(`Failed to load discovery feed: ${error.message || 'Unknown error'}`);
     } finally {
       setLoading(false);
     }
