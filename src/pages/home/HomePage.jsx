@@ -104,16 +104,23 @@ const HomePage = () => {
         .eq('is_onboarded', true);
 
       if (swipedIds.length > 0) {
-        // Use a chunked approach or limit if swipedIds is extremely large
-        // For now, ensure it's a valid parenthesized list
-        query = query.not('id', 'in', `(${swipedIds.join(',')})`);
+        query = query.not('id', 'in', swipedIds);
       }
 
+      // Bidirectional gender filter
       if (profile.show_gender && profile.show_gender !== 'everyone') {
         const genderMap = { 'men': 'male', 'women': 'female' };
         const targetGender = genderMap[profile.show_gender];
         if (targetGender) {
           query = query.eq('gender', targetGender);
+        }
+      }
+
+      // Ensure the other person wants to see current user's gender
+      if (profile.gender) {
+        const myGenderAsPref = profile.gender === 'male' ? 'men' : profile.gender === 'female' ? 'women' : 'everyone';
+        if (myGenderAsPref !== 'everyone') {
+          query = query.or(`show_gender.eq.${myGenderAsPref},show_gender.eq.everyone`);
         }
       }
 
@@ -138,28 +145,33 @@ const HomePage = () => {
 
       console.log(`Remaining ${filteredData?.length || 0} profiles after distance filtering.`);
 
-      // Advanced Sorting with Location, Interests, and Randomness
+      // Advanced Sorting with Location, Interests, School, and Randomness
       const myInterests = profile.interests || [];
       const dataWithScores = filteredData?.map(p => {
         if (!p || !p.id) return null;
         const pInterests = p.interests || [];
         const commonInterestsCount = pInterests.filter(i => myInterests.includes(i)).length;
 
-        let score = (commonInterestsCount * 10); // Interests are high priority
+        let score = (commonInterestsCount * 25); // Increased weight for common interests
 
         // Priority boost for people who already liked you
         if (likedMeIds.includes(p.id)) {
-          score += 100;
+          score += 150;
+        }
+
+        // Bonus for same school
+        if (profile.school && p.school && profile.school.toLowerCase() === p.school.toLowerCase()) {
+          score += 50;
         }
 
         if (profile.latitude && profile.longitude && p.latitude && p.longitude) {
           const distance = calculateDistance(profile.latitude, profile.longitude, p.latitude, p.longitude);
           // Higher score for closer users
-          score += Math.max(0, 50 - (distance / 2));
+          score += Math.max(0, 100 - (distance));
         }
 
-        // Stable randomness (0-10 points)
-        score += Math.random() * 10;
+        // Stable randomness (0-20 points)
+        score += Math.random() * 20;
 
         return { ...p, _score: score, commonInterestsCount };
       }).filter(Boolean);
@@ -240,13 +252,15 @@ const HomePage = () => {
   };
 
   const handleRewind = async () => {
-    const lastProfile = swipeHistory[0];
-    if (!lastProfile) {
+    if (loading || swipeHistory.length === 0) {
       toast.error('Nothing to rewind');
       return;
     }
 
+    const lastProfile = swipeHistory[0];
+
     try {
+      setLoading(true);
       const { error } = await supabase
         .from('swipes')
         .delete()
@@ -261,6 +275,8 @@ const HomePage = () => {
     } catch (error) {
       console.error('Rewind error:', error);
       toast.error('Failed to undo swipe');
+    } finally {
+      setLoading(false);
     }
   };
 

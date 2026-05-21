@@ -262,7 +262,7 @@ const OnboardingPage = () => {
           </button>
         </div>
       ),
-      isValid: !!formData.latitude,
+      isValid: formData.latitude !== null,
     }
   ];
 
