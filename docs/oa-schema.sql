@@ -14,6 +14,7 @@ CREATE TABLE profiles (
   bio TEXT,
   job TEXT,
   school TEXT,
+  phone_number TEXT UNIQUE,
   interests TEXT[] DEFAULT '{}',
   photos TEXT[] DEFAULT '{}',
   latitude FLOAT8,
