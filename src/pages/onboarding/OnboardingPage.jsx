@@ -90,7 +90,7 @@ const OnboardingPage = () => {
           id: user.id,
           ...formData,
           is_onboarded: true,
-          updated_at: new Date(),
+          updated_at: new Date().toISOString(),
         });
 
       if (error) throw error;

@@ -55,7 +55,8 @@ const HomePage = () => {
       const formatted = data.map(m => {
         if (!m.user1 || !m.user2) return null;
         const otherUser = m.user1.id === user.id ? m.user2 : m.user1;
-        return { id: m.id, ...otherUser };
+        // Include the match id explicitly to avoid being overwritten by user id
+        return { matchId: m.id, ...otherUser };
       }).filter(Boolean);
       setRecentMatches(formatted);
     } catch (err) {
@@ -121,9 +122,9 @@ const HomePage = () => {
       if (profile.gender) {
         const myGenderAsPref = profile.gender === 'male' ? 'men' :
                                profile.gender === 'female' ? 'women' : 'everyone';
-        // Only filter if user identifies as male or female; otherwise 'everyone' should cover them
+        // If candidate hasn't set show_gender, we assume they want to see everyone (relaxed filtering)
         if (myGenderAsPref !== 'everyone') {
-          query = query.or(`show_gender.eq.${myGenderAsPref},show_gender.eq.everyone`);
+          query = query.or(`show_gender.eq.${myGenderAsPref},show_gender.eq.everyone,show_gender.is.null`);
         }
       }
 
@@ -137,15 +138,27 @@ const HomePage = () => {
       const { data, error } = await query.limit(1000);
       if (error) throw error;
 
-      console.log(`Found ${data?.length || 0} potential profiles after SQL filtering.`);
+      console.log(`Found ${data?.length || 0} potential profiles after SQL filtering. My coords: ${profile.latitude}, ${profile.longitude}`);
 
       const filteredData = data?.filter(p => {
-        if (profile.latitude === null || p.latitude === null || profile.latitude === undefined || p.latitude === undefined) return true;
-        const d = calculateDistance(profile.latitude, profile.longitude, p.latitude, p.longitude);
+        if (profile.latitude === null || p.latitude === null || profile.latitude === undefined || p.latitude === undefined) {
+          console.log(`Skipping distance filter for user ${p.id} due to missing coords.`);
+          return true;
+        }
+        const d = calculateDistance(
+          Number(profile.latitude),
+          Number(profile.longitude),
+          Number(p.latitude),
+          Number(p.longitude)
+        );
 
         // If distance_pref is set, respect it. Default to 80km.
         const maxDistance = profile.distance_pref || 80;
-        return d <= maxDistance;
+        const isWithin = d <= maxDistance;
+        if (!isWithin) {
+          console.log(`User ${p.id} is too far: ${d.toFixed(2)}km (Max: ${maxDistance}km)`);
+        }
+        return isWithin;
       });
 
       console.log(`Remaining ${filteredData?.length || 0} profiles after distance filtering.`);
@@ -419,8 +432,8 @@ const HomePage = () => {
             <motion.button
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
-              key={`match-${m.id}`}
-              onClick={() => navigate(`/app/chat/${m.id}`)}
+              key={`match-${m.matchId}`}
+              onClick={() => navigate(`/app/chat/${m.matchId}`)}
               className="flex-shrink-0 flex flex-col items-center gap-1"
             >
               <div className="w-16 h-16 rounded-full p-0.5 bg-gradient-to-tr from-primary to-purple-500">
