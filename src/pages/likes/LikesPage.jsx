@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../hooks/useAuth';
-import { Diamond, Lock, Sparkles, Crown } from 'lucide-react';
+import { Lock, Ghost, Crown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const LikesPage = () => {
@@ -103,7 +103,7 @@ const LikesPage = () => {
                     {/* Superlike Indicator */}
                     {p.isSuperLike && (
                       <div className="absolute top-4 left-4 bg-blue-500 p-2 rounded-xl shadow-lg shadow-blue-500/40">
-                        <Sparkles size={12} className="text-white fill-current" />
+                        <Ghost size={12} className="text-white fill-current" />
                       </div>
                     )}
                   </motion.div>
@@ -135,9 +135,9 @@ const LikesPage = () => {
         ) : (
           <div className="flex flex-col items-center justify-center py-32 text-center">
             <div className="w-24 h-24 rounded-[2.5rem] bg-zinc-900/50 border border-white/5 flex items-center justify-center mb-6">
-              <Diamond size={40} className="text-white/10" />
+              <Ghost size={40} className="text-white/10" />
             </div>
-            <h2 className="text-xl font-black uppercase italic tracking-widest mb-2 text-white/40">Quiet for now</h2>
+            <h2 className="text-xl font-black uppercase tracking-widest mb-2 text-white/40">Quiet for now</h2>
             <p className="text-zinc-500 text-sm max-w-[200px] mx-auto">
               Keep discovering. When someone likes you, they'll show up here.
             </p>
