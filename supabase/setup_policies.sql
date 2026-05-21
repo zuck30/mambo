@@ -89,3 +89,55 @@ ON profiles FOR ALL
 TO authenticated
 USING (auth.uid() = id)
 WITH CHECK (auth.uid() = id);
+
+-- 6. Discovery RPC Function
+-- This function performs the complex discovery query on the server side for better performance and robustness.
+CREATE OR REPLACE FUNCTION get_discovery_stack(
+  p_user_id UUID,
+  p_latitude FLOAT,
+  p_longitude FLOAT,
+  p_distance_pref INT,
+  p_show_gender TEXT,
+  p_min_age INT,
+  p_max_age INT,
+  p_user_gender TEXT
+)
+RETURNS SETOF profiles AS $$
+BEGIN
+  RETURN QUERY
+  SELECT p.*
+  FROM profiles p
+  WHERE p.id != p_user_id
+    AND p.is_onboarded = true
+    -- Exclude users already swiped
+    AND NOT EXISTS (
+      SELECT 1 FROM swipes s
+      WHERE s.swiper_id = p_user_id AND s.swiped_id = p.id
+    )
+    -- Gender Filter (Bidirectional)
+    AND (
+      p_show_gender = 'everyone' OR
+      p.gender = (CASE WHEN p_show_gender = 'men' THEN 'male' WHEN p_show_gender = 'women' THEN 'female' ELSE NULL END)
+    )
+    AND (
+      p.show_gender = 'everyone' OR p.show_gender IS NULL OR
+      p.show_gender = (CASE WHEN p_user_gender = 'male' THEN 'men' WHEN p_user_gender = 'female' THEN 'women' ELSE 'everyone' END)
+    )
+    -- Age Filter
+    AND p.birthday >= (CURRENT_DATE - (p_max_age || ' years')::INTERVAL)
+    AND p.birthday <= (CURRENT_DATE - (p_min_age || ' years')::INTERVAL)
+    -- Distance Filter (Haversine Formula)
+    -- Simplified to allow cross-checking client vs server
+    AND (
+      p_latitude IS NULL OR p_longitude IS NULL OR p.latitude IS NULL OR p.longitude IS NULL OR
+      (6371 * acos(
+        least(1.0,
+          cos(radians(p_latitude)) * cos(radians(p.latitude)) *
+          cos(radians(p_longitude) - radians(p.longitude)) +
+          sin(radians(p_latitude)) * sin(radians(p.latitude))
+        )
+      )) <= p_distance_pref
+    )
+  LIMIT 50;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;

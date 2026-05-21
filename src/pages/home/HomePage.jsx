@@ -28,8 +28,26 @@ const HomePage = () => {
     if (profile?.id) {
       fetchDiscoveryStack();
       fetchRecentMatches();
+      fetchSwipeHistory();
     }
   }, [profile?.id, profile?.gender, profile?.show_gender, profile?.distance_pref, profile?.min_age_pref, profile?.max_age_pref]);
+
+  const fetchSwipeHistory = async () => {
+    if (!user) return;
+    try {
+      const { data, error } = await supabase
+        .from('swipes')
+        .select('swiped_id, direction, created_at, swiped_profile:profiles!swiped_id(*)')
+        .eq('swiper_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(20);
+
+      if (error) throw error;
+      setSwipeHistory(data.map(s => s.swiped_profile).filter(Boolean));
+    } catch (err) {
+      console.warn('Error fetching swipe history:', err);
+    }
+  };
 
   const fetchRecentMatches = async () => {
     if (!user) return;
@@ -70,136 +88,93 @@ const HomePage = () => {
     if (isRefresh) setStack([]);
 
     try {
-      const { data: swipedData, error: swipesError } = await supabase
-        .from('swipes')
-        .select('swiped_id')
-        .eq('swiper_id', user.id);
-
-      if (swipesError) {
-        console.warn('Could not fetch previous swipes (this is normal for new accounts):', swipesError);
-      }
-
-      // Sanitize swiped IDs and ensure uniqueness
-      const swipedIds = Array.from(new Set([
-        ...(swipedData?.map(s => s.swiped_id) || []),
-        user.id
-      ])).filter(Boolean);
-
-      // Fetch users who liked me to prioritize them
-      let likedMeIds = [];
-      try {
-        const { data: likedMeData } = await supabase
-          .from('swipes')
-          .select('swiper_id')
-          .eq('swiped_id', user.id)
-          .in('direction', ['like', 'superlike']);
-
-        likedMeIds = likedMeData?.map(s => s.swiper_id) || [];
-      } catch (e) {
-        console.warn('Error fetching reciprocal likes:', e);
-      }
-
-      let query = supabase
-        .from('profiles')
-        .select('*')
-        .eq('is_onboarded', true);
-
-      if (swipedIds.length > 0) {
-        // Explicitly format for PostgREST: (val1,val2,...)
-        query = query.filter('id', 'not.in', `(${swipedIds.join(',')})`);
-      }
-
-      // Bidirectional gender filter
-      if (profile.show_gender && profile.show_gender !== 'everyone') {
-        const genderMap = { 'men': 'male', 'women': 'female' };
-        const targetGender = genderMap[profile.show_gender];
-        if (targetGender) {
-          query = query.eq('gender', targetGender);
-        }
-      }
-
-      // Ensure the candidate also wants to see the current user's gender
-      if (profile.gender) {
-        const myGenderAsPref = profile.gender === 'male' ? 'men' :
-                               profile.gender === 'female' ? 'women' : 'everyone';
-        // If candidate hasn't set show_gender, we assume they want to see everyone (relaxed filtering)
-        if (myGenderAsPref !== 'everyone') {
-          query = query.or(`show_gender.eq.${myGenderAsPref},show_gender.eq.everyone,show_gender.is.null`);
-        }
-      }
-
-      const minAge = profile.min_age_pref || 18;
-      const maxAge = profile.max_age_pref || 100;
-
-      query = query
-        .gte('birthday', formatDate(maxAge))
-        .lte('birthday', formatDate(minAge));
-
-      const { data, error } = await query.limit(1000);
-      if (error) throw error;
-
-      console.log(`Found ${data?.length || 0} potential profiles after SQL filtering. My coords: ${profile.latitude}, ${profile.longitude}`);
-
-      const filteredData = data?.filter(p => {
-        if (profile.latitude === null || p.latitude === null || profile.latitude === undefined || p.latitude === undefined) {
-          console.log(`Skipping distance filter for user ${p.id} due to missing coords.`);
-          return true;
-        }
-        const d = calculateDistance(
-          Number(profile.latitude),
-          Number(profile.longitude),
-          Number(p.latitude),
-          Number(p.longitude)
-        );
-
-        // If distance_pref is set, respect it. Default to 80km.
-        const maxDistance = profile.distance_pref || 80;
-        const isWithin = d <= maxDistance;
-        if (!isWithin) {
-          console.log(`User ${p.id} is too far: ${d.toFixed(2)}km (Max: ${maxDistance}km)`);
-        }
-        return isWithin;
+      // 1. Try fetching via RPC (Server-side heavy lifting)
+      const { data: rpcData, error: rpcError } = await supabase.rpc('get_discovery_stack', {
+        p_user_id: user.id,
+        p_latitude: profile.latitude,
+        p_longitude: profile.longitude,
+        p_distance_pref: profile.distance_pref || 80,
+        p_show_gender: profile.show_gender || 'everyone',
+        p_min_age: profile.min_age_pref || 18,
+        p_max_age: profile.max_age_pref || 100,
+        p_user_gender: profile.gender
       });
 
-      console.log(`Remaining ${filteredData?.length || 0} profiles after distance filtering.`);
+      let discoveryData = [];
 
-      // Advanced Sorting with Location, Interests, School, and Randomness
+      if (!rpcError && rpcData) {
+        console.log('RPC Discovery Success:', rpcData.length, 'profiles found');
+        discoveryData = rpcData;
+      } else {
+        console.warn('RPC Discovery failed or not found, falling back to JS filtering:', rpcError);
+        // 2. Fallback to JS Filtering (Legacy/Safety)
+        const { data: swipedData } = await supabase
+          .from('swipes')
+          .select('swiped_id')
+          .eq('swiper_id', user.id);
+
+        const swipedIds = Array.from(new Set([
+          ...(swipedData?.map(s => s.swiped_id) || []),
+          user.id
+        ])).filter(Boolean);
+
+        let query = supabase.from('profiles').select('*').eq('is_onboarded', true);
+        if (swipedIds.length > 0) {
+          query = query.filter('id', 'not.in', `(${swipedIds.join(',')})`);
+        }
+
+        if (profile.show_gender && profile.show_gender !== 'everyone') {
+          const genderMap = { 'men': 'male', 'women': 'female' };
+          const targetGender = genderMap[profile.show_gender];
+          if (targetGender) query = query.eq('gender', targetGender);
+        }
+
+        const minAge = profile.min_age_pref || 18;
+        const maxAge = profile.max_age_pref || 100;
+        query = query.gte('birthday', formatDate(maxAge)).lte('birthday', formatDate(minAge));
+
+        const { data, error } = await query.limit(1000);
+        if (error) throw error;
+
+        discoveryData = data?.filter(p => {
+          if (profile.latitude == null || p.latitude == null) return true;
+          const d = calculateDistance(profile.latitude, profile.longitude, p.latitude, p.longitude);
+          return d <= (profile.distance_pref || 80);
+        }) || [];
+      }
+
+      // 3. Common Scoring & Sorting (applied to both RPC and Fallback)
       const myInterests = profile.interests || [];
-      const dataWithScores = filteredData?.map(p => {
+      // Fetch users who liked me to prioritize them
+      const { data: likedMeData } = await supabase
+        .from('swipes')
+        .select('swiper_id')
+        .eq('swiped_id', user.id)
+        .in('direction', ['like', 'superlike']);
+      const likedMeIds = likedMeData?.map(s => s.swiper_id) || [];
+
+      const dataWithScores = discoveryData.map(p => {
         if (!p || !p.id) return null;
         const pInterests = p.interests || [];
         const commonInterestsCount = pInterests.filter(i => myInterests.includes(i)).length;
 
-        let score = (commonInterestsCount * 25); // Increased weight for common interests
-
-        // Priority boost for people who already liked you
-        if (likedMeIds.includes(p.id)) {
-          score += 150;
-        }
-
-        // Bonus for same school
-        if (profile.school && p.school && profile.school.trim().toLowerCase() === p.school.trim().toLowerCase()) {
-          score += 50;
-        }
+        let score = (commonInterestsCount * 25);
+        if (likedMeIds.includes(p.id)) score += 150;
+        if (profile.school && p.school && profile.school.trim().toLowerCase() === p.school.trim().toLowerCase()) score += 50;
 
         if (profile.latitude && profile.longitude && p.latitude && p.longitude) {
           const distance = calculateDistance(profile.latitude, profile.longitude, p.latitude, p.longitude);
-          // Higher score for closer users
-          score += Math.max(0, 100 - (distance));
+          score += Math.max(0, 100 - distance);
         }
 
-        // Stable randomness (0-20 points)
         score += Math.random() * 20;
-
-        return { ...p, _score: score, commonInterestsCount };
+        return { ...p, _score: score };
       }).filter(Boolean);
 
-      const sortedData = dataWithScores?.sort((a, b) => b._score - a._score);
-
-      setStack(sortedData || []);
+      setStack(dataWithScores.sort((a, b) => b._score - a._score));
     } catch (error) {
-      console.error('Detailed error fetching stack:', error);
-      toast.error(`Failed to load discovery feed: ${error.message || 'Unknown error'}`);
+      console.error('Discovery Error:', error);
+      toast.error(`Discovery Error: ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -488,7 +463,18 @@ const HomePage = () => {
              </div>
              <div>
                <p className="text-white text-xl font-bold mb-2">{t.no_more_discovery}</p>
-               <p className="text-dark-text text-sm">{t.expand_filters}</p>
+               <p className="text-dark-text text-sm mb-4">{t.expand_filters}</p>
+               <div className="flex flex-wrap justify-center gap-2 mb-6">
+                 <span className="px-3 py-1 bg-white/5 rounded-full text-[10px] text-zinc-400 font-bold uppercase tracking-wider">
+                   {profile?.show_gender}
+                 </span>
+                 <span className="px-3 py-1 bg-white/5 rounded-full text-[10px] text-zinc-400 font-bold uppercase tracking-wider">
+                   {profile?.min_age_pref || 18} - {profile?.max_age_pref || 100} years
+                 </span>
+                 <span className="px-3 py-1 bg-white/5 rounded-full text-[10px] text-zinc-400 font-bold uppercase tracking-wider">
+                   {profile?.distance_pref || 80}km range
+                 </span>
+               </div>
              </div>
              <button
               onClick={() => setShowFilters(true)}
