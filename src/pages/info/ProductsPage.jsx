@@ -77,7 +77,7 @@ const ProductsPage = () => {
           onClick={() => navigate(-1)}
           className="text-white/40 hover:text-[#ff79ac] transition-all font-black text-[10px] uppercase tracking-[0.4em] flex items-center gap-2"
         >
-          <ArrowLeft size={14} /> [Exit ]
+          <ArrowLeft size={14} /> Exit 
         </button>
       </header>
 
@@ -110,7 +110,7 @@ const ProductsPage = () => {
               )}
 
               <span className="text-[10px] font-black tracking-[0.4em] text-white/30 uppercase block mb-8 underline underline-offset-8 decoration-[#ff79ac]/40">
-                {product.id} // SECURE
+                {product.id}SECURE
               </span>
 
               <div className="mb-10 transform group-hover:scale-110 transition-transform duration-700">
@@ -152,9 +152,7 @@ const ProductsPage = () => {
 
       <footer className="relative z-10 py-16 px-8 border-t border-white/5 flex flex-col items-center">
         <div className="flex gap-12 mb-8 opacity-20">
-          <ShieldCheck size={20} />
           <Globe size={20} />
-          <Zap size={20} />
         </div>
         <p className="text-white/20 text-[10px] font-black uppercase tracking-[0.5em]">
           © {new Date().getFullYear()} MAMBO.

@@ -11,7 +11,7 @@ const SafetyPage = () => {
       id: "01",
       title: "Uhakiki wa AI",
       label: "MEMBER VERIFICATION",
-      desc: "Every profile is scanned by our neural engines. If the vibe is fake or the intent is malicious, they get the boot instantly. No bots allowed in the mambo zone.",
+      desc: "Every profile is scanned by our neural engines. If the vibe is fake or the intent is malicious, they get the boot instantly. No bots allowed in the mambo app.",
       icon: (
         <svg viewBox="0 0 100 100" className="w-16 h-16 drop-shadow-[0_0_12px_rgba(255,121,172,0.4)]">
           <circle cx="50" cy="50" r="40" fill="none" stroke="#ff79ac" strokeWidth="1" strokeDasharray="4 4" />

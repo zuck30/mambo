@@ -54,7 +54,7 @@ const SupportPage = () => {
           onClick={() => navigate(-1)}
           className="mix-blend-difference hover:text-[#ff79ac] transition-colors text-[10px] font-black uppercase tracking-[0.4em]"
         >
-          [ Return to mambo ]
+          Return to mambo
         </button>
       </header>
 
@@ -109,7 +109,7 @@ const SupportPage = () => {
               <div className="space-y-12">
                 <div className="group cursor-pointer">
                   <span className="text-[10px] font-black tracking-[0.4em] text-white/30 block mb-2 underline decoration-[#ff79ac] underline-offset-8">EMAIL</span>
-                  <p className="text-3xl md:text-5xl font-black italic tracking-tighter hover:text-[#ff79ac] transition-colors">support@mambovibe.com</p>
+                  <p className="text-3xl md:text-5xl font-black italic tracking-tighter hover:text-[#ff79ac] transition-colors">support@mambo.com</p>
                 </div>
                 <div className="group cursor-pointer">
                   <span className="text-[10px] font-black tracking-[0.4em] text-white/30 block mb-2 underline decoration-[#ff79ac] underline-offset-8">OFFICE</span>

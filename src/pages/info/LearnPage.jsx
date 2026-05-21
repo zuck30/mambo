@@ -11,14 +11,14 @@ const LearnPage = () => {
       id: "01",
       title: "Jitambulishe",
       subtitle: "REAL RECOGNIZES REAL",
-      content: "Forget the boring bios. In mambo, your profile is your digital aura. We use glassmorphism aesthetics and bold type to make sure your first impression is cinematic.",
+      content: "Forget the boring bios. In mambo, your profile is your digital aura. In Mambo We make sure your first impression is cinematic.",
       glow: "bg-[#ff79ac]/20"
     },
     {
       id: "02",
       title: "Vumbua",
       subtitle: "BEYOND THE MAP",
-      content: "Whether you are in Dodoma or Dar, mambo connects you to the vibe. Optimized for our local networks so you never miss a match while on the move.",
+      content: "Whenever you are, Mambo connects you to the vibe. Optimized for our local networks so you never miss a match while on the move.",
       glow: "bg-blue-500/10"
     },
     {
@@ -52,7 +52,7 @@ const LearnPage = () => {
           onClick={() => navigate(-1)}
           className="mix-blend-difference hover:text-[#ff79ac] transition-colors text-[10px] font-black uppercase tracking-[0.4em]"
         >
-          [ Go Back ]
+          Go Back 
         </button>
       </header>
 
@@ -113,7 +113,7 @@ const LearnPage = () => {
               Ready to <br /> mambo?
             </h2>
             <p className="text-black/60 font-bold uppercase tracking-widest text-sm mb-12 max-w-md">
-              Join the community built for East African excellence. No cap.
+              Join the community built for East African excellence.
             </p>
             <button className="px-12 py-6 bg-black text-white rounded-full font-black uppercase tracking-[0.3em] hover:scale-105 transition-transform">
               Join the Vibe

@@ -161,7 +161,7 @@ const LandingPage = () => {
       {/* Footer Links */}
       <footer className="absolute bottom-0 w-full z-20 py-8 px-6 md:px-12 flex flex-col md:flex-row justify-between items-center gap-4 bg-gradient-to-t from-black/90 to-transparent">
         <div className="flex flex-wrap justify-center gap-6 text-[11px] font-black uppercase tracking-widest text-white/60">
-          {['Terms', 'Privacy', 'Cookies', 'Safety'].map(link => (
+          {['Terms', 'Privacy', 'Safety'].map(link => (
             <Link key={link} to={`/${link.toLowerCase()}`} className="hover:text-white transition-colors">{link}</Link>
           ))}
         </div>
