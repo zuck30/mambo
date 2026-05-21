@@ -7,7 +7,6 @@ import {
   Send, 
   Phone, 
   Video, 
-  Brain, 
   MoreVertical, 
   Smile
 } from 'lucide-react';
@@ -25,7 +24,6 @@ const ChatPage = () => {
   const [isTyping, setIsTyping] = useState(false);
   const [otherUserTyping, setOtherUserTyping] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [aiLoading, setAiLoading] = useState(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
   const typingTimeoutRef = useRef(null);
@@ -186,30 +184,6 @@ const ChatPage = () => {
     inputRef.current?.focus();
   };
 
-  const handleAiIcebreaker = async () => {
-    setAiLoading(true);
-    try {
-      const { data, error } = await supabase.functions.invoke('oa-ai', {
-        body: {
-          prompt: 'Generate a high-engagement technical icebreaker.',
-          context: `Match: ${match?.otherUser.name}. Interests: ${match?.otherUser.interests?.join(', ')}.`
-        }
-      });
-      if (error) throw error;
-      setNewMessage(data.response);
-      setTimeout(() => {
-        if (inputRef.current) {
-          inputRef.current.style.height = 'auto';
-          inputRef.current.style.height = Math.min(inputRef.current.scrollHeight, 160) + 'px';
-        }
-        inputRef.current?.focus();
-      }, 0);
-    } catch (error) {
-      toast.error('Intelligence service unavailable');
-    } finally {
-      setAiLoading(false);
-    }
-  };
 
   const formatMessageTime = (timestamp) => {
     const date = new Date(timestamp);
@@ -401,19 +375,6 @@ const ChatPage = () => {
             className="flex-1 bg-transparent border-none px-2 py-3 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:ring-0 resize-none max-h-[160px] leading-relaxed whitespace-pre-wrap break-words"
           />
 
-          {/* Brain on the RIGHT */}
-          {!newMessage.trim() && (
-            <button
-              type="button"
-              onClick={handleAiIcebreaker}
-              disabled={aiLoading}
-              className={`flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center transition-all ${
-                aiLoading ? 'bg-white/5 text-white animate-pulse' : 'text-zinc-500 hover:text-white hover:bg-white/5'
-              }`}
-            >
-              <Brain size={20} className={aiLoading ? 'fill-current' : ''} />
-            </button>
-          )}
 
           {/* Send button */}
           {newMessage.trim() && (

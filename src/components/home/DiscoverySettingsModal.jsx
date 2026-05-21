@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 const DiscoverySettingsModal = ({ isOpen, onClose, profile, onSave }) => {
   const [distance, setDistance] = useState(profile?.distance_pref || 80);
-  const [ageRange, setAgeRange] = useState([profile?.min_age_pref || 18, profile?.max_age_pref || 55]);
+  const [ageRange, setAgeRange] = useState([profile?.min_age_pref || 18, profile?.max_age_pref || 100]);
   const [showGender, setShowGender] = useState(profile?.show_gender || 'everyone');
 
   useEffect(() => {
@@ -85,7 +85,7 @@ const DiscoverySettingsModal = ({ isOpen, onClose, profile, onSave }) => {
                   <input
                     type="range"
                     min="18"
-                    max="55"
+                    max="100"
                     value={ageRange[0]}
                     onChange={(e) => setAgeRange([parseInt(e.target.value), Math.max(parseInt(e.target.value), ageRange[1])])}
                     className="w-full accent-primary"
@@ -96,7 +96,7 @@ const DiscoverySettingsModal = ({ isOpen, onClose, profile, onSave }) => {
                   <input
                     type="range"
                     min="18"
-                    max="55"
+                    max="100"
                     value={ageRange[1]}
                     onChange={(e) => setAgeRange([Math.min(parseInt(e.target.value), ageRange[0]), parseInt(e.target.value)])}
                     className="w-full accent-primary"
