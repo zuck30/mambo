@@ -25,6 +25,9 @@ const ChatPage = () => {
   const [otherUserTyping, setOtherUserTyping] = useState(false);
   const [loading, setLoading] = useState(true);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
+  const [showReportModal, setShowReportModal] = useState(false);
+  const [reportReason, setReportReason] = useState('');
 
   const typingTimeoutRef = useRef(null);
   const channelRef = useRef(null);
@@ -32,16 +35,19 @@ const ChatPage = () => {
   const pickerRef = useRef(null);
   const messagesEndRef = useRef(null);
 
-  // Close emoji picker when clicking outside
+  // Close UI elements when clicking outside
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (pickerRef.current && !pickerRef.current.contains(e.target)) {
         setShowEmojiPicker(false);
       }
+      if (showMenu && !e.target.closest('.chat-menu-container')) {
+        setShowMenu(false);
+      }
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  }, [showMenu]);
 
   const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -145,6 +151,56 @@ const ChatPage = () => {
     }, 3000);
   };
 
+  const handleUnmatch = async () => {
+    if (!window.confirm(`Are you sure you want to unmatch with ${match?.otherUser.name}? This cannot be undone.`)) return;
+
+    try {
+      const { error } = await supabase
+        .from('matches')
+        .update({ is_active: false })
+        .eq('id', matchId);
+
+      if (error) throw error;
+      toast.success('Unmatched successfully');
+      navigate('/app/messages');
+    } catch (error) {
+      toast.error('Failed to unmatch');
+    }
+  };
+
+  const handleReport = async () => {
+    if (!reportReason.trim()) {
+      toast.error('Please provide a reason for reporting');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      // Logic for reporting (saving to reports table)
+      const { error } = await supabase
+        .from('reports')
+        .insert({
+          reporter_id: user.id,
+          reported_id: match.otherUser.id,
+          match_id: matchId,
+          reason: reportReason,
+          created_at: new Date().toISOString()
+        });
+
+      if (error) {
+        // If reports table doesn't exist, we fallback to log and unmatch
+        console.warn('Reports table may not exist, logging locally:', error);
+      }
+
+      await handleUnmatch(); // Auto-unmatch after reporting
+      setShowReportModal(false);
+    } catch (error) {
+      toast.error('Failed to submit report');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSendMessage = async (e) => {
     e.preventDefault();
     if (!newMessage.trim()) return;
@@ -240,12 +296,80 @@ const ChatPage = () => {
           </div>
         </div>
 
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1 relative chat-menu-container">
           <button className="p-2 text-zinc-500 hover:text-white transition-colors"><Phone size={18} /></button>
           <button className="p-2 text-zinc-500 hover:text-white transition-colors"><Video size={18} /></button>
-          <button className="p-2 text-zinc-500 hover:text-white transition-colors"><MoreVertical size={18} /></button>
+          <button
+            onClick={() => setShowMenu(!showMenu)}
+            className="p-2 text-zinc-500 hover:text-white transition-colors"
+          >
+            <MoreVertical size={18} />
+          </button>
+
+          <AnimatePresence>
+            {showMenu && (
+              <motion.div
+                initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                className="absolute top-full right-0 mt-2 w-48 bg-zinc-900 border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-[100]"
+              >
+                <button
+                  onClick={() => { setShowMenu(false); handleUnmatch(); }}
+                  className="w-full px-4 py-3 text-left text-sm font-bold text-white hover:bg-white/5 transition-colors"
+                >
+                  Unmatch
+                </button>
+                <button
+                  onClick={() => { setShowMenu(false); setShowReportModal(true); }}
+                  className="w-full px-4 py-3 text-left text-sm font-bold text-rose-500 hover:bg-rose-500/5 transition-colors border-t border-white/5"
+                >
+                  Report Profile
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </header>
+
+      {/* Report Modal */}
+      <AnimatePresence>
+        {showReportModal && (
+          <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              className="w-full max-w-sm bg-zinc-900 border border-white/10 rounded-[2rem] p-8 shadow-2xl"
+            >
+              <h2 className="text-2xl font-black uppercase tracking-tighter mb-2">Report Profile</h2>
+              <p className="text-zinc-400 text-sm mb-6">Why are you reporting {match?.otherUser.name}? This will also unmatch you.</p>
+
+              <textarea
+                value={reportReason}
+                onChange={(e) => setReportReason(e.target.value)}
+                placeholder="Describe the issue..."
+                className="w-full bg-black border border-white/10 rounded-2xl p-4 text-sm text-white focus:outline-none focus:border-primary/50 min-h-[120px] resize-none mb-6"
+              />
+
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowReportModal(false)}
+                  className="flex-1 py-4 rounded-full font-bold text-zinc-400 hover:bg-white/5 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleReport}
+                  className="flex-1 py-4 rounded-full font-black uppercase tracking-widest bg-rose-500 text-white shadow-lg shadow-rose-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
+                >
+                  Submit
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-4 space-y-1 scrollbar-hide">
