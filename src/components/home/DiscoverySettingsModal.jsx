@@ -66,11 +66,15 @@ const DiscoverySettingsModal = ({ isOpen, onClose, profile, onSave }) => {
               <input
                 type="range"
                 min="2"
-                max="160"
+                max="500"
                 value={distance}
                 onChange={(e) => setDistance(parseInt(e.target.value))}
                 className="w-full accent-primary bg-dark-surface h-1 rounded-full appearance-none cursor-pointer"
               />
+              <div className="flex justify-between mt-2">
+                <span className="text-[10px] text-dark-text font-bold">2km</span>
+                <span className="text-[10px] text-dark-text font-bold">500km</span>
+              </div>
             </div>
 
             {/* Age Range */}
