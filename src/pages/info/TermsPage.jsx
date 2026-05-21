@@ -112,7 +112,7 @@ const TermsPage = () => {
 
       <footer className="relative z-10 py-16 px-8 border-t border-white/5 text-center">
         <p className="text-white/20 text-[10px] font-black uppercase tracking-[0.8em]">
-          © {new Date().getFullYear()} MAMBO GROUP, LLC.
+          © {new Date().getFullYear()} MAMBO GROUP.
         </p>
       </footer>
     </div>

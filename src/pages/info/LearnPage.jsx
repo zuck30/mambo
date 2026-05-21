@@ -124,7 +124,7 @@ const LearnPage = () => {
 
       <footer className="relative z-10 py-20 px-8 flex flex-col md:flex-row justify-between items-center gap-8 border-t border-white/5">
         <div className="text-[10px] font-black uppercase tracking-[0.5em] text-white/20">
-          © {new Date().getFullYear()} MAMBO GROUP, LLC.
+          © {new Date().getFullYear()} MAMBO GROUP.
         </div>
         <div className="flex gap-8 text-[10px] font-black uppercase tracking-[0.3em] text-white/40">
           <a href="#" className="hover:text-[#ff79ac]">Terms</a>

@@ -27,7 +27,7 @@ const InfoLayout = ({ title, children }) => {
 
       <footer className="border-t border-white/5 py-12 px-6">
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
-          <p className="text-xs text-zinc-500">© {new Date().getFullYear()} Mambo Group, LLC.</p>
+          <p className="text-xs text-zinc-500">© {new Date().getFullYear()} Mambo Group</p>
           <div className="flex gap-6 text-xs text-zinc-500">
             <Link to="/privacy" className="hover:text-white">Privacy</Link>
             <Link to="/terms" className="hover:text-white">Terms</Link>

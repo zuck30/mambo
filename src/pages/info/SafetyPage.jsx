@@ -161,7 +161,7 @@ const SafetyPage = () => {
 
       <footer className="relative z-10 py-20 px-8 flex flex-col md:flex-row justify-between items-center gap-8 border-t border-white/5">
         <div className="text-[10px] font-black uppercase tracking-[0.5em] text-white/20">
-          © {new Date().getFullYear()} MAMBO GROUP, LLC.
+          © {new Date().getFullYear()} MAMBO GROUP.
         </div>
       </footer>
     </div>

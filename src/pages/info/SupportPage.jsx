@@ -147,7 +147,7 @@ const SupportPage = () => {
 
       <footer className="relative z-10 py-12 px-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
         <p className="text-white/20 text-[10px] font-black uppercase tracking-[0.6em]">
-          © {new Date().getFullYear()} MAMBO GROUP, LLC.
+          © {new Date().getFullYear()} MAMBO GROUP.
         </p>
       </footer>
     </div>

@@ -166,7 +166,7 @@ const LandingPage = () => {
           ))}
         </div>
         <p className="text-[10px] font-black text-white/30 tracking-[0.2em]">
-          © {new Date().getFullYear()} MAMBO GROUP, LLC.
+          © {new Date().getFullYear()} MAMBO GROUP.
         </p>
       </footer>
 

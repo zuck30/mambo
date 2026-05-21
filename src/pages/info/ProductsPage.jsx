@@ -157,7 +157,7 @@ const ProductsPage = () => {
           <Zap size={20} />
         </div>
         <p className="text-white/20 text-[10px] font-black uppercase tracking-[0.5em]">
-          © {new Date().getFullYear()} MAMBO LLC.
+          © {new Date().getFullYear()} MAMBO.
         </p>
       </footer>
     </div>
