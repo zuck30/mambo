@@ -168,7 +168,11 @@ const HomePage = () => {
         }
 
         score += Math.random() * 20;
-        return { ...p, _score: score };
+        return {
+          ...p,
+          _score: score,
+          likedMe: likedMeIds.includes(p.id)
+        };
       }).filter(Boolean);
 
       setStack(dataWithScores.sort((a, b) => b._score - a._score));
@@ -205,9 +209,8 @@ const HomePage = () => {
     setSwipeHistory(prev => [swipedProfile, ...prev]);
 
     try {
-      // Use UPSERT to handle potential retries or race conditions
-      // Note: 403 error might occur if RLS policies are misconfigured
-      const { error } = await supabase
+      // 1. Persist the swipe record
+      const { error: swipeError } = await supabase
         .from('swipes')
         .upsert({
           swiper_id: user.id,
@@ -216,14 +219,27 @@ const HomePage = () => {
           created_at: new Date().toISOString()
         }, { onConflict: 'swiper_id,swiped_id' });
 
-      if (error) {
-        console.error('Swipe DB Error:', error);
-        throw error;
-      }
+      if (swipeError) throw swipeError;
 
+      // 2. Check for match if it's a like
       if (direction === 'like' || direction === 'superlike') {
-        const isMatch = await checkMatch(swipedProfile);
-        if (!isMatch) {
+        const matchId = await checkMatch(swipedProfile);
+        if (matchId) {
+          setMatchedUser({ ...swipedProfile, matchId });
+          setShowMatch(true);
+          fetchRecentMatches();
+          toast.success(t.match || 'Match Found!', {
+            icon: '🔥',
+            position: 'top-center',
+            duration: 6000
+          });
+          confetti({
+            particleCount: 200,
+            spread: 90,
+            origin: { y: 0.6 },
+            colors: ['#ff79ac', '#ff5280', '#ffffff', '#ffd700']
+          });
+        } else {
           toast.success(direction === 'superlike' ? 'Super Liked!' : 'Liked!', {
             icon: direction === 'superlike' ? '⭐' : '❤️',
             position: 'top-center'
@@ -231,8 +247,8 @@ const HomePage = () => {
         }
       }
     } catch (error) {
-      console.error('Swipe error caught:', error);
-      toast.error('Action failed. Check your connection or settings.');
+      console.error('Swipe error:', error);
+      toast.error('Action failed. Please try again.');
       // Rollback optimistic update
       setStack(prev => [swipedProfile, ...prev]);
       setSwipeHistory(prev => prev.filter(p => p.id !== swipedProfile.id));
@@ -276,83 +292,49 @@ const HomePage = () => {
   };
 
   const checkMatch = async (otherProfile) => {
-    console.log(`Checking match with user: ${otherProfile.id}`);
+    if (!otherProfile?.id || !user?.id) return null;
+
     try {
-      // Use select() instead of maybeSingle() to avoid 406 errors and handle duplicates gracefully
-      const { data: otherSwipes, error: checkError } = await supabase
+      // 1. Direct check for reciprocal like
+      const { data: otherSwipes } = await supabase
         .from('swipes')
-        .select('direction')
+        .select('id')
         .eq('swiper_id', otherProfile.id)
         .eq('swiped_id', user.id)
-        .in('direction', ['like', 'superlike']);
+        .in('direction', ['like', 'superlike'])
+        .limit(1);
 
-      if (checkError) {
-         console.error('Error checking for reciprocal swipe:', checkError);
-         return false;
-      }
+      const isMutual = (otherSwipes && otherSwipes.length > 0) || otherProfile.likedMe === true;
 
-      const hasReciprocalSwipe = otherSwipes && otherSwipes.length > 0;
-      console.log('Reciprocal swipe search result:', otherSwipes);
-
-      if (hasReciprocalSwipe) {
-        console.log('Match detected! Processing match record...');
+      if (isMutual) {
         const [u1, u2] = [user.id, otherProfile.id].sort();
 
-        // 1. Check if match already exists
-        const { data: existingMatch, error: existingError } = await supabase
+        // 2. Ensure match record exists
+        const { data: matchRecord } = await supabase
           .from('matches')
-          .select('id, user1_id, user2_id')
+          .upsert(
+            { user1_id: u1, user2_id: u2, is_active: true, created_at: new Date().toISOString() },
+            { onConflict: 'user1_id,user2_id' }
+          )
+          .select('id')
+          .maybeSingle();
+
+        if (matchRecord?.id) return matchRecord.id;
+
+        // Fallback fetch
+        const { data: fallback } = await supabase
+          .from('matches')
+          .select('id')
           .eq('user1_id', u1)
           .eq('user2_id', u2)
           .maybeSingle();
 
-        if (existingError) {
-          console.error('Error checking for existing match:', existingError);
-        }
-
-        let matchData = existingMatch;
-        let matchError = null;
-
-        // 2. Create match if it doesn't exist
-        if (!matchData) {
-          const { data, error } = await supabase
-            .from('matches')
-            .upsert(
-              { user1_id: u1, user2_id: u2, is_active: true, created_at: new Date().toISOString() },
-              { onConflict: 'user1_id,user2_id' }
-            )
-            .select('id, user1_id, user2_id')
-            .single();
-
-          matchData = data;
-          matchError = error;
-        }
-
-        if (!matchError && matchData) {
-          console.log('Match confirmed:', matchData.id);
-          // Immediately update recent matches to show the new match
-          fetchRecentMatches();
-          setMatchedUser({ ...otherProfile, matchId: matchData.id });
-          setShowMatch(true);
-          console.log('ShowMatch state set to TRUE');
-          confetti({
-            particleCount: 150,
-            spread: 70,
-            origin: { y: 0.6 },
-            colors: ['#ff79ac', '#ff5280', '#ffffff']
-          });
-          return true;
-        } else {
-           console.error('Match creation/retrieval error:', matchError);
-           toast.error('Could not finalize match. Please try again.');
-           return false;
-        }
+        return fallback?.id || null;
       }
-      return false;
+      return null;
     } catch (err) {
-      console.error('Internal match check error:', err);
-      toast.error('An unexpected error occurred during match check.');
-      return false;
+      console.error('Match error:', err);
+      return null;
     }
   };
 
