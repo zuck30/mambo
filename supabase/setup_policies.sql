@@ -90,7 +90,13 @@ TO authenticated
 USING (auth.uid() = id)
 WITH CHECK (auth.uid() = id);
 
--- 6. Discovery RPC Function
+-- 6. Important: Unique Constraints
+-- These are required for 'upsert' operations to work correctly.
+-- Run these if they don't already exist.
+-- ALTER TABLE swipes ADD CONSTRAINT swipes_swiper_id_swiped_id_key UNIQUE (swiper_id, swiped_id);
+-- ALTER TABLE matches ADD CONSTRAINT matches_user1_id_user2_id_key UNIQUE (user1_id, user2_id);
+
+-- 7. Discovery RPC Function
 -- This function performs the complex discovery query on the server side for better performance and robustness.
 CREATE OR REPLACE FUNCTION get_discovery_stack(
   p_user_id UUID,
@@ -133,7 +139,7 @@ BEGIN
         least(1.0,
           sin(radians(p_latitude)) * sin(radians(p.latitude)) +
           cos(radians(p_latitude)) * cos(radians(p.latitude)) *
-          cos(radians(p.longitude) - radians(p.longitude))
+          cos(radians(p.longitude) - radians(p_longitude))
         )
       )) <= p_distance_pref
     )

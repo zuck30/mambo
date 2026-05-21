@@ -222,11 +222,13 @@ const HomePage = () => {
       }
 
       if (direction === 'like' || direction === 'superlike') {
-        checkMatch(swipedProfile);
-        toast.success(direction === 'superlike' ? 'Super Liked!' : 'Liked!', {
-          icon: direction === 'superlike' ? '⭐' : '❤️',
-          position: 'top-center'
-        });
+        const isMatch = await checkMatch(swipedProfile);
+        if (!isMatch) {
+          toast.success(direction === 'superlike' ? 'Super Liked!' : 'Liked!', {
+            icon: direction === 'superlike' ? '⭐' : '❤️',
+            position: 'top-center'
+          });
+        }
       }
     } catch (error) {
       console.error('Swipe error caught:', error);
@@ -287,7 +289,7 @@ const HomePage = () => {
 
       if (checkError) {
          console.warn('Error checking for reciprocal swipe:', checkError);
-         return;
+         return false;
       }
 
       console.log('Reciprocal swipe search result:', otherSwipe);
@@ -317,12 +319,17 @@ const HomePage = () => {
             origin: { y: 0.6 },
             colors: ['#ff79ac', '#ff5280', '#ffffff']
           });
+          return true;
         } else {
            console.error('Match creation error:', matchError);
+           toast.error('Failed to create match record');
+           return false;
         }
       }
+      return false;
     } catch (err) {
       console.error('Internal match check error:', err);
+      return false;
     }
   };
 
