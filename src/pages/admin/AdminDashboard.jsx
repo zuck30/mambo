@@ -52,7 +52,7 @@ const AdminDashboard = () => {
           <ChevronLeft size={24} />
         </button>
         <h1 className="text-3xl font-black flex items-center gap-3">
-          <ShieldCheck className="text-primary" size={32} /> Admin Dashboard
+          <ShieldCheck className="#FFFC00" size={32} /> Admin Dashboard
         </h1>
       </div>
 
@@ -114,7 +114,7 @@ const AdminDashboard = () => {
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase ${user.role === 'admin' ? 'bg-primary/20 text-primary' : 'bg-white/10 text-dark-text'}`}>
+                    <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase ${user.role === 'admin' ? 'bg-primary/20 #FFFC00' : 'bg-white/10 text-dark-text'}`}>
                       {user.role}
                     </span>
                   </td>

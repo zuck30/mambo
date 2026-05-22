@@ -39,7 +39,7 @@ const Sidebar = () => {
             animate={{ opacity: 1 }}
             className="text-3xl font-black italic tracking-tighter text-theme-yellow whitespace-nowrap uppercase"
           >
-            mambo
+            {/* mambo */}
           </motion.span>
         </div>
 
