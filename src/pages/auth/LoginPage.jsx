@@ -83,8 +83,8 @@ const LoginPage = () => {
       </div>
       
       {/* Original Gradient Orbs & Brand Colors */}
-      <div className="absolute top-[-20%] right-[-10%] w-[400px] h-[400px] bg-[#C13D88]/20 rounded-full blur-[100px] pointer-events-none z-0" />
-      <div className="absolute bottom-[-20%] left-[-10%] w-[400px] h-[400px] bg-[#C13D88]/10 rounded-full blur-[100px] pointer-events-none z-0" />
+      <div className="absolute top-[-20%] right-[-10%] w-[400px] h-[400px] bg-[#FFFC00]/20 rounded-full blur-[100px] pointer-events-none z-0" />
+      <div className="absolute bottom-[-20%] left-[-10%] w-[400px] h-[400px] bg-[#FFFC00]/10 rounded-full blur-[100px] pointer-events-none z-0" />
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -93,7 +93,7 @@ const LoginPage = () => {
       >
         <div className="text-center mb-10">
           <div className="flex items-center justify-center gap-2 mb-6">
-            <Flame className="text-[#C13D88] fill-current" size={48} />
+            <Flame className="text-[#FFFC00] fill-current" size={48} />
             <span className="text-4xl font-black tracking-tighter text-white">mambo</span>
           </div>
           <p className="text-white/60 text-[13px] px-6">
@@ -116,14 +116,14 @@ const LoginPage = () => {
                     type="email"
                     required
                     placeholder="Enter your email"
-                    className="w-full h-12 px-6 bg-white/10 backdrop-blur-md border border-white/10 rounded-full text-white placeholder:text-white/40 focus:border-[#C13D88] focus:outline-none text-center transition-all"
+                    className="w-full h-12 px-6 bg-white/10 backdrop-blur-md border border-white/10 rounded-full text-white placeholder:text-white/40 focus:border-[#FFFC00] focus:outline-none text-center transition-all"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                   />
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full h-12 bg-gradient-to-r from-[#C13D88] to-[#ff4d8c] text-white rounded-full font-bold text-sm tracking-wide shadow-lg hover:opacity-90 transition-opacity flex items-center justify-center"
+                    className="w-full h-12 bg-gradient-to-r from-[#FFFC00] to-[#FFFC00] text-white rounded-full font-bold text-sm tracking-wide shadow-lg hover:opacity-90 transition-opacity flex items-center justify-center"
                   >
                     {loading ? <Loader2 className="animate-spin" size={20} /> : 'CONTINUE WITH EMAIL'}
                   </button>
@@ -155,14 +155,14 @@ const LoginPage = () => {
                   required
                   maxLength={6}
                   placeholder="0 0 0 0 0 0"
-                  className="w-full h-14 bg-white/10 border border-white/20 rounded-2xl text-white text-center text-2xl tracking-[0.4em] font-bold focus:border-[#C13D88] focus:outline-none transition-all"
+                  className="w-full h-14 bg-white/10 border border-white/20 rounded-2xl text-white text-center text-2xl tracking-[0.4em] font-bold focus:border-[#FFFC00] focus:outline-none transition-all"
                   value={otp}
                   onChange={(e) => setOtp(e.target.value)}
                 />
                 <button
                   onClick={handleVerifyOtp}
                   disabled={loading}
-                  className="w-full h-12 bg-gradient-to-r from-[#C13D88] to-[#ff4d8c] text-white rounded-full font-bold text-sm flex items-center justify-center shadow-lg"
+                  className="w-full h-12 bg-gradient-to-r from-[#FFFC00] to-[#FFFC00] text-white rounded-full font-bold text-sm flex items-center justify-center shadow-lg"
                 >
                   {loading ? <Loader2 className="animate-spin" size={20} /> : 'VERIFY & LOG IN'}
                 </button>
@@ -179,7 +179,7 @@ const LoginPage = () => {
 
         <div className="mt-12 text-center">
           <p className="text-white/60 text-sm">
-            Don't have an account? <Link to="/register" className="text-[#C13D88] font-bold hover:underline">Sign up</Link>
+            Don't have an account? <Link to="/register" className="text-[#FFFC00] font-bold hover:underline">Sign up</Link>
           </p>
         </div>
       </motion.div>

@@ -11,7 +11,7 @@ const BottomNav = () => {
           {({ isActive }) => (
             <motion.div
               whileTap={{ scale: 0.9 }}
-              className={`flex flex-col items-center gap-1 p-2 transition-all ${isActive ? 'text-white' : 'text-zinc-500'}`}
+              className={`flex flex-col items-center gap-1 p-2 transition-all ${isActive ? 'text-snap-yellow' : 'text-zinc-500'}`}
             >
               <MapPin size={28} strokeWidth={isActive ? 2.5 : 2} />
             </motion.div>
@@ -46,9 +46,9 @@ const BottomNav = () => {
           {({ isActive }) => (
             <motion.div
               whileTap={{ scale: 0.9 }}
-              className={`flex flex-col items-center gap-1 p-2 transition-all ${isActive ? 'text-snap-purple' : 'text-zinc-500'}`}
+              className={`flex flex-col items-center gap-1 p-2 transition-all ${isActive ? 'text-snap-yellow' : 'text-zinc-500'}`}
             >
-              <Users size={28} strokeWidth={isActive ? 2.5 : 2} className={isActive ? 'fill-snap-purple/10' : ''} />
+              <Users size={28} strokeWidth={isActive ? 2.5 : 2} className={isActive ? 'fill-snap-yellow/10' : ''} />
             </motion.div>
           )}
         </NavLink>
