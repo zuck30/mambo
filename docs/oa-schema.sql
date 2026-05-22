@@ -1,7 +1,7 @@
 -- ENUMS
 CREATE TYPE user_role AS ENUM ('user', 'admin');
 CREATE TYPE swipe_direction AS ENUM ('like', 'pass', 'superlike');
-CREATE TYPE gender_option AS ENUM ('male', 'female', 'non-binary');
+CREATE TYPE gender_option AS ENUM ('male', 'female');
 CREATE TYPE show_gender_pref AS ENUM ('men', 'women', 'everyone');
 
 -- PROFILES
