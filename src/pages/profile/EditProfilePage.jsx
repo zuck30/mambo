@@ -41,47 +41,51 @@ const EditProfilePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white font-sans antialiased pb-12">
+    <div className="min-h-screen bg-[#F0F1F2] text-black font-sans antialiased pb-20">
       {/* Sticky Top Bar */}
-      <div className="sticky top-0 z-50 bg-black/80 backdrop-blur-xl border-b border-white/5 h-16 px-6 flex items-center justify-between">
-        <button onClick={() => navigate(-1)} className="p-2 -ml-2 text-zinc-400 hover:text-white transition-colors">
-          <ChevronLeft size={24} />
+      <header className="sticky top-0 z-50 bg-white border-b border-zinc-100 h-16 px-6 flex items-center justify-between">
+        <button onClick={() => navigate(-1)} className="p-2 -ml-2 text-zinc-400 hover:text-black transition-colors">
+          <ChevronLeft size={24} strokeWidth={3} />
         </button>
-        <h1 className="text-sm font-black uppercase tracking-widest">Edit Profile</h1>
+        <h1 className="text-lg font-black tracking-tight">Edit Profile</h1>
         <button 
           onClick={handleSave} 
           disabled={loading}
-          className="text-snap-yellow font-black text-sm uppercase tracking-widest flex items-center"
+          className="text-snap-yellow font-black text-sm uppercase tracking-widest"
         >
-          {loading ? '...' : <><Check size={18} className="mr-1"/> Done</>}
+          {loading ? '...' : 'Done'}
         </button>
-      </div>
+      </header>
 
-      <div className="max-w-2xl mx-auto p-6">
+      <div className="max-w-2xl mx-auto p-4">
         {/* Photo Grid Section */}
-        <section className="mb-10">
-          <div className="flex justify-between items-center mb-4 px-1">
-            <h3 className="text-[11px] font-black text-zinc-500 uppercase tracking-widest">Photos</h3>
-            <span className="text-[11px] text-zinc-600">{formData.photos.length}/6</span>
+        <section className="mb-8">
+          <div className="flex justify-between items-center mb-3 px-2">
+            <h3 className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em]">My Photos</h3>
+            <span className="text-[10px] font-bold text-zinc-300">{formData.photos.length}/6</span>
           </div>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-3 gap-2">
             {[...Array(6)].map((_, i) => (
-              <div key={i} className="aspect-[3/4] bg-zinc-900 rounded-2xl border border-white/5 overflow-hidden relative group">
+              <div key={i} className="aspect-[3/4] bg-white rounded-2xl border border-zinc-100 overflow-hidden relative group shadow-sm">
                 {formData.photos[i] ? (
                   <>
                     <img src={formData.photos[i]} className="w-full h-full object-cover" alt="" />
                     <button 
                       onClick={() => setFormData(p => ({...p, photos: p.photos.filter((_, idx) => idx !== i)}))}
-                      className="absolute top-2 right-2 bg-black/70 backdrop-blur-md p-1.5 rounded-full border border-white/10"
+                      className="absolute top-2 right-2 bg-black/50 backdrop-blur-md p-1.5 rounded-full text-white"
                     >
-                      <X size={14} />
+                      <X size={12} />
                     </button>
+                    {i === 0 && (
+                      <div className="absolute bottom-2 left-2 bg-snap-yellow text-black text-[8px] font-black uppercase px-2 py-0.5 rounded-full">
+                        Main
+                      </div>
+                    )}
                   </>
                 ) : (
-                  <label className="w-full h-full flex flex-col items-center justify-center cursor-pointer hover:bg-zinc-800 transition-colors">
+                  <label className="w-full h-full flex flex-col items-center justify-center cursor-pointer hover:bg-zinc-50 transition-colors">
                     <input type="file" className="hidden" />
-                    <Plus className="text-zinc-600 mb-1" size={24} />
-                    <Camera size={14} className="text-zinc-700" />
+                    <Plus className="text-zinc-200" size={24} />
                   </label>
                 )}
               </div>
@@ -90,59 +94,57 @@ const EditProfilePage = () => {
         </section>
 
         {/* Info Fields */}
-        <div className="space-y-12">
+        <div className="space-y-8">
 
           {/* Relationship Goals */}
           <section className="space-y-4">
-            <label className="text-[11px] font-black text-zinc-500 uppercase tracking-widest px-1">Relationship Goals</label>
-            <div className="grid grid-cols-1 gap-2">
+            <label className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em] px-2">Relationship Goals</label>
+            <div className="bg-white rounded-[2rem] divide-y divide-zinc-50 overflow-hidden shadow-sm border border-zinc-100">
               {GOALS_OPTIONS.map(goal => (
                 <button
                   key={goal.id}
                   onClick={() => setFormData(p => ({...p, relationship_goal: goal.label}))}
-                  className={`w-full p-4 rounded-2xl border transition-all text-left flex items-center gap-3 ${
-                    formData.relationship_goal === goal.label
-                      ? 'border-snap-yellow bg-snap-yellow/5 text-white'
-                      : 'border-white/5 bg-zinc-900/30 text-zinc-400 hover:bg-zinc-900/50'
-                  }`}
+                  className="w-full p-5 flex items-center gap-4 hover:bg-zinc-50 transition-all text-left"
                 >
                   <span className="text-xl">{goal.icon}</span>
-                  <span className="text-sm font-bold">{goal.label}</span>
-                  {formData.relationship_goal === goal.label && <Check size={16} className="ml-auto text-snap-yellow" />}
+                  <span className={`text-sm font-bold \${formData.relationship_goal === goal.label ? 'text-black' : 'text-zinc-400'}`}>
+                    {goal.label}
+                  </span>
+                  {formData.relationship_goal === goal.label && <Check size={18} className="ml-auto text-snap-yellow" strokeWidth={4} />}
                 </button>
               ))}
             </div>
           </section>
 
           <div className="space-y-3">
-            <label className="text-[11px] font-black text-zinc-500 uppercase tracking-widest px-1">About Me</label>
+            <label className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em] px-2">About Me</label>
             <textarea
               value={formData.bio}
               onChange={(e) => setFormData(p => ({...p, bio: e.target.value}))}
-              className="w-full bg-zinc-900 border border-white/5 rounded-3xl p-5 min-h-[140px] focus:outline-none focus:ring-1 focus:ring-primary/50 text-zinc-200"
+              className="w-full bg-white border border-zinc-100 rounded-[2rem] p-6 min-h-[140px] focus:outline-none text-sm font-medium text-zinc-800 shadow-sm"
               placeholder="Tell them something interesting..."
             />
           </div>
 
           <div className="space-y-6">
             <div className="space-y-3">
-              <label className="text-[11px] font-black text-zinc-500 uppercase tracking-widest px-1">Job Title</label>
+              <label className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em] px-2">Job Title</label>
               <input
                 type="text"
                 value={formData.job}
                 onChange={(e) => setFormData(p => ({...p, job: e.target.value}))}
-                className="w-full h-14 bg-zinc-900 border border-white/5 rounded-2xl px-5 focus:outline-none focus:ring-1 focus:ring-primary/50 text-zinc-200"
+                className="w-full h-14 bg-white border border-zinc-100 rounded-2xl px-6 focus:outline-none text-sm font-bold shadow-sm"
                 placeholder="Software Engineer"
               />
             </div>
 
             <div className="space-y-3">
-              <label className="text-[11px] font-black text-zinc-500 uppercase tracking-widest px-1">School</label>
+              <label className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em] px-2">School</label>
               <input
                 type="text"
                 value={formData.school}
                 onChange={(e) => setFormData(p => ({...p, school: e.target.value}))}
-                className="w-full h-14 bg-zinc-900 border border-white/5 rounded-2xl px-5 focus:outline-none focus:ring-1 focus:ring-primary/50 text-zinc-200"
+                className="w-full h-14 bg-white border border-zinc-100 rounded-2xl px-6 focus:outline-none text-sm font-bold shadow-sm"
                 placeholder="Add School"
               />
             </div>

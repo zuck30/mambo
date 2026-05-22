@@ -16,6 +16,7 @@ import PrivacyPage from '../pages/info/PrivacyPage';
 import TermsPage from '../pages/info/TermsPage';
 import CookiePolicyPage from '../pages/info/CookiePolicyPage';
 import HomePage from '../pages/home/HomePage';
+import MapPage from '../pages/home/MapPage';
 import LikesPage from '../pages/likes/LikesPage';
 import MessagesPage from '../pages/messages/MessagesPage';
 import ProfilePage from '../pages/profile/ProfilePage';
@@ -110,6 +111,10 @@ const router = createBrowserRouter([
       {
         path: 'home',
         element: <HomePage />,
+      },
+      {
+        path: 'map',
+        element: <MapPage />,
       },
       {
         path: 'likes',

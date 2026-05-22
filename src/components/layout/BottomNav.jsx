@@ -1,17 +1,17 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { MapPin, MessageCircle, Aperture, Users, Compass } from 'lucide-react';
+import { MapPin, MessageCircle, Aperture, Users, User } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const BottomNav = () => {
   return (
     <nav className="fixed bottom-0 left-0 right-0 bg-black/40 backdrop-blur-2xl h-20 px-4 pb-safe z-[100]">
       <div className="max-w-md mx-auto h-full flex items-center justify-between">
-        <NavLink to="/app/home" className="group">
+        <NavLink to="/app/map" className="group">
           {({ isActive }) => (
             <motion.div
               whileTap={{ scale: 0.9 }}
-              className={`flex flex-col items-center gap-1 p-2 transition-all ${isActive ? 'text-snap-yellow' : 'text-zinc-500'}`}
+              className={`flex flex-col items-center gap-1 p-2 transition-all ${isActive ? 'text-white' : 'text-zinc-500'}`}
             >
               <MapPin size={28} strokeWidth={isActive ? 2.5 : 2} />
             </motion.div>
@@ -59,7 +59,7 @@ const BottomNav = () => {
               whileTap={{ scale: 0.9 }}
               className={`flex flex-col items-center gap-1 p-2 transition-all ${isActive ? 'text-snap-yellow' : 'text-zinc-500'}`}
             >
-              <Compass size={28} strokeWidth={isActive ? 2.5 : 2} />
+              <User size={28} strokeWidth={isActive ? 2.5 : 2} />
             </motion.div>
           )}
         </NavLink>
