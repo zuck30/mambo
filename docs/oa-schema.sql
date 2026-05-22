@@ -20,6 +20,11 @@ CREATE TABLE profiles (
   latitude FLOAT8,
   longitude FLOAT8,
   location_name TEXT,
+  passport_latitude FLOAT8,
+  passport_longitude FLOAT8,
+  passport_location_name TEXT,
+  relationship_goal TEXT,
+  smart_photos_enabled BOOLEAN DEFAULT false,
   min_age_pref INT DEFAULT 18,
   max_age_pref INT DEFAULT 55,
   distance_pref INT DEFAULT 80,
@@ -50,6 +55,16 @@ CREATE TABLE matches (
   is_active BOOLEAN DEFAULT true,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   UNIQUE(user1_id, user2_id)
+);
+
+-- REPORTS
+CREATE TABLE reports (
+  id BIGSERIAL PRIMARY KEY,
+  reporter_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
+  reported_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
+  match_id UUID REFERENCES matches(id) ON DELETE SET NULL,
+  reason TEXT NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
 -- MESSAGES
