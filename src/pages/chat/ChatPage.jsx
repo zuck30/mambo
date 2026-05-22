@@ -53,8 +53,26 @@ const ChatPage = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, []);
 
+  const markMessagesAsRead = useCallback(async () => {
+    if (!matchId || !user?.id) return;
+
+    try {
+      const { error } = await supabase
+        .from('messages')
+        .update({ is_read: true })
+        .eq('match_id', matchId)
+        .neq('sender_id', user.id)
+        .eq('is_read', false);
+
+      if (error) throw error;
+    } catch (err) {
+      console.warn('Error marking messages as read:', err);
+    }
+  }, [matchId, user?.id]);
+
   useEffect(() => {
     fetchMatchAndMessages();
+    markMessagesAsRead();
 
     const channel = supabase
       .channel(`chat:${matchId}`, {
@@ -67,6 +85,19 @@ const ChatPage = () => {
         filter: `match_id=eq.${matchId}`
       }, (payload) => {
         setMessages(prev => [...prev, payload.new]);
+        if (payload.new.sender_id !== user.id) {
+          markMessagesAsRead();
+        }
+      })
+      .on('postgres_changes', {
+        event: 'UPDATE',
+        schema: 'public',
+        table: 'messages',
+        filter: `match_id=eq.${matchId}`
+      }, (payload) => {
+        setMessages(prev => prev.map(msg =>
+          msg.id === payload.new.id ? payload.new : msg
+        ));
       })
       .on('broadcast', { event: 'typing' }, ({ payload }) => {
         if (payload.userId !== user.id) {
@@ -420,6 +451,13 @@ const ChatPage = () => {
                     >
                       {msg.content}
                     </div>
+                    {isOwn && (
+                      <div className="absolute -right-6 bottom-2 flex items-center">
+                        <div className={`text-[10px] font-black uppercase tracking-tighter transition-colors ${msg.is_read ? 'text-primary' : 'text-zinc-700'}`}>
+                          {msg.is_read ? 'Seen' : 'Sent'}
+                        </div>
+                      </div>
+                    )}
                     <div className={`text-[10px] text-zinc-700 mt-0.5 ${isOwn ? 'text-right' : 'text-left'} opacity-0 group-hover:opacity-100 transition-opacity`}>
                       {formatMessageTime(msg.created_at)}
                     </div>
