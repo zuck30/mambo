@@ -82,7 +82,7 @@ const DiscoverCard = ({ profile, onSwipe, onClick }) => {
 
         <motion.div
           style={{ opacity: superLikeOpacity }}
-          className="absolute top-20 left-1/2 -translate-x-1/2 px-6 py-2 rounded-2xl bg-snap-yellow text-black font-black text-2xl uppercase tracking-tighter border-2 border-black flex items-center gap-2"
+          className="absolute top-20 left-1/2 -translate-x-1/2 px-6 py-2 rounded-2xl bg-theme-yellow text-black font-black text-2xl uppercase tracking-tighter border-2 border-black flex items-center gap-2"
         >
           <Flame size={20} className="fill-current" />
           Fire

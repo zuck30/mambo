@@ -6,7 +6,7 @@ export default {
     extend: {
       colors: {
         primary: { DEFAULT: '#FFFC00', dark: '#E6E300' },
-        snap: {
+        theme: {
           yellow: '#FFFC00',
           blue: '#00B9FF',
           purple: '#9055FF',

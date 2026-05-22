@@ -51,7 +51,7 @@ const EditProfilePage = () => {
         <button 
           onClick={handleSave} 
           disabled={loading}
-          className="text-snap-yellow font-black text-sm uppercase tracking-widest"
+          className="text-theme-yellow font-black text-sm uppercase tracking-widest"
         >
           {loading ? '...' : 'Done'}
         </button>
@@ -77,7 +77,7 @@ const EditProfilePage = () => {
                       <X size={12} />
                     </button>
                     {i === 0 && (
-                      <div className="absolute bottom-2 left-2 bg-snap-yellow text-black text-[8px] font-black uppercase px-2 py-0.5 rounded-full">
+                      <div className="absolute bottom-2 left-2 bg-theme-yellow text-black text-[8px] font-black uppercase px-2 py-0.5 rounded-full">
                         Main
                       </div>
                     )}
@@ -110,7 +110,7 @@ const EditProfilePage = () => {
                   <span className={`text-sm font-bold \${formData.relationship_goal === goal.label ? 'text-black' : 'text-zinc-400'}`}>
                     {goal.label}
                   </span>
-                  {formData.relationship_goal === goal.label && <Check size={18} className="ml-auto text-snap-yellow" strokeWidth={4} />}
+                  {formData.relationship_goal === goal.label && <Check size={18} className="ml-auto text-theme-yellow" strokeWidth={4} />}
                 </button>
               ))}
             </div>

@@ -111,7 +111,7 @@ const MessagesPage = () => {
               className="flex items-center gap-5 p-4 bg-zinc-900/30 border border-white/5 rounded-[2rem] hover:bg-zinc-900/60 transition-all active:scale-[0.98] group"
             >
           <div className="relative">
-            <div className="w-14 h-14 rounded-full overflow-hidden flex-shrink-0 border-2 border-white/10 group-hover:border-snap-blue transition-colors">
+            <div className="w-14 h-14 rounded-full overflow-hidden flex-shrink-0 border-2 border-white/10 group-hover:border-theme-blue transition-colors">
               <img src={m.otherUser.photos[0]} alt="" className="w-full h-full object-cover" />
             </div>
               </div>
@@ -126,11 +126,11 @@ const MessagesPage = () => {
                 </div>
             <div className="flex items-center gap-2">
               {m.lastMessage && !m.lastMessage.is_read && m.lastMessage.sender_id !== user.id ? (
-                <div className="w-3 h-3 bg-snap-blue rounded-[2px]" />
+                <div className="w-3 h-3 bg-theme-blue rounded-[2px]" />
               ) : (
-                <div className="w-3 h-3 border-2 border-snap-blue rounded-[2px]" />
+                <div className="w-3 h-3 border-2 border-theme-blue rounded-[2px]" />
               )}
-              <p className={`text-xs truncate ${m.lastMessage && !m.lastMessage.is_read && m.lastMessage.sender_id !== user.id ? 'text-snap-blue font-bold' : 'text-zinc-500'}`}>
+              <p className={`text-xs truncate ${m.lastMessage && !m.lastMessage.is_read && m.lastMessage.sender_id !== user.id ? 'text-theme-blue font-bold' : 'text-zinc-500'}`}>
                     {m.lastMessage
                   ? (m.lastMessage.sender_id === user.id ? 'Delivered' : m.lastMessage.content)
                   : 'New Friend'}

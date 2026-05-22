@@ -115,7 +115,7 @@ const RegisterPage = () => {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full h-12 bg-snap-yellow text-black rounded-full font-bold text-sm tracking-wide shadow-lg hover:opacity-90 transition-opacity flex items-center justify-center"
+                    className="w-full h-12 bg-theme-yellow text-black rounded-full font-bold text-sm tracking-wide shadow-lg hover:opacity-90 transition-opacity flex items-center justify-center"
                   >
                     {loading ? <Loader2 className="animate-spin" size={20} /> : 'CREATE ACCOUNT'}
                   </button>
@@ -154,7 +154,7 @@ const RegisterPage = () => {
                 <button
                   onClick={handleVerifyOtp}
                   disabled={loading}
-                  className="w-full h-12 bg-snap-yellow text-black rounded-full font-bold text-sm flex items-center justify-center shadow-lg"
+                  className="w-full h-12 bg-theme-yellow text-black rounded-full font-bold text-sm flex items-center justify-center shadow-lg"
                 >
                   {loading ? <Loader2 className="animate-spin" size={20} /> : 'FINISH SIGN UP'}
                 </button>
@@ -171,7 +171,7 @@ const RegisterPage = () => {
 
         <div className="mt-12 text-center">
           <p className="text-white/60 text-sm">
-            Already have an account? <Link to="/login" className="text-snap-yellow font-bold hover:underline">Log in</Link>
+            Already have an account? <Link to="/login" className="text-theme-yellow font-bold hover:underline">Log in</Link>
           </p>
         </div>
       </motion.div>
