@@ -265,7 +265,7 @@ const HomePage = () => {
             particleCount: 200,
             spread: 90,
             origin: { y: 0.6 },
-            colors: ['#ff79ac', '#ff5280', '#ffffff', '#ffd700']
+            colors: ['#C13D88', '#ff5280', '#ffffff', '#ffd700']
           });
         } else {
           toast.success(direction === 'superlike' ? 'Super Liked!' : 'Liked!', {

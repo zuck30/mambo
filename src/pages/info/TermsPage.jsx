@@ -12,26 +12,26 @@ const TermsPage = () => {
       title: "Kukubali Masharti",
       label: "ACCEPTANCE",
       desc: "By creating a mambo account, you agree to be bound by these Terms. If you do not agree, do not use the service.",
-      icon: <Scale className="text-[#ff79ac]" size={24} />
+      icon: <Scale className="text-[#C13D88]" size={24} />
     },
     {
       id: "02",
       title: "Umri na Vigezo",
       label: "ELIGIBILITY",
       desc: "You must be at least 18 years of age to create an account and use mambo.",
-      icon: <Gavel className="text-[#ff79ac]" size={24} />
+      icon: <Gavel className="text-[#C13D88]" size={24} />
     },
     {
       id: "03",
       title: "Matumizi ya Dunia",
       label: "GLOBAL USAGE",
       desc: "mambo is for a global audience. You are responsible for complying with your local jurisdiction's laws.",
-      icon: <Globe className="text-[#ff79ac]" size={24} />
+      icon: <Globe className="text-[#C13D88]" size={24} />
     }
   ];
 
   return (
-    <div className="min-h-screen bg-black text-white selection:bg-[#ff79ac] overflow-x-hidden font-sans antialiased">
+    <div className="min-h-screen bg-black text-white selection:bg-[#C13D88] overflow-x-hidden font-sans antialiased">
       {/* Cinematic Backdrop */}
       <div className="fixed inset-0 z-0">
         <div className="absolute inset-0 bg-black/95 backdrop-blur-3xl z-10" />
@@ -44,12 +44,12 @@ const TermsPage = () => {
 
       <header className="fixed top-0 w-full z-50 flex items-center justify-between px-8 py-8 md:px-12">
         <div className="flex items-center gap-3 cursor-pointer group" onClick={() => navigate('/')}>
-          <Crown className="text-[#ff79ac] fill-current" size={28} />
+          <Crown className="text-[#C13D88] fill-current" size={28} />
           <span className="text-2xl font-black tracking-tighter uppercase italic">mambo</span>
         </div>
         <button 
           onClick={() => navigate(-1)}
-          className="text-white/40 hover:text-[#ff79ac] transition-all font-black text-[10px] uppercase tracking-[0.4em] flex items-center gap-2"
+          className="text-white/40 hover:text-[#C13D88] transition-all font-black text-[10px] uppercase tracking-[0.4em] flex items-center gap-2"
         >
           <ArrowLeft size={14} /> Back
         </button>
@@ -73,7 +73,7 @@ const TermsPage = () => {
             <div key={section.id} className="p-12 bg-black hover:bg-white/[0.02] transition-colors relative group">
               <div className="mb-8">{section.icon}</div>
               <span className="text-[10px] font-black tracking-[0.3em] text-white/30 uppercase">{section.label}</span>
-              <h2 className="text-3xl font-black italic uppercase tracking-tighter mt-2 mb-6 group-hover:text-[#ff79ac] transition-colors">{section.title}</h2>
+              <h2 className="text-3xl font-black italic uppercase tracking-tighter mt-2 mb-6 group-hover:text-[#C13D88] transition-colors">{section.title}</h2>
               <p className="text-white/50 text-sm leading-relaxed">{section.desc}</p>
             </div>
           ))}

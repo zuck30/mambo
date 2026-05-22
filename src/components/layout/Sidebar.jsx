@@ -22,7 +22,7 @@ const Sidebar = () => {
       {/* Mobile Header */}
       <div className="fixed top-0 left-0 right-0 h-14 bg-black border-b border-white/10 flex items-center justify-between px-4 z-40 md:hidden">
         <div className="flex items-center gap-2">
-          <Flame size={28} className="text-[#ff79ac] fill-current" />
+          <Flame size={28} className="text-[#C13D88] fill-current" />
           <span className="text-xl font-bold text-white">mambo</span>
         </div>
       </div>
@@ -38,7 +38,7 @@ const Sidebar = () => {
         {/* Logo */}
         <div className="flex items-center h-16 px-4 mb-8 mt-2 overflow-hidden">
           <div className="flex items-center gap-3">
-            <Flame size={32} className="text-[#ff79ac] fill-current flex-shrink-0" />
+            <Flame size={32} className="text-[#C13D88] fill-current flex-shrink-0" />
             <motion.span
               animate={{ opacity: isHovered ? 1 : 0 }}
               transition={{ duration: 0.15 }}

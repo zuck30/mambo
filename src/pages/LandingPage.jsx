@@ -29,12 +29,12 @@ const TypewriterText = ({ texts }) => {
   }, [displayText, isDeleting, index, texts]);
 
   return (
-    <span className="text-[#ff79ac] drop-shadow-[0_0_15px_rgba(255,121,172,0.5)]">
+    <span className="text-[#C13D88] drop-shadow-[0_0_15px_rgba(255,121,172,0.5)]">
       {displayText}
       <motion.span
         animate={{ opacity: [0, 1, 0] }}
         transition={{ duration: 0.8, repeat: Infinity }}
-        className="inline-block w-1 h-16 md:h-32 bg-[#ff79ac] ml-2 align-middle"
+        className="inline-block w-1 h-16 md:h-32 bg-[#C13D88] ml-2 align-middle"
       />
     </span>
   );
@@ -70,15 +70,15 @@ const LandingPage = () => {
           className="flex items-center gap-1.5 cursor-pointer"
           onClick={() => navigate('/')}
         >
-          <Flame className="text-[#ff79ac] fill-current w-8 h-8 md:w-10 md:h-10" size={32} />
+          <Flame className="text-[#C13D88] fill-current w-8 h-8 md:w-10 md:h-10" size={32} />
           <span className="text-2xl md:text-4xl font-black tracking-tighter">mambo</span>
         </motion.div>
 
         <nav className="hidden lg:flex gap-8 font-bold text-sm uppercase tracking-widest text-white/90">
           {['Products', 'Learn', 'Safety', 'Support'].map((item) => (
-            <Link key={item} to={`/${item.toLowerCase()}`} className="hover:text-[#ff79ac] transition-colors relative group">
+            <Link key={item} to={`/${item.toLowerCase()}`} className="hover:text-[#C13D88] transition-colors relative group">
               {item}
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#ff79ac] transition-all group-hover:w-full" />
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#C13D88] transition-all group-hover:w-full" />
             </Link>
           ))}
         </nav>
@@ -90,7 +90,7 @@ const LandingPage = () => {
         >
           <button
             onClick={() => navigate('/login')}
-            className="bg-white text-black px-4 md:px-8 py-2 md:py-2.5 rounded-full font-bold text-xs md:text-sm uppercase hover:bg-[#ff79ac] hover:text-white transition-all shadow-xl active:scale-95 whitespace-nowrap"
+            className="bg-white text-black px-4 md:px-8 py-2 md:py-2.5 rounded-full font-bold text-xs md:text-sm uppercase hover:bg-[#C13D88] hover:text-white transition-all shadow-xl active:scale-95 whitespace-nowrap"
           >
             Log in
           </button>
@@ -122,7 +122,7 @@ const LandingPage = () => {
         >
           <button
             onClick={() => navigate('/register')}
-            className="group relative bg-gradient-to-r from-[#ff79ac] to-[#ff4d8c] text-white px-8 md:px-16 py-4 md:py-5 rounded-full text-xl md:text-2xl font-black uppercase tracking-tighter shadow-2xl overflow-hidden w-full md:w-auto"
+            className="group relative bg-gradient-to-r from-[#C13D88] to-[#ff4d8c] text-white px-8 md:px-16 py-4 md:py-5 rounded-full text-xl md:text-2xl font-black uppercase tracking-tighter shadow-2xl overflow-hidden w-full md:w-auto"
           >
             <span className="relative z-10 transition-transform group-hover:scale-110 inline-block">Create account</span>
             <motion.div 
@@ -145,9 +145,9 @@ const LandingPage = () => {
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.8 + (i * 0.2) }}
                 href="#" 
-                className="flex items-center gap-2 bg-black/40 backdrop-blur-md border border-white/10 px-4 md:px-6 py-2 md:py-3 rounded-xl hover:border-[#ff79ac]/50 hover:bg-black/60 transition-all group"
+                className="flex items-center gap-2 bg-black/40 backdrop-blur-md border border-white/10 px-4 md:px-6 py-2 md:py-3 rounded-xl hover:border-[#C13D88]/50 hover:bg-black/60 transition-all group"
               >
-                <btn.Icon size={24} className="text-white group-hover:text-[#ff79ac] transition-colors" />
+                <btn.Icon size={24} className="text-white group-hover:text-[#C13D88] transition-colors" />
                 <div className="text-left leading-tight">
                   <span className="text-[8px] md:text-[10px] uppercase block font-bold opacity-60">{btn.label}</span>
                   <span className="text-base md:text-lg font-black tracking-tight">{btn.store}</span>
@@ -191,7 +191,7 @@ const LandingPage = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.1 }}
                 >
-                  <Link to={`/${item.toLowerCase()}`} onClick={() => setIsMobileMenuOpen(false)} className="hover:text-[#ff79ac]">
+                  <Link to={`/${item.toLowerCase()}`} onClick={() => setIsMobileMenuOpen(false)} className="hover:text-[#C13D88]">
                     {item}
                   </Link>
                 </motion.div>
