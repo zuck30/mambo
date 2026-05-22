@@ -5,7 +5,12 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: { DEFAULT: '#C13D88', dark: '#ff5280' },
+        primary: { DEFAULT: '#F2C20E', dark: '#C13D88' },
+        mambo: {
+          yellow: '#F2C20E',
+          magenta: '#C13D88',
+          cream: '#F8E7B4',
+        },
         dark: {
           DEFAULT: '#000000',
           card: '#1F1F1F',

@@ -3,7 +3,7 @@ import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../hooks/useAuth';
 import { Link } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
-import { Search } from 'lucide-react';
+import { Search, MessageCircle } from 'lucide-react';
 
 const MessagesPage = () => {
   const { user } = useAuth();
@@ -66,58 +66,65 @@ const MessagesPage = () => {
   );
 
   return (
-    <div className="p-6 pb-24">
-      <h1 className="text-lg font-semibold mb-4 tracking-tight">Messages</h1>
+    <div className="p-6 pb-32">
+      <header className="flex items-center justify-between mb-8">
+        <h1 className="text-2xl font-black uppercase tracking-tighter italic">Conversations</h1>
+        <div className="w-10 h-10 rounded-full bg-zinc-900 flex items-center justify-center border border-white/5">
+           <MessageCircle size={20} className="text-primary" />
+        </div>
+      </header>
 
       {/* Search Bar */}
-      <div className="relative mb-6">
-        <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-zinc-500">
-          <Search size={18} />
+      <div className="relative mb-8">
+        <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none text-zinc-600">
+          <Search size={16} />
         </div>
         <input
           type="text"
-          placeholder="Search matches..."
+          placeholder="Jump to chat..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full bg-zinc-900/50 border border-white/5 rounded-2xl py-4 pl-12 pr-4 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:ring-1 focus:ring-white/10 transition-all"
+          className="w-full bg-zinc-900/40 border border-white/5 rounded-2xl py-4 pl-14 pr-4 text-xs font-black uppercase tracking-widest text-white placeholder:text-zinc-700 focus:outline-none focus:ring-1 focus:ring-primary/20 transition-all"
         />
       </div>
 
       {loading ? (
         <div className="space-y-4">
           {[...Array(5)].map((_, i) => (
-            <div key={i} className="h-20 bg-white/5 rounded-2xl animate-pulse" />
+            <div key={i} className="h-24 bg-white/5 rounded-[2rem] animate-pulse" />
           ))}
         </div>
       ) : filteredMatches.length > 0 ? (
-        <div className="space-y-4">
+        <div className="space-y-3">
           {filteredMatches.map(m => (
             <Link
               key={m.id}
               to={`/app/chat/${m.id}`}
-              className="flex items-center gap-4 p-4 bg-dark-card rounded-2xl hover:bg-dark-surface transition-colors"
+              className="flex items-center gap-5 p-4 bg-zinc-900/30 border border-white/5 rounded-[2rem] hover:bg-zinc-900/60 transition-all active:scale-[0.98] group"
             >
-              <div className="w-16 h-16 rounded-full overflow-hidden flex-shrink-0">
+              <div className="w-16 h-16 rounded-[1.5rem] overflow-hidden flex-shrink-0 border-2 border-white/5 group-hover:border-primary/50 transition-colors">
                 <img src={m.otherUser.photos[0]} alt="" className="w-full h-full object-cover" />
               </div>
-              <div className="flex-grow min-w-0">
-                <div className="flex justify-between items-baseline">
-                  <h3 className="font-bold text-lg truncate">{m.otherUser.name}</h3>
-                  <span className="text-xs text-dark-text flex-shrink-0 ml-2">
+              <div className="flex-grow min-w-0 py-1">
+                <div className="flex justify-between items-baseline mb-1">
+                  <h3 className="font-black text-sm uppercase tracking-widest truncate">{m.otherUser.name}</h3>
+                  <span className="text-[10px] font-bold text-zinc-600 flex-shrink-0 ml-2 uppercase">
                     {m.lastMessage
-                      ? formatDistanceToNow(new Date(m.lastMessage.created_at), { addSuffix: true })
-                      : formatDistanceToNow(new Date(m.createdAt), { addSuffix: true })}
+                      ? formatDistanceToNow(new Date(m.lastMessage.created_at), { addSuffix: false })
+                      : 'Just now'}
                   </span>
                 </div>
-                <p className="text-dark-text text-sm truncate">
-                  {m.lastMessage
-                    ? (m.lastMessage.sender_id === user.id ? 'You: ' : '') + m.lastMessage.content
-                    : 'New match! Say hello 👋'}
-                </p>
+                <div className="flex items-center justify-between gap-2">
+                  <p className={`text-[11px] truncate leading-none ${m.lastMessage && !m.lastMessage.is_read && m.lastMessage.sender_id !== user.id ? 'text-white font-black' : 'text-zinc-500 font-medium'}`}>
+                    {m.lastMessage
+                      ? (m.lastMessage.sender_id === user.id ? 'Sent · ' : '') + m.lastMessage.content
+                      : 'New match! 👋'}
+                  </p>
+                  {m.lastMessage && !m.lastMessage.is_read && m.lastMessage.sender_id !== user.id && (
+                    <div className="w-2.5 h-2.5 bg-mambo-magenta rounded-full flex-shrink-0 shadow-lg shadow-mambo-magenta/40" />
+                  )}
+                </div>
               </div>
-              {m.lastMessage && !m.lastMessage.is_read && m.lastMessage.sender_id !== user.id && (
-                <div className="w-3 h-3 bg-primary rounded-full flex-shrink-0" />
-              )}
             </Link>
           ))}
         </div>

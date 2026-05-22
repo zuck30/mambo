@@ -65,75 +65,68 @@ const DiscoverCard = ({ profile, onSwipe, onClick }) => {
           className="w-full h-full object-cover pointer-events-none transition-all duration-1000 grayscale-[0.2] hover:grayscale-0 hover:scale-105"
         />
 
-        {/* Technical Status Indicators */}
+        {/* Status Indicators */}
         <motion.div
           style={{ opacity: likeOpacity }}
-          className="absolute top-10 left-10 px-6 py-2 rounded-2xl bg-white text-black font-black text-2xl uppercase tracking-tighter -rotate-12 border border-white/20 shadow-xl"
+          className="absolute top-10 left-10 px-6 py-2 rounded-2xl bg-primary text-black font-black text-2xl uppercase tracking-tighter -rotate-12 border-2 border-black shadow-xl"
         >
-          Match
+          Sweet
         </motion.div>
         
         <motion.div
           style={{ opacity: nopeOpacity }}
           className="absolute top-10 right-10 px-6 py-2 rounded-2xl bg-zinc-900/80 backdrop-blur-md text-white font-black text-2xl uppercase tracking-tighter rotate-12 border border-white/10"
         >
-          Skip
+          Next
         </motion.div>
 
         <motion.div
           style={{ opacity: superLikeOpacity }}
-          className="absolute top-20 left-1/2 -translate-x-1/2 px-6 py-2 rounded-2xl bg-blue-500 text-white font-black text-2xl uppercase tracking-tighter border border-blue-400 flex items-center gap-2"
+          className="absolute top-20 left-1/2 -translate-x-1/2 px-6 py-2 rounded-2xl bg-mambo-magenta text-white font-black text-2xl uppercase tracking-tighter border-2 border-black flex items-center gap-2"
         >
-          <Ghost size={20} className="fill-current" />
-          Elite
+          <Flame size={20} className="fill-current" />
+          Fire
         </motion.div>
 
         {/* Info Overlay */}
-        <div className="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-black via-black/80 to-transparent">
+        <div className="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-black via-black/90 to-transparent">
           <div className="flex items-end justify-between">
-            <div className="space-y-2">
+            <div className="space-y-3">
               <div className="flex items-baseline gap-3">
-                <h3 className="text-4xl font-black tracking-tighter uppercase text-white">
+                <h3 className="text-4xl font-black tracking-tighter uppercase text-white leading-none">
                   {profile.name}
                 </h3>
-                <span className="text-2xl font-bold text-white/50">{calculateAge(profile.birthday)}</span>
+                <span className="text-2xl font-black text-primary italic leading-none">{calculateAge(profile.birthday)}</span>
               </div>
               
-              <div className="flex items-center gap-2 flex-wrap">
-                <div className="flex items-center gap-1.5 px-3 py-1 bg-white/5 backdrop-blur-md border border-white/10 rounded-full">
-                  <MapPin size={12} className="text-zinc-400" />
-                  <span className="text-[10px] font-black uppercase tracking-widest text-zinc-300">
+              <div className="flex items-center gap-2 flex-wrap max-w-[240px]">
+                <div className="flex items-center gap-1.5 px-3 py-1 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl">
+                  <MapPin size={10} className="text-primary" />
+                  <span className="text-[9px] font-black uppercase tracking-widest text-zinc-400">
                     {profile.location_name || 'Nearby'}
                   </span>
                 </div>
                 {profile.commonInterestsCount > 0 && (
-                  <div className="flex items-center gap-1.5 px-3 py-1 bg-primary/20 backdrop-blur-md border border-primary/30 rounded-full">
-                    <Heart size={12} className="text-primary fill-current" />
-                    <span className="text-[10px] font-black uppercase tracking-widest text-primary">
-                      {profile.commonInterestsCount} {t.shared}
+                  <div className="flex items-center gap-1.5 px-3 py-1 bg-primary border border-black rounded-xl">
+                    <Heart size={10} className="text-black fill-current" />
+                    <span className="text-[9px] font-black uppercase tracking-widest text-black">
+                      {profile.commonInterestsCount} Shared
                     </span>
                   </div>
                 )}
                 {profile.relationship_goal && (
-                  <div className="flex items-center gap-1.5 px-3 py-1 bg-white/10 backdrop-blur-md border border-white/20 rounded-full">
+                  <div className="flex items-center gap-1.5 px-3 py-1 bg-zinc-900/50 backdrop-blur-md border border-white/10 rounded-xl">
                     <span className="text-xs">{getGoalIcon(profile.relationship_goal)}</span>
-                    <span className="text-[10px] font-black uppercase tracking-widest text-white">
+                    <span className="text-[9px] font-black uppercase tracking-widest text-white/70">
                       {profile.relationship_goal}
-                    </span>
-                  </div>
-                )}
-                {profile.job && (
-                  <div className="flex items-center gap-1.5 px-3 py-1 bg-white/5 backdrop-blur-md border border-white/10 rounded-full">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-zinc-300">
-                      {profile.job}
                     </span>
                   </div>
                 )}
               </div>
             </div>
 
-            <button className="w-12 h-12 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white transition-all hover:bg-white hover:text-black">
-              <Info size={20} />
+            <button className="w-14 h-14 rounded-3xl bg-white/5 backdrop-blur-3xl border border-white/10 flex items-center justify-center text-white transition-all hover:bg-primary hover:text-black hover:border-black active:scale-95">
+              <Info size={24} />
             </button>
           </div>
         </div>

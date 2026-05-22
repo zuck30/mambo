@@ -9,21 +9,20 @@ const Sidebar = () => {
   const [isHovered, setIsHovered] = useState(false);
 
   const navItems = [
-    { to: '/app/home', icon: Home, label: 'Home' },
-    { to: '/app/search', icon: Search, label: 'Search' },
-    { to: '/app/explore', icon: Compass, label: 'Explore' },
-    { to: '/app/messages', icon: MessageCircle, label: 'Messages' },
-    { to: '/app/likes', icon: Heart, label: 'Likes', premium: true },
-    { to: '/app/profile', icon: User, label: 'Profile' },
+    { to: '/app/home', icon: Compass, label: 'Discover' },
+    { to: '/app/messages', icon: MessageCircle, label: 'Chat' },
+    { to: '/app/home', icon: Flame, label: 'For You' },
+    { to: '/app/likes', icon: Heart, label: 'Likes' },
+    { to: '/app/profile', icon: User, label: 'Me' },
   ];
 
   return (
     <>
       {/* Mobile Header */}
-      <div className="fixed top-0 left-0 right-0 h-14 bg-black border-b border-white/10 flex items-center justify-between px-4 z-40 md:hidden">
+      <div className="fixed top-0 left-0 right-0 h-14 bg-black/80 backdrop-blur-xl border-b border-white/5 flex items-center justify-between px-6 z-40 md:hidden">
         <div className="flex items-center gap-2">
-          <Flame size={28} className="text-[#C13D88] fill-current" />
-          <span className="text-xl font-bold text-white">mambo</span>
+          <Flame size={28} className="text-primary fill-current" />
+          <span className="text-xl font-black italic tracking-tighter text-white">mambo</span>
         </div>
       </div>
 
@@ -38,11 +37,11 @@ const Sidebar = () => {
         {/* Logo */}
         <div className="flex items-center h-16 px-4 mb-8 mt-2 overflow-hidden">
           <div className="flex items-center gap-3">
-            <Flame size={32} className="text-[#C13D88] fill-current flex-shrink-0" />
+            <Flame size={32} className="text-primary fill-current flex-shrink-0" />
             <motion.span
               animate={{ opacity: isHovered ? 1 : 0 }}
               transition={{ duration: 0.15 }}
-              className="text-2xl font-bold text-white whitespace-nowrap"
+              className="text-2xl font-black italic tracking-tighter text-white whitespace-nowrap uppercase"
             >
               mambo
             </motion.span>
