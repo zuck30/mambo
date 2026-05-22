@@ -94,11 +94,11 @@ const SettingsPage = () => {
 
         {/* Account Details */}
         <section className="space-y-4">
-          <label className="text-[11px] font-black text-zinc-500 uppercase tracking-widest px-1 block">Account</label>
-          <div className="bg-zinc-900/50 border border-white/5 rounded-[2rem] divide-y divide-white/5 overflow-hidden">
+          <label className="text-[11px] font-black text-zinc-500 uppercase tracking-[0.2em] px-2 block">Account Settings</label>
+          <div className="bg-black/20 border border-white/5 rounded-[2.5rem] divide-y divide-white/5 overflow-hidden">
             
             {/* Phone Number Item */}
-            <div className="p-5">
+            <div className="p-6">
               <div className="flex justify-between items-center mb-2">
                 <div className="flex items-center gap-4">
                   <div className="w-10 h-10 rounded-xl bg-zinc-800 flex items-center justify-center text-zinc-400">
@@ -108,24 +108,24 @@ const SettingsPage = () => {
                 </div>
                 <button 
                   onClick={() => setIsEditingPhone(!isEditingPhone)}
-                  className="text-[10px] font-black uppercase text-primary tracking-wider"
+                  className="text-[10px] font-black uppercase text-snap-yellow tracking-wider"
                 >
-                  {isEditingPhone ? t.cancel : 'Edit'}
+                  {isEditingPhone ? t.cancel : 'Change'}
                 </button>
               </div>
               
               {isEditingPhone ? (
-                <div className="flex gap-2 mt-4 animate-in slide-in-from-top-2 duration-300">
+                <div className="flex gap-2 mt-4">
                   <input
                     type="tel"
                     value={phoneNumber}
                     onChange={(e) => setPhoneNumber(e.target.value)}
-                    className="flex-grow bg-black border border-white/10 rounded-xl px-4 h-11 text-sm focus:outline-none focus:border-primary/50"
+                    className="flex-grow bg-black border border-white/10 rounded-xl px-4 h-11 text-sm focus:outline-none focus:border-snap-yellow/50"
                   />
                   <button
                     onClick={handleUpdatePhone}
                     disabled={loading}
-                    className="bg-white text-black px-5 rounded-xl font-bold text-xs uppercase disabled:opacity-50"
+                    className="bg-snap-yellow text-black px-5 rounded-xl font-bold text-xs uppercase disabled:opacity-50"
                   >
                     {loading ? '...' : t.save}
                   </button>
@@ -136,24 +136,24 @@ const SettingsPage = () => {
             </div>
 
             {/* Notification Toggle */}
-            <div className="p-5 flex justify-between items-center">
+            <div className="p-6 flex justify-between items-center">
               <div className="flex items-center gap-4">
                 <div className="w-10 h-10 rounded-xl bg-zinc-800 flex items-center justify-center text-zinc-400">
                   <Bell size={18} />
                 </div>
-                <span className="font-bold text-sm">Push Notifications</span>
+                <span className="font-bold text-sm">Notifications</span>
               </div>
-              <div className="w-11 h-6 bg-zinc-800 rounded-full relative cursor-pointer">
-                <div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full" />
+              <div className="w-12 h-7 bg-zinc-800 rounded-full relative cursor-pointer">
+                <div className="absolute left-1 top-1 w-5 h-5 bg-white rounded-full" />
               </div>
             </div>
           </div>
         </section>
 
-        {/* Safety & Legal */}
+        {/* Privacy & Legal */}
         <section className="space-y-4">
-          <label className="text-[11px] font-black text-zinc-500 uppercase tracking-widest px-1 block">Security & Legal</label>
-          <div className="bg-zinc-900/50 border border-white/5 rounded-[2rem] overflow-hidden">
+          <label className="text-[11px] font-black text-zinc-500 uppercase tracking-[0.2em] px-2 block">Privacy & Support</label>
+          <div className="bg-black/20 border border-white/5 rounded-[2.5rem] overflow-hidden">
             {[
               { id: 'safety', label: 'Safety Center', icon: Shield },
               { id: 'privacy', label: 'Privacy Policy', icon: Lock },
@@ -161,8 +161,7 @@ const SettingsPage = () => {
             ].map((item) => (
               <button
                 key={item.id}
-                onClick={() => setExpandedSection(expandedSection === item.id ? null : item.id)}
-                className="w-full p-5 flex items-center justify-between hover:bg-white/5 transition-colors border-b border-white/5 last:border-0"
+                className="w-full p-6 flex items-center justify-between hover:bg-white/5 transition-colors border-b border-white/5 last:border-0 group"
               >
                 <div className="flex items-center gap-4">
                   <div className="w-10 h-10 rounded-xl bg-zinc-800 flex items-center justify-center text-zinc-400">
@@ -170,27 +169,24 @@ const SettingsPage = () => {
                   </div>
                   <span className="font-bold text-sm">{item.label}</span>
                 </div>
-                <ChevronRight 
-                  size={18} 
-                  className={`text-zinc-600 transition-transform ${expandedSection === item.id ? 'rotate-90 text-primary' : ''}`} 
-                />
+                <ChevronRight size={18} className="text-zinc-600 group-hover:translate-x-1 transition-transform" />
               </button>
             ))}
           </div>
         </section>
 
-        {/* Danger Zone */}
-        <div className="pt-6 space-y-4">
+        {/* Actions */}
+        <div className="pt-6 space-y-3">
           <button
             onClick={signOut}
-            className="w-full bg-zinc-900 border border-white/5 text-white font-bold h-16 rounded-3xl flex items-center justify-center gap-3 hover:bg-zinc-800 transition-colors"
+            className="w-full bg-black/20 border border-white/5 text-white font-black uppercase text-xs tracking-widest h-16 rounded-full flex items-center justify-center gap-3 hover:bg-white/5 transition-all"
           >
             <LogOut size={20} /> {t.logout}
           </button>
 
           <button
             onClick={handleDeleteAccount}
-            className="w-full text-rose-500 font-bold h-16 flex items-center justify-center gap-2 hover:bg-rose-500/5 rounded-3xl transition-colors"
+            className="w-full text-snap-red font-black uppercase text-xs tracking-[0.2em] h-16 flex items-center justify-center gap-2 hover:bg-snap-red/5 rounded-full transition-all"
           >
             <Trash2 size={18} /> {t.delete_account}
           </button>

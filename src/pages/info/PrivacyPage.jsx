@@ -12,26 +12,26 @@ const PrivacyPage = () => {
       title: "Utangulizi",
       label: "INTRODUCTION",
       desc: "mambo is committed to your privacy. We operate across Tanzania, East Africa, and globally, ensuring your data is handled under strict protection standards.",
-      icon: <Fingerprint className="text-[#C13D88]" size={24} />
+      icon: <Fingerprint className="text-[#FFFC00]" size={24} />
     },
     {
       id: "02",
       title: "Data Tunazokusanya",
       label: "COLLECTION",
       desc: "We collect info you provide: email, phone, profile photos, and location (with your permission) to build your digital vibe.",
-      icon: <Database className="text-[#C13D88]" size={24} />
+      icon: <Database className="text-[#FFFC00]" size={24} />
     },
     {
       id: "03",
       title: "Matumizi ya Data",
       label: "USAGE",
       desc: "We use your intel to maintain services, facilitate matches, verify identity, and keep the ecosystem secure from fraud.",
-      icon: <Eye className="text-[#C13D88]" size={24} />
+      icon: <Eye className="text-[#FFFC00]" size={24} />
     }
   ];
 
   return (
-    <div className="min-h-screen bg-black text-white selection:bg-[#C13D88] overflow-x-hidden font-sans antialiased">
+    <div className="min-h-screen bg-black text-white selection:bg-[#FFFC00] overflow-x-hidden font-sans antialiased">
       {/* Background Matrix */}
       <div className="fixed inset-0 z-0">
         <div className="absolute inset-0 bg-black/95 backdrop-blur-3xl z-10" />
@@ -44,12 +44,12 @@ const PrivacyPage = () => {
 
       <header className="fixed top-0 w-full z-50 flex items-center justify-between px-8 py-8 md:px-12">
         <div className="flex items-center gap-3 cursor-pointer group" onClick={() => navigate('/')}>
-          <Crown className="text-[#C13D88] fill-current" size={28} />
+          <Crown className="text-[#FFFC00] fill-current" size={28} />
           <span className="text-2xl font-black tracking-tighter uppercase italic">mambo</span>
         </div>
         <button 
           onClick={() => navigate(-1)}
-          className="text-white/40 hover:text-[#C13D88] transition-all font-black text-[10px] uppercase tracking-[0.4em] flex items-center gap-2"
+          className="text-white/40 hover:text-[#FFFC00] transition-all font-black text-[10px] uppercase tracking-[0.4em] flex items-center gap-2"
         >
           <ArrowLeft size={14} /> Back
         </button>
@@ -74,7 +74,7 @@ const PrivacyPage = () => {
             <div key={module.id} className="p-12 bg-black hover:bg-white/[0.02] transition-colors relative group">
               <div className="mb-8">{module.icon}</div>
               <span className="text-[10px] font-black tracking-[0.3em] text-white/30 uppercase">{module.label}</span>
-              <h2 className="text-3xl font-black italic uppercase tracking-tighter mt-2 mb-6 group-hover:text-[#C13D88] transition-colors">{module.title}</h2>
+              <h2 className="text-3xl font-black italic uppercase tracking-tighter mt-2 mb-6 group-hover:text-[#FFFC00] transition-colors">{module.title}</h2>
               <p className="text-white/50 text-sm leading-relaxed">{module.desc}</p>
             </div>
           ))}
@@ -83,7 +83,7 @@ const PrivacyPage = () => {
         {/* Global Transfer Section */}
         <section className="bg-white/5 backdrop-blur-3xl border border-white/10 rounded-[3rem] p-12 md:p-20 relative overflow-hidden">
           <div className="relative z-10 flex flex-col md:flex-row gap-12 items-center">
-            <Globe className="text-[#C13D88] shrink-0" size={60} />
+            <Globe className="text-[#FFFC00] shrink-0" size={60} />
             <div>
               <h2 className="text-4xl md:text-6xl font-black italic uppercase tracking-tighter mb-6">Global Transfers</h2>
               <p className="text-xl text-white/60 leading-relaxed font-medium">

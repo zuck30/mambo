@@ -7,7 +7,7 @@ import DiscoverCard from '../../components/home/DiscoverCard';
 import DiscoverySettingsModal from '../../components/home/DiscoverySettingsModal';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { Flame, Filter, RefreshCcw, X, Star, Heart, Zap, User, Search } from 'lucide-react';
+import { Flame, Filter, RefreshCcw, X, Star, Heart, Zap, User, Search, MapPin, Compass } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import confetti from 'canvas-confetti';
 
@@ -443,9 +443,13 @@ const HomePage = () => {
             >
                {profile?.photos?.[0] ? <img src={profile.photos[0]} className="w-full h-full object-cover" /> : <User className="text-white" />}
             </motion.button>
-            <div className="w-10 h-10 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center border-2 border-white/20">
+            <motion.button
+              whileTap={{ scale: 0.9 }}
+              onClick={() => setShowFilters(true)}
+              className="w-10 h-10 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center border-2 border-white/20 pointer-events-auto"
+            >
               <Search size={20} className="text-white" />
-            </div>
+            </motion.button>
           </div>
 
           <div className="flex items-center gap-3">
@@ -463,18 +467,20 @@ const HomePage = () => {
         <div className="flex justify-center gap-8 py-2 pointer-events-auto">
           <button
             onClick={() => setActiveTab('discover')}
-            className={`text-sm font-black uppercase tracking-widest transition-all ${
+            className={`text-sm font-black uppercase tracking-widest transition-all flex items-center gap-2 ${
               activeTab === 'discover' ? 'text-white' : 'text-white/40'
             }`}
           >
+            <Compass size={16} strokeWidth={activeTab === 'discover' ? 3 : 2} />
             Discover
           </button>
           <button
             onClick={() => setActiveTab('topPicks')}
-            className={`text-sm font-black uppercase tracking-widest transition-all ${
+            className={`text-sm font-black uppercase tracking-widest transition-all flex items-center gap-2 ${
               activeTab === 'topPicks' ? 'text-white' : 'text-white/40'
             }`}
           >
+            <Star size={16} strokeWidth={activeTab === 'topPicks' ? 3 : 2} />
             Spotlight
           </button>
         </div>
@@ -494,7 +500,7 @@ const HomePage = () => {
               onClick={() => navigate(`/app/chat/${m.matchId}`)}
               className="flex-shrink-0 flex flex-col items-center gap-1.5"
             >
-              <div className="w-16 h-16 rounded-[1.5rem] p-0.5 bg-gradient-to-tr from-primary to-snap-purple">
+              <div className="w-16 h-16 rounded-[1.5rem] p-0.5 bg-gradient-to-tr from-primary to-white">
                 <div className="w-full h-full rounded-[1.25rem] border-2 border-black overflow-hidden">
                   <img src={m.photos[0]} className="w-full h-full object-cover" />
                 </div>
@@ -644,7 +650,7 @@ const HomePage = () => {
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
           onClick={handleBoost}
-          className="w-12 h-12 rounded-full bg-snap-purple/20 backdrop-blur-md border-2 border-snap-purple flex items-center justify-center text-snap-purple shadow-lg"
+          className="w-12 h-12 rounded-full bg-snap-yellow/20 backdrop-blur-md border-2 border-snap-yellow flex items-center justify-center text-snap-yellow shadow-lg"
         >
           <Zap className="w-6 h-6" fill="currentColor" />
         </motion.button>

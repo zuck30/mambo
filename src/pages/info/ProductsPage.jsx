@@ -10,16 +10,16 @@ const ProductsPage = () => {
     {
       name: "mambo Core",
       id: "BASIC",
-      color: "text-[#C13D88]",
+      color: "text-[#FFFC00]",
       glow: "shadow-[0_0_50px_rgba(255,121,172,0.2)]",
       description: "Our flagship foundation for high-energy Tanzanian connections.",
       features: ["Global Reach", "Smart Matching", "Daily Vibe Checks"],
       buttonText: "Join the Vibe",
       icon: (
         <svg viewBox="0 0 100 100" className="w-24 h-24 drop-shadow-[0_0_15px_rgba(255,121,172,0.4)]">
-          <circle cx="50" cy="50" r="40" fill="none" stroke="#C13D88" strokeWidth="1" strokeDasharray="4 4" />
-          <path d="M30 50 Q50 20 70 50 T30 50" fill="#C13D88" fillOpacity="0.2" stroke="#C13D88" strokeWidth="3" />
-          <circle cx="50" cy="50" r="8" fill="#C13D88" />
+          <circle cx="50" cy="50" r="40" fill="none" stroke="#FFFC00" strokeWidth="1" strokeDasharray="4 4" />
+          <path d="M30 50 Q50 20 70 50 T30 50" fill="#FFFC00" fillOpacity="0.2" stroke="#FFFC00" strokeWidth="3" />
+          <circle cx="50" cy="50" r="8" fill="#FFFC00" />
         </svg>
       )
     },
@@ -57,7 +57,7 @@ const ProductsPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-black text-white selection:bg-[#C13D88] overflow-x-hidden font-sans antialiased">
+    <div className="min-h-screen bg-black text-white selection:bg-[#FFFC00] overflow-x-hidden font-sans antialiased">
       {/* Cinematic Background */}
       <div className="fixed inset-0 z-0">
         <div className="absolute inset-0 bg-black/90 backdrop-blur-3xl z-10" />
@@ -70,12 +70,12 @@ const ProductsPage = () => {
 
       <header className="relative z-50 flex items-center justify-between px-8 py-10">
         <div className="flex items-center gap-3 cursor-pointer group" onClick={() => navigate('/')}>
-          <Crown className="text-[#C13D88] fill-current group-hover:rotate-12 transition-transform" size={30} />
+          <Crown className="text-[#FFFC00] fill-current group-hover:rotate-12 transition-transform" size={30} />
           <span className="text-3xl font-black tracking-tighter uppercase italic">mambo</span>
         </div>
         <button 
           onClick={() => navigate(-1)}
-          className="text-white/40 hover:text-[#C13D88] transition-all font-black text-[10px] uppercase tracking-[0.4em] flex items-center gap-2"
+          className="text-white/40 hover:text-[#FFFC00] transition-all font-black text-[10px] uppercase tracking-[0.4em] flex items-center gap-2"
         >
           <ArrowLeft size={14} /> Exit 
         </button>
@@ -88,7 +88,7 @@ const ProductsPage = () => {
             animate={{ opacity: 1, scale: 1 }}
             className="text-[12vw] md:text-[10rem] font-black italic tracking-tighter uppercase leading-[0.8] mb-6"
           >
-            Tier <span className="text-[#C13D88]">Up.</span>
+            Tier <span className="text-[#FFFC00]">Up.</span>
           </motion.h1>
           <p className="text-white/30 text-xs font-black uppercase tracking-[0.8em]">Select Your Access Level</p>
         </section>
@@ -101,15 +101,15 @@ const ProductsPage = () => {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.1 }}
               viewport={{ once: true }}
-              className={`group bg-white/5 backdrop-blur-3xl border ${product.popular ? 'border-[#C13D88]/50' : 'border-white/10'} p-12 rounded-[3.5rem] relative overflow-hidden hover:bg-white/[0.08] transition-all duration-700 ${product.glow}`}
+              className={`group bg-white/5 backdrop-blur-3xl border ${product.popular ? 'border-[#FFFC00]/50' : 'border-white/10'} p-12 rounded-[3.5rem] relative overflow-hidden hover:bg-white/[0.08] transition-all duration-700 ${product.glow}`}
             >
               {product.popular && (
-                <div className="absolute top-0 right-0 bg-[#C13D88] text-black font-black text-[10px] uppercase tracking-widest px-8 py-3 rounded-bl-3xl">
+                <div className="absolute top-0 right-0 bg-[#FFFC00] text-black font-black text-[10px] uppercase tracking-widest px-8 py-3 rounded-bl-3xl">
                   Recommended
                 </div>
               )}
 
-              <span className="text-[10px] font-black tracking-[0.4em] text-white/30 uppercase block mb-8 underline underline-offset-8 decoration-[#C13D88]/40">
+              <span className="text-[10px] font-black tracking-[0.4em] text-white/30 uppercase block mb-8 underline underline-offset-8 decoration-[#FFFC00]/40">
                 {product.id}SECURE
               </span>
 
@@ -136,8 +136,8 @@ const ProductsPage = () => {
 
               <button className={`w-full py-6 rounded-2xl font-black text-xs uppercase tracking-[0.3em] transition-all duration-500 ${
                 product.popular 
-                ? 'bg-[#C13D88] text-black hover:scale-105 shadow-2xl' 
-                : 'bg-white/10 text-white hover:bg-[#C13D88] hover:text-black'
+                ? 'bg-[#FFFC00] text-black hover:scale-105 shadow-2xl'
+                : 'bg-white/10 text-white hover:bg-[#FFFC00] hover:text-black'
               }`}>
                 {product.buttonText}
               </button>

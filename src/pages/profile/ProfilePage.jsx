@@ -14,103 +14,108 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white font-sans antialiased pb-20">
-      <div className="max-w-2xl mx-auto">
+    <div className="min-h-screen bg-zinc-900 text-white font-sans antialiased pb-24">
+      {/* Background Yellow Header */}
+      <div className="h-64 bg-snap-yellow relative rounded-b-[3rem] shadow-2xl overflow-hidden">
+         <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]" />
+         <button
+            onClick={() => navigate('/app/settings')}
+            className="absolute top-12 right-6 w-10 h-10 rounded-full bg-black/10 backdrop-blur-md flex items-center justify-center text-black hover:bg-black/20 transition-all"
+          >
+            <Settings size={22} />
+          </button>
+      </div>
+
+      <div className="max-w-2xl mx-auto px-6 -mt-24 relative z-10">
         
-        {/* Header/Cover Area */}
-        <div className="relative pt-12 pb-8 px-6 flex flex-col items-center border-b border-white/5 bg-gradient-to-b from-zinc-900/50 to-transparent">
-          <div className="relative">
-            <div className="w-32 h-32 rounded-full p-[3px] bg-gradient-to-tr from-primary to-rose-500">
-              <div className="w-full h-full rounded-full border-4 border-black overflow-hidden bg-zinc-900">
-                <img 
-                  src={profile?.photos?.[0] || 'https://via.placeholder.com/150'} 
-                  className="w-full h-full object-cover" 
-                  alt="" 
-                />
+        {/* Profile Identity Card */}
+        <div className="bg-black/40 backdrop-blur-3xl rounded-[2.5rem] p-8 border border-white/10 shadow-2xl">
+          <div className="flex flex-col items-center">
+            <div className="relative group">
+              <div className="w-36 h-44 rounded-3xl p-[3px] bg-snap-yellow shadow-2xl shadow-snap-yellow/20">
+                <div className="w-full h-full rounded-[1.5rem] border-4 border-black overflow-hidden bg-zinc-800">
+                  <img
+                    src={profile?.photos?.[0] || 'https://via.placeholder.com/150'}
+                    className="w-full h-full object-cover grayscale-[0.2] group-hover:grayscale-0 transition-all duration-500"
+                    alt=""
+                  />
+                </div>
+              </div>
+              <button
+                onClick={() => navigate('/app/profile/edit')}
+                className="absolute -bottom-3 -right-3 w-12 h-12 bg-snap-yellow text-black rounded-2xl flex items-center justify-center shadow-xl hover:scale-105 active:scale-95 transition-all"
+              >
+                <Edit2 size={20} strokeWidth={3} />
+              </button>
+            </div>
+
+            <div className="text-center mt-8">
+              <h2 className="text-4xl font-black tracking-tighter uppercase italic leading-none">
+                {profile?.name}
+              </h2>
+              <div className="flex items-center justify-center gap-2 mt-2">
+                <span className="text-snap-yellow font-black uppercase text-[10px] tracking-[0.2em]">
+                   {calculateAge(profile.birthday)} Years Old
+                </span>
+                <span className="w-1 h-1 bg-white/20 rounded-full" />
+                <span className="text-zinc-500 font-bold text-sm lowercase tracking-tight">
+                  @{profile?.name?.toLowerCase().replace(' ', '')}
+                </span>
               </div>
             </div>
-          </div>
-
-          <div className="text-center mt-5">
-            <h2 className="text-3xl font-black tracking-tight">
-              {profile?.name}{profile?.birthday && `, ${calculateAge(profile.birthday)}`}
-            </h2>
-            <p className="text-zinc-400 font-medium">{profile?.job || 'Add Job Title'}</p>
-            {profile?.school && <p className="text-zinc-500 text-sm">{profile.school}</p>}
-          </div>
-
-          {/* Core Actions */}
-          <div className="flex items-center gap-4 mt-8 w-full max-w-sm">
-            <button 
-              onClick={() => navigate('/app/settings')}
-              className="flex-1 h-12 bg-zinc-900 border border-white/10 rounded-2xl flex items-center justify-center text-zinc-300 hover:bg-zinc-800 transition-colors"
-            >
-              <Settings size={20} className="mr-2" />
-              <span className="font-bold text-sm">Settings</span>
-            </button>
-            <button 
-              onClick={() => navigate('/app/profile/edit')}
-              className="flex-[2] h-12 bg-white text-black rounded-2xl flex items-center justify-center font-bold text-sm hover:bg-zinc-200 transition-colors"
-            >
-              <Edit2 size={18} className="mr-2" />
-              Edit Profile
-            </button>
           </div>
         </div>
 
-        <div className="px-6 py-8 space-y-6">
-          {/* Subscription Card */}
-          <div className="bg-gradient-to-br from-amber-400 to-orange-500 p-6 rounded-[2rem] text-black shadow-xl shadow-orange-500/10">
-            <div className="flex justify-between items-start mb-4">
-              <div>
-                <h3 className="text-2xl font-black leading-none uppercase ">Premium</h3>
-                <p className="text-xs font-bold opacity-80 mt-1">SEE WHO LIKES YOU & MORE</p>
-              </div>
-              <Crown size={28} />
-            </div>
-            <button className="w-full bg-black text-white h-11 rounded-xl font-bold text-sm">
-              Upgrade from 5,000 TZS
-            </button>
-          </div>
+        <div className="py-10 space-y-8">
 
-          {/* Bio Section */}
-          {profile?.bio && (
-            <div className="space-y-3">
-              <h4 className="text-[11px] font-black text-zinc-500 uppercase tracking-widest px-1">About Me</h4>
-              <div className="bg-zinc-900/50 border border-white/5 p-5 rounded-3xl text-zinc-200 leading-relaxed">
-                {profile.bio}
-              </div>
-            </div>
-          )}
+          {/* Profile Sections - Snap Style */}
+          <div className="space-y-4">
+            <h4 className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.3em] px-2">Profile Details</h4>
 
-          {/* Secondary Menu */}
-          <div className="bg-zinc-900/50 border border-white/5 rounded-[2rem] overflow-hidden">
-            {profile?.role === 'admin' && (
-              <button 
-                onClick={() => navigate('/app/admin')}
-                className="w-full flex items-center justify-between p-5 hover:bg-white/5 transition-colors border-b border-white/5 text-primary"
-              >
-                <div className="flex items-center gap-4">
-                  <ShieldCheck size={20} />
-                  <span className="font-bold text-sm">Admin Dashboard</span>
+            <div className="bg-black/20 border border-white/5 rounded-[2.5rem] divide-y divide-white/5 overflow-hidden">
+              <div className="p-6">
+                <span className="text-[10px] font-black uppercase text-snap-yellow tracking-widest block mb-2">My Bio</span>
+                <p className="text-zinc-300 text-sm leading-relaxed font-medium">
+                  {profile.bio || "No bio added yet. Add a bio to express yourself!"}
+                </p>
+              </div>
+
+              <div className="p-6 flex items-center justify-between">
+                <div>
+                   <span className="text-[10px] font-black uppercase text-zinc-500 tracking-widest block mb-1">Career & School</span>
+                   <p className="text-sm font-bold text-white">{profile.job || 'Explore'} · {profile.school || 'Campus'}</p>
                 </div>
-                <ChevronRight size={18} />
-              </button>
-            )}
-            <button className="w-full flex items-center justify-between p-5 hover:bg-white/5 transition-colors border-b border-white/5 text-zinc-300">
-              <div className="flex items-center gap-4">
-                <Shield size={20} />
-                <span className="font-bold text-sm">Safety Center</span>
               </div>
-              <ChevronRight size={18} />
-            </button>
-            <button 
-              onClick={signOut}
-              className="w-full flex items-center gap-4 p-5 text-rose-500 hover:bg-rose-500/5 transition-colors font-bold text-sm"
-            >
-              <LogOut size={20} />
-              Logout
-            </button>
+
+              {profile?.role === 'admin' && (
+                <button
+                  onClick={() => navigate('/app/admin')}
+                  className="w-full p-6 flex items-center justify-between hover:bg-white/5 transition-all text-snap-yellow group"
+                >
+                  <div className="flex items-center gap-4">
+                    <ShieldCheck size={20} />
+                    <span className="font-black uppercase text-xs tracking-widest">Admin Dashboard</span>
+                  </div>
+                  <ChevronRight size={20} className="group-hover:translate-x-1 transition-transform" />
+                </button>
+              )}
+
+              <button className="w-full p-6 flex items-center justify-between hover:bg-white/5 transition-all text-zinc-300 group">
+                <div className="flex items-center gap-4">
+                  <Shield size={20} />
+                  <span className="font-black uppercase text-xs tracking-widest">Safety & Privacy</span>
+                </div>
+                <ChevronRight size={20} className="group-hover:translate-x-1 transition-transform" />
+              </button>
+
+              <button
+                onClick={signOut}
+                className="w-full p-6 flex items-center gap-4 text-snap-red hover:bg-snap-red/5 transition-all font-black uppercase text-xs tracking-widest"
+              >
+                <LogOut size={20} />
+                Logout
+              </button>
+            </div>
           </div>
         </div>
       </div>

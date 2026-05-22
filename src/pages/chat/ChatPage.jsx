@@ -354,7 +354,7 @@ const ChatPage = () => {
                 </button>
                 <button
                   onClick={() => { setShowMenu(false); setShowReportModal(true); }}
-                  className="w-full px-4 py-3 text-left text-sm font-bold text-rose-500 hover:bg-rose-500/5 transition-colors border-t border-white/5"
+                  className="w-full px-4 py-3 text-left text-sm font-bold text-snap-red hover:bg-snap-red/5 transition-colors border-t border-white/5"
                 >
                   Report Profile
                 </button>
@@ -393,7 +393,7 @@ const ChatPage = () => {
                 </button>
                 <button
                   onClick={handleReport}
-                  className="flex-1 py-4 rounded-full font-black uppercase tracking-widest bg-rose-500 text-white shadow-lg shadow-rose-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
+                  className="flex-1 py-4 rounded-full font-black uppercase tracking-widest bg-snap-red text-white shadow-lg shadow-snap-red/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
                 >
                   Submit
                 </button>
@@ -444,12 +444,12 @@ const ChatPage = () => {
                 >
                   <div className={`max-w-[80%] sm:max-w-[70%] relative group`}>
                     <div className={`flex flex-col ${isOwn ? 'items-end' : 'items-start'}`}>
-                      {isFirstInGroup && <span className={`text-[10px] font-black uppercase tracking-widest mb-1 ${isOwn ? 'text-snap-blue' : 'text-snap-red'}`}>{isOwn ? 'Me' : match?.otherUser.name}</span>}
+                      {isFirstInGroup && <span className={`text-[10px] font-black uppercase tracking-widest mb-1 ${isOwn ? 'text-snap-blue' : 'text-snap-yellow'}`}>{isOwn ? 'Me' : match?.otherUser.name}</span>}
                       <div
                         className={`px-4 py-2 text-sm font-medium leading-relaxed tracking-tight whitespace-pre-wrap break-words border-l-2 ${
                           isOwn
                             ? 'bg-transparent text-white border-snap-blue'
-                            : 'bg-transparent text-white border-snap-red'
+                            : 'bg-transparent text-white border-snap-yellow'
                         }`}
                       >
                         {msg.content}

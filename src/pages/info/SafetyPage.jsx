@@ -14,9 +14,9 @@ const SafetyPage = () => {
       desc: "Every profile is scanned by our neural engines. If the vibe is fake or the intent is malicious, they get the boot instantly. No bots allowed in the mambo app.",
       icon: (
         <svg viewBox="0 0 100 100" className="w-16 h-16 drop-shadow-[0_0_12px_rgba(255,121,172,0.4)]">
-          <circle cx="50" cy="50" r="40" fill="none" stroke="#C13D88" strokeWidth="1" strokeDasharray="4 4" />
-          <path d="M30 50 Q50 20 70 50 T30 50" fill="#C13D88" fillOpacity="0.2" stroke="#C13D88" strokeWidth="3" />
-          <circle cx="50" cy="50" r="8" fill="#C13D88" />
+          <circle cx="50" cy="50" r="40" fill="none" stroke="#FFFC00" strokeWidth="1" strokeDasharray="4 4" />
+          <path d="M30 50 Q50 20 70 50 T30 50" fill="#FFFC00" fillOpacity="0.2" stroke="#FFFC00" strokeWidth="3" />
+          <circle cx="50" cy="50" r="8" fill="#FFFC00" />
         </svg>
       )
     },
@@ -27,9 +27,9 @@ const SafetyPage = () => {
       desc: "Your data is locked in an end-to-end encrypted vault. You control who sees your energy and who stays on the outside.",
       icon: (
         <svg viewBox="0 0 100 100" className="w-16 h-16 drop-shadow-[0_0_12px_rgba(255,121,172,0.4)]">
-          <rect x="25" y="40" width="50" height="40" rx="8" fill="none" stroke="#C13D88" strokeWidth="3" />
-          <path d="M35 40 V25 Q50 10 65 25 V40" fill="none" stroke="#C13D88" strokeWidth="3" />
-          <circle cx="50" cy="60" r="5" fill="#C13D88" />
+          <rect x="25" y="40" width="50" height="40" rx="8" fill="none" stroke="#FFFC00" strokeWidth="3" />
+          <path d="M35 40 V25 Q50 10 65 25 V40" fill="none" stroke="#FFFC00" strokeWidth="3" />
+          <circle cx="50" cy="60" r="5" fill="#FFFC00" />
         </svg>
       )
     },
@@ -40,16 +40,16 @@ const SafetyPage = () => {
       desc: "One tap. Instant intervention. Our safety team operates at light speed to keep the East African community clean and high-vibe.",
       icon: (
         <svg viewBox="0 0 100 100" className="w-16 h-16 drop-shadow-[0_0_12px_rgba(255,121,172,0.4)]">
-          <path d="M50 10 L90 85 L10 85 Z" fill="none" stroke="#C13D88" strokeWidth="3" />
-          <rect x="47" y="40" width="6" height="25" fill="#C13D88" />
-          <circle cx="50" cy="75" r="4" fill="#C13D88" />
+          <path d="M50 10 L90 85 L10 85 Z" fill="none" stroke="#FFFC00" strokeWidth="3" />
+          <rect x="47" y="40" width="6" height="25" fill="#FFFC00" />
+          <circle cx="50" cy="75" r="4" fill="#FFFC00" />
         </svg>
       )
     }
   ];
 
   return (
-    <div className="min-h-screen bg-black text-white selection:bg-[#C13D88] selection:text-white overflow-x-hidden font-sans antialiased">
+    <div className="min-h-screen bg-black text-white selection:bg-[#FFFC00] selection:text-white overflow-x-hidden font-sans antialiased">
       {/* Background Layering */}
       <div className="fixed inset-0 z-0">
         <div className="absolute inset-0 bg-black/90 backdrop-blur-3xl z-10" />
@@ -63,12 +63,12 @@ const SafetyPage = () => {
       {/* Navigation */}
       <header className="fixed top-0 w-full z-50 flex items-center justify-between px-8 py-8 md:px-12">
         <div className="flex items-center gap-3 cursor-pointer group" onClick={() => navigate('/')}>
-          <Crown className="text-[#C13D88] group-hover:rotate-12 transition-transform" size={28} />
+          <Crown className="text-[#FFFC00] group-hover:rotate-12 transition-transform" size={28} />
           <span className="text-2xl font-black tracking-tighter uppercase italic">mambo</span>
         </div>
         <button 
           onClick={() => navigate(-1)}
-          className="mix-blend-difference hover:text-[#C13D88] transition-colors text-[10px] font-black uppercase tracking-[0.4em]"
+          className="mix-blend-difference hover:text-[#FFFC00] transition-colors text-[10px] font-black uppercase tracking-[0.4em]"
         >
           [ Exit ]
         </button>
@@ -84,7 +84,7 @@ const SafetyPage = () => {
           >
 
             <h1 className="text-[12vw] leading-[0.8] font-black italic uppercase tracking-tighter">
-              SAFE <br /> <span className="text-[#C13D88]">ULINZI</span>
+              SAFE <br /> <span className="text-[#FFFC00]">ULINZI</span>
             </h1>
           </motion.div>
         </section>
@@ -102,7 +102,7 @@ const SafetyPage = () => {
             >
               <div className="mb-12">{protocol.icon}</div>
               <span className="text-white/30 text-[10px] font-black tracking-[0.3em] uppercase">{protocol.label}</span>
-              <h2 className="text-4xl font-black italic uppercase tracking-tighter mt-2 mb-6 group-hover:text-[#C13D88] transition-colors">
+              <h2 className="text-4xl font-black italic uppercase tracking-tighter mt-2 mb-6 group-hover:text-[#FFFC00] transition-colors">
                 {protocol.title}
               </h2>
               <p className="text-white/50 text-sm leading-relaxed font-medium max-w-xs">
@@ -129,7 +129,7 @@ const SafetyPage = () => {
                 { label: "03", text: "Trust the vibe. If the energy feels off, ghosting is a survival tool.", icon: <Zap size={20} /> }
               ].map((rule) => (
                 <div key={rule.label} className="flex gap-8 group">
-                  <span className="text-[#C13D88] font-black text-2xl group-hover:translate-x-2 transition-transform">{rule.label}.</span>
+                  <span className="text-[#FFFC00] font-black text-2xl group-hover:translate-x-2 transition-transform">{rule.label}.</span>
                   <div className="pb-8 border-b border-white/10 w-full">
                     <p className="text-xl md:text-3xl font-bold text-white/80 group-hover:text-white transition-colors">
                       {rule.text}
@@ -143,7 +143,7 @@ const SafetyPage = () => {
 
         {/* Final Safety Callout */}
         <section className="px-8 md:px-20 pb-40">
-          <div className="bg-[#C13D88] p-16 md:p-32 rounded-[4rem] text-black relative overflow-hidden">
+          <div className="bg-[#FFFC00] p-16 md:p-32 rounded-[4rem] text-black relative overflow-hidden">
             <div className="relative z-10">
               <h2 className="text-6xl md:text-9xl font-black italic uppercase tracking-tighter mb-8 leading-none">
                 Secure <br /> the Vibe
