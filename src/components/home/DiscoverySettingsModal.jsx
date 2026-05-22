@@ -75,7 +75,7 @@ const DiscoverySettingsModal = ({ isOpen, onClose, profile, onSave }) => {
             {/* Passport Section */}
             <section className="space-y-4">
               <div className="flex items-center gap-2">
-                <Globe size={18} className="text-primary" />
+                <Globe size={18} className="text-theme-yellow" />
                 <h3 className="font-black uppercase tracking-widest text-[11px] text-zinc-500">Passport</h3>
               </div>
 
@@ -85,13 +85,13 @@ const DiscoverySettingsModal = ({ isOpen, onClose, profile, onSave }) => {
                   className="w-full flex items-center justify-between p-5 hover:bg-white/5 transition-colors"
                 >
                   <div className="flex items-center gap-4">
-                    <Navigation size={18} className={!passportLocation.lat ? 'text-primary' : 'text-zinc-600'} />
+                    <Navigation size={18} className={!passportLocation.lat ? 'text-theme-yellow' : 'text-zinc-600'} />
                     <div className="text-left">
                       <p className="text-sm font-bold">Current Location</p>
                       <p className="text-[10px] text-zinc-500 uppercase tracking-widest">Use GPS</p>
                     </div>
                   </div>
-                  {!passportLocation.lat && <div className="w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_rgba(242,194,14,0.4)]" />}
+                  {!passportLocation.lat && <div className="w-2 h-2 rounded-full bg-theme-yellow shadow-[0_0_8px_rgba(242,194,14,0.4)]" />}
                 </button>
 
                 {CITIES.map((city) => (
@@ -101,13 +101,13 @@ const DiscoverySettingsModal = ({ isOpen, onClose, profile, onSave }) => {
                     className="w-full flex items-center justify-between p-5 hover:bg-white/5 transition-colors"
                   >
                     <div className="flex items-center gap-4">
-                      <MapPin size={18} className={passportLocation.name === city.name ? 'text-primary' : 'text-zinc-600'} />
+                      <MapPin size={18} className={passportLocation.name === city.name ? 'text-theme-yellow' : 'text-zinc-600'} />
                       <div className="text-left">
                         <p className="text-sm font-bold">{city.name}</p>
                         <p className="text-[10px] text-zinc-500 uppercase tracking-widest">Passport</p>
                       </div>
                     </div>
-                    {passportLocation.name === city.name && <div className="w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_rgba(242,194,14,0.4)]" />}
+                    {passportLocation.name === city.name && <div className="w-2 h-2 rounded-full bg-theme-yellow shadow-[0_0_8px_rgba(242,194,14,0.4)]" />}
                   </button>
                 ))}
               </div>
@@ -117,7 +117,7 @@ const DiscoverySettingsModal = ({ isOpen, onClose, profile, onSave }) => {
             <div>
               <div className="flex justify-between mb-4">
                 <span className="font-bold">Maximum Distance</span>
-                <span className="text-primary font-bold">{distance}km</span>
+                <span className="text-theme-yellow font-bold">{distance}km</span>
               </div>
               <input
                 type="range"
@@ -125,7 +125,7 @@ const DiscoverySettingsModal = ({ isOpen, onClose, profile, onSave }) => {
                 max="500"
                 value={distance}
                 onChange={(e) => setDistance(parseInt(e.target.value))}
-                className="w-full accent-primary bg-dark-surface h-1 rounded-full appearance-none cursor-pointer"
+                className="w-full accent-theme-yellow bg-dark-surface h-1 rounded-full appearance-none cursor-pointer"
               />
               <div className="flex justify-between mt-2">
                 <span className="text-[10px] text-dark-text font-bold">2km</span>
@@ -137,7 +137,7 @@ const DiscoverySettingsModal = ({ isOpen, onClose, profile, onSave }) => {
             <div>
               <div className="flex justify-between mb-4">
                 <span className="font-bold">Age Range</span>
-                <span className="text-primary font-bold">{ageRange[0]} - {ageRange[1]}</span>
+                <span className="text-theme-yellow font-bold">{ageRange[0]} - {ageRange[1]}</span>
               </div>
               <div className="flex gap-4">
                 <div className="flex-grow">
@@ -148,7 +148,7 @@ const DiscoverySettingsModal = ({ isOpen, onClose, profile, onSave }) => {
                     max="100"
                     value={ageRange[0]}
                     onChange={(e) => setAgeRange([parseInt(e.target.value), Math.max(parseInt(e.target.value), ageRange[1])])}
-                    className="w-full accent-primary"
+                    className="w-full accent-theme-yellow"
                   />
                 </div>
                 <div className="flex-grow">
@@ -159,7 +159,7 @@ const DiscoverySettingsModal = ({ isOpen, onClose, profile, onSave }) => {
                     max="100"
                     value={ageRange[1]}
                     onChange={(e) => setAgeRange([Math.min(parseInt(e.target.value), ageRange[0]), parseInt(e.target.value)])}
-                    className="w-full accent-primary"
+                    className="w-full accent-theme-yellow"
                   />
                 </div>
               </div>
@@ -176,7 +176,7 @@ const DiscoverySettingsModal = ({ isOpen, onClose, profile, onSave }) => {
                     className="w-full flex justify-between items-center p-4 hover:bg-white/5 transition-colors"
                   >
                     <span className="capitalize">{pref}</span>
-                    {showGender === pref && <div className="w-3 h-3 rounded-full bg-primary" />}
+                    {showGender === pref && <div className="w-3 h-3 rounded-full bg-theme-yellow" />}
                   </button>
                 ))}
               </div>
@@ -195,7 +195,7 @@ const DiscoverySettingsModal = ({ isOpen, onClose, profile, onSave }) => {
                 passport_longitude: passportLocation.lon,
                 passport_location_name: passportLocation.name
               })}
-              className="w-full primary-gradient text-white font-bold py-4 rounded-full shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all"
+              className="w-full theme-yellow-gradient text-white font-bold py-4 rounded-full shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all"
             >
               Done
             </button>

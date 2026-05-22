@@ -140,7 +140,7 @@ const OnboardingPage = () => {
           type="date"
           value={formData.birthday}
           onChange={(e) => updateFormData('birthday', e.target.value)}
-          className="w-full bg-dark-surface border border-white/10 rounded-xl px-4 py-4 text-2xl text-white focus:outline-none focus:ring-2 focus:ring-primary/50"
+          className="w-full bg-dark-surface border border-white/10 rounded-xl px-4 py-4 text-2xl text-white focus:outline-none focus:ring-2 focus:ring-theme-yellow/50"
         />
       ),
       isValid: formData.birthday && (new Date().getFullYear() - new Date(formData.birthday).getFullYear() >= 18),

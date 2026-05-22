@@ -68,7 +68,7 @@ const DiscoverCard = ({ profile, onSwipe, onClick }) => {
         {/* Status Indicators */}
         <motion.div
           style={{ opacity: likeOpacity }}
-          className="absolute top-10 left-10 px-6 py-2 rounded-2xl bg-primary text-black font-black text-2xl uppercase tracking-tighter -rotate-12 border-2 border-black shadow-xl"
+          className="absolute top-10 left-10 px-6 py-2 rounded-2xl bg-theme-yellow text-black font-black text-2xl uppercase tracking-tighter -rotate-12 border-2 border-black shadow-xl"
         >
           Sweet
         </motion.div>
@@ -96,18 +96,18 @@ const DiscoverCard = ({ profile, onSwipe, onClick }) => {
                 <h3 className="text-4xl font-black tracking-tighter uppercase text-white leading-none">
                   {profile.name}
                 </h3>
-                <span className="text-2xl font-black text-primary italic leading-none">{calculateAge(profile.birthday)}</span>
+                <span className="text-2xl font-black text-theme-yellow italic leading-none">{calculateAge(profile.birthday)}</span>
               </div>
               
               <div className="flex items-center gap-2 flex-wrap max-w-[240px]">
                 <div className="flex items-center gap-1.5 px-3 py-1 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl">
-                  <MapPin size={10} className="text-primary" />
+                  <MapPin size={10} className="text-theme-yellow" />
                   <span className="text-[9px] font-black uppercase tracking-widest text-zinc-400">
                     {profile.location_name || 'Nearby'}
                   </span>
                 </div>
                 {profile.commonInterestsCount > 0 && (
-                  <div className="flex items-center gap-1.5 px-3 py-1 bg-primary border border-black rounded-xl">
+                  <div className="flex items-center gap-1.5 px-3 py-1 bg-theme-yellow border border-black rounded-xl">
                     <Heart size={10} className="text-black fill-current" />
                     <span className="text-[9px] font-black uppercase tracking-widest text-black">
                       {profile.commonInterestsCount} Shared
@@ -125,7 +125,7 @@ const DiscoverCard = ({ profile, onSwipe, onClick }) => {
               </div>
             </div>
 
-            <button className="w-14 h-14 rounded-3xl bg-white/5 backdrop-blur-3xl border border-white/10 flex items-center justify-center text-white transition-all hover:bg-primary hover:text-black hover:border-black active:scale-95">
+            <button className="w-14 h-14 rounded-3xl bg-white/5 backdrop-blur-3xl border border-white/10 flex items-center justify-center text-white transition-all hover:bg-theme-yellow hover:text-black hover:border-black active:scale-95">
               <Info size={24} />
             </button>
           </div>

@@ -67,11 +67,10 @@ const LandingPage = () => {
         <motion.div 
           initial={{ x: -20, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
-          className="flex items-center gap-1.5 cursor-pointer"
+          className="flex items-center cursor-pointer"
           onClick={() => navigate('/')}
         >
-          <Flame className="text-[#FFFC00] fill-current w-8 h-8 md:w-10 md:h-10" size={32} />
-          <span className="text-2xl md:text-4xl font-black tracking-tighter">mambo</span>
+          <span className="text-2xl md:text-4xl font-black italic tracking-tighter text-[#FFFC00] uppercase">mambo</span>
         </motion.div>
 
         <nav className="hidden lg:flex gap-8 font-bold text-sm uppercase tracking-widest text-white/90">
