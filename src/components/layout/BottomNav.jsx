@@ -22,9 +22,9 @@ const BottomNav = () => {
           {({ isActive }) => (
             <motion.div
               whileTap={{ scale: 0.9 }}
-              className={`flex flex-col items-center gap-1 p-2 transition-all ${isActive ? 'text-snap-blue' : 'text-zinc-500'}`}
+              className={`flex flex-col items-center gap-1 p-2 transition-all ${isActive ? 'text-theme-blue' : 'text-zinc-500'}`}
             >
-              <MessageCircle size={28} strokeWidth={isActive ? 2.5 : 2} className={isActive ? 'fill-snap-blue/10' : ''} />
+              <MessageCircle size={28} strokeWidth={isActive ? 2.5 : 2} className={isActive ? 'fill-theme-blue/10' : ''} />
             </motion.div>
           )}
         </NavLink>
@@ -33,9 +33,9 @@ const BottomNav = () => {
           {({ isActive }) => (
             <motion.div
               whileTap={{ scale: 0.9 }}
-              className={`flex items-center justify-center p-2 transition-all ${isActive ? 'text-snap-yellow' : 'text-zinc-500'}`}
+              className={`flex items-center justify-center p-2 transition-all ${isActive ? 'text-theme-yellow' : 'text-zinc-500'}`}
             >
-              <div className={`w-14 h-14 rounded-full border-4 ${isActive ? 'border-snap-yellow' : 'border-zinc-500'} flex items-center justify-center`}>
+              <div className={`w-14 h-14 rounded-full border-4 ${isActive ? 'border-theme-yellow' : 'border-zinc-500'} flex items-center justify-center`}>
                 <Aperture size={32} strokeWidth={2} />
               </div>
             </motion.div>
@@ -46,9 +46,9 @@ const BottomNav = () => {
           {({ isActive }) => (
             <motion.div
               whileTap={{ scale: 0.9 }}
-              className={`flex flex-col items-center gap-1 p-2 transition-all ${isActive ? 'text-snap-yellow' : 'text-zinc-500'}`}
+              className={`flex flex-col items-center gap-1 p-2 transition-all ${isActive ? 'text-theme-yellow' : 'text-zinc-500'}`}
             >
-              <Users size={28} strokeWidth={isActive ? 2.5 : 2} className={isActive ? 'fill-snap-yellow/10' : ''} />
+              <Users size={28} strokeWidth={isActive ? 2.5 : 2} className={isActive ? 'fill-theme-yellow/10' : ''} />
             </motion.div>
           )}
         </NavLink>
@@ -57,7 +57,7 @@ const BottomNav = () => {
           {({ isActive }) => (
             <motion.div
               whileTap={{ scale: 0.9 }}
-              className={`flex flex-col items-center gap-1 p-2 transition-all ${isActive ? 'text-snap-yellow' : 'text-zinc-500'}`}
+              className={`flex flex-col items-center gap-1 p-2 transition-all ${isActive ? 'text-theme-yellow' : 'text-zinc-500'}`}
             >
               <User size={28} strokeWidth={isActive ? 2.5 : 2} />
             </motion.div>

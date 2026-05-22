@@ -51,7 +51,7 @@ const LikesPage = () => {
 
   return (
     <div className="min-h-screen bg-black text-white font-sans antialiased pb-32">
-      {/* Snapchat-style Header */}
+      {/* Premium theme Header */}
       <header className="flex items-center justify-between px-6 py-6 border-b border-white/5">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full bg-zinc-800 border-2 border-white/10 overflow-hidden">

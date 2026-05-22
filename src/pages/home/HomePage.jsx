@@ -432,7 +432,7 @@ const HomePage = () => {
         onSave={handleUpdateFilters}
       />
 
-      {/* Snapchat-style Floating Header */}
+      {/* Premium theme Floating Header */}
       <header className="fixed top-0 left-0 right-0 z-[100] flex flex-col pointer-events-none">
         <div className="flex items-center justify-between px-4 py-4 pointer-events-auto">
           <div className="flex items-center gap-3">
@@ -456,7 +456,7 @@ const HomePage = () => {
           </div>
         </div>
 
-        {/* Home Tabs - Snap Style */}
+        {/* Home Tabs - Premium Style */}
         <div className="flex justify-center gap-8 py-2 pointer-events-auto">
           <button
             onClick={() => setActiveTab('discover')}
@@ -625,7 +625,7 @@ const HomePage = () => {
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
           onClick={() => stack[0] && handleSwipe('superlike', stack[0])}
-          className="w-12 h-12 rounded-full bg-snap-blue/20 backdrop-blur-md border-2 border-snap-blue flex items-center justify-center text-snap-blue shadow-lg"
+          className="w-12 h-12 rounded-full bg-theme-blue/20 backdrop-blur-md border-2 border-theme-blue flex items-center justify-center text-theme-blue shadow-lg"
         >
           <Star className="w-6 h-6" fill="currentColor" />
         </motion.button>
@@ -634,7 +634,7 @@ const HomePage = () => {
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
           onClick={() => stack[0] && handleSwipe('like', stack[0])}
-          className="w-16 h-16 rounded-full bg-snap-green/20 backdrop-blur-md border-2 border-snap-green flex items-center justify-center text-snap-green shadow-xl"
+          className="w-16 h-16 rounded-full bg-theme-green/20 backdrop-blur-md border-2 border-theme-green flex items-center justify-center text-theme-green shadow-xl"
         >
           <Heart className="w-8 h-8" fill="currentColor" />
         </motion.button>
@@ -643,7 +643,7 @@ const HomePage = () => {
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
           onClick={handleBoost}
-          className="w-12 h-12 rounded-full bg-snap-yellow/20 backdrop-blur-md border-2 border-snap-yellow flex items-center justify-center text-snap-yellow shadow-lg"
+          className="w-12 h-12 rounded-full bg-theme-yellow/20 backdrop-blur-md border-2 border-theme-yellow flex items-center justify-center text-theme-yellow shadow-lg"
         >
           <Zap className="w-6 h-6" fill="currentColor" />
         </motion.button>

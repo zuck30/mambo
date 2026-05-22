@@ -309,7 +309,7 @@ const ChatPage = () => {
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate(-1)}
-            className="p-2 -ml-2 text-snap-blue hover:text-white transition-colors"
+            className="p-2 -ml-2 text-theme-blue hover:text-white transition-colors"
           >
             <ChevronLeft size={24} strokeWidth={3} />
           </button>
@@ -354,7 +354,7 @@ const ChatPage = () => {
                 </button>
                 <button
                   onClick={() => { setShowMenu(false); setShowReportModal(true); }}
-                  className="w-full px-4 py-3 text-left text-sm font-bold text-snap-red hover:bg-snap-red/5 transition-colors border-t border-white/5"
+                  className="w-full px-4 py-3 text-left text-sm font-bold text-theme-red hover:bg-theme-red/5 transition-colors border-t border-white/5"
                 >
                   Report Profile
                 </button>
@@ -393,7 +393,7 @@ const ChatPage = () => {
                 </button>
                 <button
                   onClick={handleReport}
-                  className="flex-1 py-4 rounded-full font-black uppercase tracking-widest bg-snap-red text-white shadow-lg shadow-snap-red/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
+                  className="flex-1 py-4 rounded-full font-black uppercase tracking-widest bg-theme-red text-white shadow-lg shadow-theme-red/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
                 >
                   Submit
                 </button>
@@ -444,12 +444,12 @@ const ChatPage = () => {
                 >
                   <div className={`max-w-[80%] sm:max-w-[70%] relative group`}>
                     <div className={`flex flex-col ${isOwn ? 'items-end' : 'items-start'}`}>
-                      {isFirstInGroup && <span className={`text-[10px] font-black uppercase tracking-widest mb-1 ${isOwn ? 'text-snap-blue' : 'text-snap-yellow'}`}>{isOwn ? 'Me' : match?.otherUser.name}</span>}
+                      {isFirstInGroup && <span className={`text-[10px] font-black uppercase tracking-widest mb-1 ${isOwn ? 'text-theme-blue' : 'text-theme-yellow'}`}>{isOwn ? 'Me' : match?.otherUser.name}</span>}
                       <div
                         className={`px-4 py-2 text-sm font-medium leading-relaxed tracking-tight whitespace-pre-wrap break-words border-l-2 ${
                           isOwn
-                            ? 'bg-transparent text-white border-snap-blue'
-                            : 'bg-transparent text-white border-snap-yellow'
+                            ? 'bg-transparent text-white border-theme-blue'
+                            : 'bg-transparent text-white border-theme-yellow'
                         }`}
                       >
                         {msg.content}
@@ -539,7 +539,7 @@ const ChatPage = () => {
           {newMessage.trim() && (
             <button
               type="submit"
-              className="flex-shrink-0 w-12 h-12 rounded-full bg-snap-blue text-white flex items-center justify-center transition-all hover:scale-105 active:scale-95 shadow-lg shadow-snap-blue/20"
+              className="flex-shrink-0 w-12 h-12 rounded-full bg-theme-blue text-white flex items-center justify-center transition-all hover:scale-105 active:scale-95 shadow-lg shadow-theme-blue/20"
             >
               <Send size={18} strokeWidth={3} />
             </button>

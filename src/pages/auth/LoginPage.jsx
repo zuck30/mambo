@@ -123,7 +123,7 @@ const LoginPage = () => {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full h-12 bg-snap-yellow text-black rounded-full font-bold text-sm tracking-wide shadow-lg hover:opacity-90 transition-opacity flex items-center justify-center"
+                    className="w-full h-12 bg-theme-yellow text-black rounded-full font-bold text-sm tracking-wide shadow-lg hover:opacity-90 transition-opacity flex items-center justify-center"
                   >
                     {loading ? <Loader2 className="animate-spin" size={20} /> : 'CONTINUE WITH EMAIL'}
                   </button>
@@ -162,7 +162,7 @@ const LoginPage = () => {
                 <button
                   onClick={handleVerifyOtp}
                   disabled={loading}
-                  className="w-full h-12 bg-snap-yellow text-black rounded-full font-bold text-sm flex items-center justify-center shadow-lg"
+                  className="w-full h-12 bg-theme-yellow text-black rounded-full font-bold text-sm flex items-center justify-center shadow-lg"
                 >
                   {loading ? <Loader2 className="animate-spin" size={20} /> : 'VERIFY & LOG IN'}
                 </button>
@@ -179,7 +179,7 @@ const LoginPage = () => {
 
         <div className="mt-12 text-center">
           <p className="text-white/60 text-sm">
-            Don't have an account? <Link to="/register" className="text-snap-yellow font-bold hover:underline">Sign up</Link>
+            Don't have an account? <Link to="/register" className="text-theme-yellow font-bold hover:underline">Sign up</Link>
           </p>
         </div>
       </motion.div>
