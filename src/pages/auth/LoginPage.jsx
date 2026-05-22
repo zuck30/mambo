@@ -93,8 +93,7 @@ const LoginPage = () => {
       >
         <div className="text-center mb-10">
           <div className="flex items-center justify-center gap-2 mb-6">
-            <Flame className="text-[#FFFC00] fill-current" size={48} />
-            <span className="text-4xl font-black tracking-tighter text-white">mambo</span>
+            <span className="text-6xl font-black italic tracking-tighter text-theme-yellow uppercase">mambo</span>
           </div>
           <p className="text-white/60 text-[13px] px-6">
             By clicking Continue, you agree to our <span className="underline cursor-pointer">Terms</span>. Learn how we process your data in our <span className="underline cursor-pointer">Privacy Policy</span>.

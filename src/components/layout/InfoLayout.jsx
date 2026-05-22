@@ -8,8 +8,7 @@ const InfoLayout = ({ title, children }) => {
       <header className="sticky top-0 z-50 bg-black/80 backdrop-blur-xl border-b border-white/5 px-6 h-16">
         <div className="max-w-5xl mx-auto h-full flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
-            <Flame className="text-white fill-current" size={24} />
-            <span className="text-xl font-bold tracking-tight">mambo</span>
+            <span className="text-xl font-black italic tracking-tighter uppercase text-theme-yellow">mambo</span>
           </Link>
           <Link to="/" className="flex items-center gap-1 text-sm text-zinc-400 hover:text-white transition-colors">
             <ChevronLeft size={16} />

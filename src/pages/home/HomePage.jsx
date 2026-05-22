@@ -493,7 +493,7 @@ const HomePage = () => {
               onClick={() => navigate(`/app/chat/${m.matchId}`)}
               className="flex-shrink-0 flex flex-col items-center gap-1.5"
             >
-              <div className="w-16 h-16 rounded-[1.5rem] p-0.5 bg-gradient-to-tr from-primary to-white">
+              <div className="w-16 h-16 rounded-[1.5rem] p-0.5 bg-gradient-to-tr from-theme-yellow to-white">
                 <div className="w-full h-full rounded-[1.25rem] border-2 border-black overflow-hidden">
                   <img src={m.photos[0]} className="w-full h-full object-cover" />
                 </div>
@@ -524,8 +524,8 @@ const HomePage = () => {
       <div className="flex-grow relative flex items-center justify-center">
         {loading ? (
           <div className="flex flex-col items-center gap-4">
-            <div className="w-20 h-20 rounded-full border-4 border-primary/20 border-t-primary animate-spin" />
-            <p className="text-primary font-bold animate-pulse">{t.finding_people}</p>
+            <div className="w-20 h-20 rounded-full border-4 border-theme-yellow/20 border-t-theme-yellow animate-spin" />
+            <p className="text-theme-yellow font-bold animate-pulse">{t.finding_people}</p>
           </div>
         ) : activeTab === 'topPicks' ? (
           <div className="w-full h-full max-w-4xl grid grid-cols-2 gap-4 p-4 overflow-y-auto no-scrollbar pb-32">
@@ -587,7 +587,7 @@ const HomePage = () => {
              </div>
              <button
               onClick={() => setShowFilters(true)}
-              className="primary-gradient text-white font-bold px-8 py-3 rounded-full shadow-lg"
+              className="theme-yellow-gradient text-white font-bold px-8 py-3 rounded-full shadow-lg"
              >
                {t.discovery_settings}
              </button>
@@ -687,7 +687,7 @@ const HomePage = () => {
             <div className="space-y-4 w-full max-w-xs">
               <button
                 onClick={() => handleSayHello(matchedUser.matchId)}
-                className="w-full primary-gradient text-white font-black py-4 rounded-full shadow-2xl hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+                className="w-full theme-yellow-gradient text-white font-black py-4 rounded-full shadow-2xl hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2"
               >
                 {t.say_hello}
               </button>
