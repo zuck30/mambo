@@ -68,9 +68,17 @@ const MessagesPage = () => {
   return (
     <div className="p-6 pb-32">
       <header className="flex items-center justify-between mb-8">
-        <h1 className="text-2xl font-black uppercase tracking-tighter italic">Conversations</h1>
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-zinc-800 border-2 border-white/10 overflow-hidden">
+            <img src={user?.photoURL || 'https://via.placeholder.com/40'} className="w-full h-full object-cover" />
+          </div>
+          <div className="w-10 h-10 rounded-full bg-zinc-900 flex items-center justify-center border border-white/5">
+             <Search size={20} className="text-white" />
+          </div>
+        </div>
+        <h1 className="text-xl font-black tracking-tight">Chat</h1>
         <div className="w-10 h-10 rounded-full bg-zinc-900 flex items-center justify-center border border-white/5">
-           <MessageCircle size={20} className="text-primary" />
+           <MessageCircle size={20} className="text-white" />
         </div>
       </header>
 
@@ -102,27 +110,35 @@ const MessagesPage = () => {
               to={`/app/chat/${m.id}`}
               className="flex items-center gap-5 p-4 bg-zinc-900/30 border border-white/5 rounded-[2rem] hover:bg-zinc-900/60 transition-all active:scale-[0.98] group"
             >
-              <div className="w-16 h-16 rounded-[1.5rem] overflow-hidden flex-shrink-0 border-2 border-white/5 group-hover:border-primary/50 transition-colors">
-                <img src={m.otherUser.photos[0]} alt="" className="w-full h-full object-cover" />
+          <div className="relative">
+            <div className="w-14 h-14 rounded-full overflow-hidden flex-shrink-0 border-2 border-white/10 group-hover:border-snap-blue transition-colors">
+              <img src={m.otherUser.photos[0]} alt="" className="w-full h-full object-cover" />
+            </div>
               </div>
               <div className="flex-grow min-w-0 py-1">
-                <div className="flex justify-between items-baseline mb-1">
-                  <h3 className="font-black text-sm uppercase tracking-widest truncate">{m.otherUser.name}</h3>
+            <div className="flex justify-between items-baseline">
+              <h3 className="font-bold text-lg tracking-tight truncate">{m.otherUser.name}</h3>
                   <span className="text-[10px] font-bold text-zinc-600 flex-shrink-0 ml-2 uppercase">
                     {m.lastMessage
                       ? formatDistanceToNow(new Date(m.lastMessage.created_at), { addSuffix: false })
                       : 'Just now'}
                   </span>
                 </div>
-                <div className="flex items-center justify-between gap-2">
-                  <p className={`text-[11px] truncate leading-none ${m.lastMessage && !m.lastMessage.is_read && m.lastMessage.sender_id !== user.id ? 'text-white font-black' : 'text-zinc-500 font-medium'}`}>
+            <div className="flex items-center gap-2">
+              {m.lastMessage && !m.lastMessage.is_read && m.lastMessage.sender_id !== user.id ? (
+                <div className="w-3 h-3 bg-snap-blue rounded-[2px]" />
+              ) : (
+                <div className="w-3 h-3 border-2 border-snap-blue rounded-[2px]" />
+              )}
+              <p className={`text-xs truncate ${m.lastMessage && !m.lastMessage.is_read && m.lastMessage.sender_id !== user.id ? 'text-snap-blue font-bold' : 'text-zinc-500'}`}>
                     {m.lastMessage
-                      ? (m.lastMessage.sender_id === user.id ? 'Sent · ' : '') + m.lastMessage.content
-                      : 'New match! 👋'}
+                  ? (m.lastMessage.sender_id === user.id ? 'Delivered' : m.lastMessage.content)
+                  : 'New Friend'}
+                <span className="mx-1">·</span>
+                {m.lastMessage
+                  ? formatDistanceToNow(new Date(m.lastMessage.created_at), { addSuffix: false })
+                  : 'Just now'}
                   </p>
-                  {m.lastMessage && !m.lastMessage.is_read && m.lastMessage.sender_id !== user.id && (
-                    <div className="w-2.5 h-2.5 bg-mambo-magenta rounded-full flex-shrink-0 shadow-lg shadow-mambo-magenta/40" />
-                  )}
                 </div>
               </div>
             </Link>

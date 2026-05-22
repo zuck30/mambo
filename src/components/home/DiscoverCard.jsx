@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, useMotionValue, useTransform } from 'framer-motion';
-import { MapPin, Info, Ghost , Heart } from 'lucide-react';
+import { MapPin, Info, Ghost , Heart, Flame } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { translations } from '../../lib/translations';
 
@@ -56,9 +56,9 @@ const DiscoverCard = ({ profile, onSwipe, onClick }) => {
       dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
       onDragEnd={handleDragEnd}
       onClick={onClick}
-      className="absolute w-full h-[70vh] md:h-[75vh] cursor-grab active:cursor-grabbing z-10"
+      className="absolute w-full h-full cursor-grab active:cursor-grabbing z-10 p-2"
     >
-      <div className="relative w-full h-full rounded-[2.5rem] overflow-hidden bg-black border border-white/5 shadow-2xl">
+      <div className="relative w-full h-full rounded-[2rem] overflow-hidden bg-black border border-white/10 shadow-2xl">
         <img
           src={profile.photos?.[0] || 'https://via.placeholder.com/400x600'}
           alt={profile.name}
@@ -82,7 +82,7 @@ const DiscoverCard = ({ profile, onSwipe, onClick }) => {
 
         <motion.div
           style={{ opacity: superLikeOpacity }}
-          className="absolute top-20 left-1/2 -translate-x-1/2 px-6 py-2 rounded-2xl bg-mambo-magenta text-white font-black text-2xl uppercase tracking-tighter border-2 border-black flex items-center gap-2"
+          className="absolute top-20 left-1/2 -translate-x-1/2 px-6 py-2 rounded-2xl bg-snap-purple text-white font-black text-2xl uppercase tracking-tighter border-2 border-black flex items-center gap-2"
         >
           <Flame size={20} className="fill-current" />
           Fire

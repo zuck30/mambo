@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../hooks/useAuth';
-import { Ghost } from 'lucide-react';
+import { Ghost, Crown, Lock, Search, Users } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const LikesPage = () => {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const [likers, setLikers] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -47,11 +47,25 @@ const LikesPage = () => {
     return Math.abs(new Date(ageDifMs).getUTCFullYear() - 1970);
   };
 
+  const isGold = profile?.subscription === 'gold';
+
   return (
     <div className="min-h-screen bg-black text-white font-sans antialiased pb-32">
-      {/* Clean Page Header (No Sticky Nav) */}
-      <div className="max-w-2xl mx-auto px-6 pt-16 pb-10">
-      </div>
+      {/* Snapchat-style Header */}
+      <header className="flex items-center justify-between px-6 py-6 border-b border-white/5">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-zinc-800 border-2 border-white/10 overflow-hidden">
+            <img src={user?.photoURL || 'https://via.placeholder.com/40'} className="w-full h-full object-cover" />
+          </div>
+          <div className="w-10 h-10 rounded-full bg-zinc-900 flex items-center justify-center border border-white/5">
+             <Search size={20} className="text-white" />
+          </div>
+        </div>
+        <h1 className="text-xl font-black tracking-tight">Friends</h1>
+        <div className="w-10 h-10 rounded-full bg-zinc-900 flex items-center justify-center border border-white/5">
+           <Users size={20} className="text-white" />
+        </div>
+      </header>
 
       <div className="max-w-2xl mx-auto px-6">
         {loading ? (
@@ -62,8 +76,9 @@ const LikesPage = () => {
           </div>
         ) : likers.length > 0 ? (
           <div className="space-y-12">
+            <h2 className="text-sm font-black uppercase tracking-widest text-zinc-500 mb-4">Mutual Friends</h2>
             {/* Grid */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-3">
               <AnimatePresence>
                 {likers.map((p, i) => (
                   <motion.div 
