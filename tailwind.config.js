@@ -5,11 +5,13 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: { DEFAULT: '#F2C20E', dark: '#C13D88' },
-        mambo: {
-          yellow: '#F2C20E',
-          magenta: '#C13D88',
-          cream: '#F8E7B4',
+        primary: { DEFAULT: '#FFFC00', dark: '#E6E300' },
+        snap: {
+          yellow: '#FFFC00',
+          blue: '#00B9FF',
+          purple: '#9055FF',
+          red: '#FF2D55',
+          green: '#24CE67',
         },
         dark: {
           DEFAULT: '#000000',

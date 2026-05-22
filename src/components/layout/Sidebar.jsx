@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Flame, Diamond, MessageCircle, User, Search, Settings, Heart, Compass, Home } from 'lucide-react';
+import { MessageCircle, User, Settings, Heart, Compass, Flame } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { motion } from 'framer-motion';
 

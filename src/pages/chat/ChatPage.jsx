@@ -309,12 +309,12 @@ const ChatPage = () => {
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate(-1)}
-            className="p-2 -ml-2 text-primary hover:text-white transition-colors"
+            className="p-2 -ml-2 text-snap-blue hover:text-white transition-colors"
           >
             <ChevronLeft size={24} strokeWidth={3} />
           </button>
           <div className="flex items-center gap-3" onClick={() => navigate(`/app/profile/${match?.otherUser.id}`)}>
-            <div className="w-10 h-10 rounded-[1rem] overflow-hidden border border-white/10 ring-2 ring-primary/20">
+            <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-white/10">
               <img
                 src={match?.otherUser.photos?.[0] || '/default-avatar.png'}
                 alt={match?.otherUser.name}
@@ -323,19 +323,19 @@ const ChatPage = () => {
               />
             </div>
             <div>
-              <h3 className="text-sm font-black uppercase tracking-widest leading-none">{match?.otherUser.name}</h3>
+              <h3 className="text-lg font-bold tracking-tight leading-none text-white">{match?.otherUser.name}</h3>
             </div>
           </div>
         </div>
 
         <div className="flex items-center gap-1 relative chat-menu-container">
-          <button className="p-2 text-zinc-500 hover:text-white transition-colors"><Phone size={18} /></button>
-          <button className="p-2 text-zinc-500 hover:text-white transition-colors"><Video size={18} /></button>
+          <button className="p-2 text-zinc-500 hover:text-white transition-colors"><Phone size={20} /></button>
+          <button className="p-2 text-zinc-500 hover:text-white transition-colors"><Video size={20} /></button>
           <button
             onClick={() => setShowMenu(!showMenu)}
             className="p-2 text-zinc-500 hover:text-white transition-colors"
           >
-            <MoreVertical size={18} />
+            <MoreVertical size={20} />
           </button>
 
           <AnimatePresence>
@@ -443,22 +443,18 @@ const ChatPage = () => {
                   className={`flex ${isOwn ? 'justify-end' : 'justify-start'} ${isFirstInGroup ? 'mt-2' : 'mt-0.5'}`}
                 >
                   <div className={`max-w-[80%] sm:max-w-[70%] relative group`}>
-                    <div
-                      className={`px-4 py-2 text-sm font-black leading-relaxed tracking-tight whitespace-pre-wrap break-words ${
-                        isOwn
-                          ? 'bg-primary text-black rounded-[1.5rem] shadow-xl shadow-primary/10'
-                          : 'bg-zinc-900 text-zinc-200 border border-white/5 rounded-[1.5rem]'
-                      }`}
-                    >
-                      {msg.content}
-                    </div>
-                    {isOwn && (
-                      <div className="absolute -right-6 bottom-2 flex items-center">
-                        <div className={`text-[10px] font-black uppercase tracking-tighter transition-colors ${msg.is_read ? 'text-primary' : 'text-zinc-700'}`}>
-                          {msg.is_read ? 'Seen' : 'Sent'}
-                        </div>
+                    <div className={`flex flex-col ${isOwn ? 'items-end' : 'items-start'}`}>
+                      {isFirstInGroup && <span className={`text-[10px] font-black uppercase tracking-widest mb-1 ${isOwn ? 'text-snap-blue' : 'text-snap-red'}`}>{isOwn ? 'Me' : match?.otherUser.name}</span>}
+                      <div
+                        className={`px-4 py-2 text-sm font-medium leading-relaxed tracking-tight whitespace-pre-wrap break-words border-l-2 ${
+                          isOwn
+                            ? 'bg-transparent text-white border-snap-blue'
+                            : 'bg-transparent text-white border-snap-red'
+                        }`}
+                      >
+                        {msg.content}
                       </div>
-                    )}
+                    </div>
                     <div className={`text-[10px] text-zinc-700 mt-0.5 ${isOwn ? 'text-right' : 'text-left'} opacity-0 group-hover:opacity-100 transition-opacity`}>
                       {formatMessageTime(msg.created_at)}
                     </div>
@@ -543,7 +539,7 @@ const ChatPage = () => {
           {newMessage.trim() && (
             <button
               type="submit"
-              className="flex-shrink-0 w-12 h-12 rounded-full bg-primary text-black flex items-center justify-center transition-all hover:scale-105 active:scale-95 shadow-lg shadow-primary/20"
+              className="flex-shrink-0 w-12 h-12 rounded-full bg-snap-blue text-white flex items-center justify-center transition-all hover:scale-105 active:scale-95 shadow-lg shadow-snap-blue/20"
             >
               <Send size={18} strokeWidth={3} />
             </button>
