@@ -55,34 +55,34 @@ const SettingsPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white font-sans antialiased pb-20">
+    <div className="min-h-screen bg-[#F0F1F2] text-black font-sans antialiased pb-20">
       {/* Header */}
-      <div className="sticky top-0 z-50 bg-black/80 backdrop-blur-xl border-b border-white/5 h-16 px-6 flex items-center gap-4">
-        <button onClick={() => navigate(-1)} className="p-2 -ml-2 text-zinc-400 hover:text-white transition-colors">
-          <ChevronLeft size={24} />
+      <header className="sticky top-0 z-50 bg-white border-b border-zinc-100 h-16 px-6 flex items-center gap-4">
+        <button onClick={() => navigate(-1)} className="p-2 -ml-2 text-zinc-400 hover:text-black transition-colors">
+          <ChevronLeft size={24} strokeWidth={3} />
         </button>
-        <h1 className="text-sm font-black uppercase tracking-widest">{t.settings}</h1>
-      </div>
+        <h1 className="text-lg font-black tracking-tight">{t.settings}</h1>
+      </header>
 
-      <div className="max-w-2xl mx-auto p-6 space-y-10">
+      <div className="max-w-2xl mx-auto p-4 space-y-8">
         
         {/* Language Selection */}
         <section>
-          <label className="text-[11px] font-black text-zinc-500 uppercase tracking-widest px-1 mb-4 block">Preference</label>
-          <div className="bg-zinc-900/50 border border-white/5 rounded-3xl p-5 flex items-center justify-between">
+          <label className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em] px-2 mb-3 block">My Preferences</label>
+          <div className="bg-white border border-zinc-100 rounded-[2rem] p-6 flex items-center justify-between shadow-sm">
             <div className="flex items-center gap-4">
-              <div className="w-10 h-10 rounded-xl bg-zinc-800 flex items-center justify-center text-zinc-400">
+              <div className="w-10 h-10 rounded-xl bg-zinc-50 flex items-center justify-center text-zinc-400">
                 <Globe size={20} />
               </div>
               <span className="font-bold text-sm">App Language</span>
             </div>
-            <div className="flex bg-black p-1 rounded-xl border border-white/5">
+            <div className="flex bg-zinc-100 p-1 rounded-xl">
               {['en', 'sw'].map((lang) => (
                 <button
                   key={lang}
                   onClick={() => setLanguage(lang)}
                   className={`px-4 py-1.5 rounded-lg text-[10px] font-black uppercase transition-all ${
-                    language === lang ? 'bg-white text-black shadow-lg' : 'text-zinc-500'
+                    language === lang ? 'bg-white text-black shadow-sm' : 'text-zinc-400'
                   }`}
                 >
                   {lang}
@@ -94,14 +94,14 @@ const SettingsPage = () => {
 
         {/* Account Details */}
         <section className="space-y-4">
-          <label className="text-[11px] font-black text-zinc-500 uppercase tracking-[0.2em] px-2 block">Account Settings</label>
-          <div className="bg-black/20 border border-white/5 rounded-[2.5rem] divide-y divide-white/5 overflow-hidden">
+          <label className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em] px-2 block">Account Settings</label>
+          <div className="bg-white border border-zinc-100 rounded-[2rem] divide-y divide-zinc-50 overflow-hidden shadow-sm">
             
             {/* Phone Number Item */}
             <div className="p-6">
               <div className="flex justify-between items-center mb-2">
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-xl bg-zinc-800 flex items-center justify-center text-zinc-400">
+                  <div className="w-10 h-10 rounded-xl bg-zinc-50 flex items-center justify-center text-zinc-400">
                     <Phone size={18} />
                   </div>
                   <span className="font-bold text-sm">{t.phone_number}</span>
@@ -120,56 +120,55 @@ const SettingsPage = () => {
                     type="tel"
                     value={phoneNumber}
                     onChange={(e) => setPhoneNumber(e.target.value)}
-                    className="flex-grow bg-black border border-white/10 rounded-xl px-4 h-11 text-sm focus:outline-none focus:border-snap-yellow/50"
+                    className="flex-grow bg-zinc-50 border border-zinc-100 rounded-xl px-4 h-11 text-sm focus:outline-none focus:border-snap-yellow/50"
                   />
                   <button
                     onClick={handleUpdatePhone}
                     disabled={loading}
-                    className="bg-snap-yellow text-black px-5 rounded-xl font-bold text-xs uppercase disabled:opacity-50"
+                    className="bg-snap-yellow text-black px-5 rounded-xl font-bold text-xs uppercase disabled:opacity-50 shadow-sm"
                   >
                     {loading ? '...' : t.save}
                   </button>
                 </div>
               ) : (
-                <p className="text-zinc-500 text-sm ml-14">{profile?.phone_number || 'Not linked'}</p>
+                <p className="text-zinc-400 text-sm ml-14 font-medium">{profile?.phone_number || 'Not linked'}</p>
               )}
             </div>
 
             {/* Notification Toggle */}
             <div className="p-6 flex justify-between items-center">
               <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-xl bg-zinc-800 flex items-center justify-center text-zinc-400">
+                <div className="w-10 h-10 rounded-xl bg-zinc-50 flex items-center justify-center text-zinc-400">
                   <Bell size={18} />
                 </div>
                 <span className="font-bold text-sm">Notifications</span>
               </div>
-              <div className="w-12 h-7 bg-zinc-800 rounded-full relative cursor-pointer">
-                <div className="absolute left-1 top-1 w-5 h-5 bg-white rounded-full" />
+              <div className="w-12 h-7 bg-zinc-100 rounded-full relative cursor-pointer shadow-inner">
+                <div className="absolute left-1 top-1 w-5 h-5 bg-white rounded-full shadow-sm" />
               </div>
             </div>
           </div>
         </section>
 
-        {/* Privacy & Legal */}
+        {/* Support Section */}
         <section className="space-y-4">
-          <label className="text-[11px] font-black text-zinc-500 uppercase tracking-[0.2em] px-2 block">Privacy & Support</label>
-          <div className="bg-black/20 border border-white/5 rounded-[2.5rem] overflow-hidden">
+          <label className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em] px-2 block">Support</label>
+          <div className="bg-white border border-zinc-100 rounded-[2rem] overflow-hidden shadow-sm">
             {[
               { id: 'safety', label: 'Safety Center', icon: Shield },
-              { id: 'privacy', label: 'Privacy Policy', icon: Lock },
               { id: 'terms', label: 'Terms of Service', icon: AlertTriangle }
             ].map((item) => (
               <button
                 key={item.id}
-                className="w-full p-6 flex items-center justify-between hover:bg-white/5 transition-colors border-b border-white/5 last:border-0 group"
+                className="w-full p-6 flex items-center justify-between hover:bg-zinc-50 transition-colors border-b border-zinc-50 last:border-0 group text-left"
               >
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-xl bg-zinc-800 flex items-center justify-center text-zinc-400">
+                  <div className="w-10 h-10 rounded-xl bg-zinc-50 flex items-center justify-center text-zinc-400">
                     <item.icon size={18} />
                   </div>
-                  <span className="font-bold text-sm">{item.label}</span>
+                  <span className="font-bold text-sm text-zinc-800">{item.label}</span>
                 </div>
-                <ChevronRight size={18} className="text-zinc-600 group-hover:translate-x-1 transition-transform" />
+                <ChevronRight size={18} className="text-zinc-300 group-hover:translate-x-1 transition-transform" />
               </button>
             ))}
           </div>
@@ -179,7 +178,7 @@ const SettingsPage = () => {
         <div className="pt-6 space-y-3">
           <button
             onClick={signOut}
-            className="w-full bg-black/20 border border-white/5 text-white font-black uppercase text-xs tracking-widest h-16 rounded-full flex items-center justify-center gap-3 hover:bg-white/5 transition-all"
+            className="w-full bg-white border border-zinc-100 text-black font-black uppercase text-xs tracking-widest h-16 rounded-full flex items-center justify-center gap-3 hover:bg-zinc-50 transition-all shadow-sm"
           >
             <LogOut size={20} /> {t.logout}
           </button>
@@ -193,8 +192,8 @@ const SettingsPage = () => {
         </div>
 
         {/* Version Info */}
-        <div className="text-center pt-10 opacity-20">
-           <Flame className="mx-auto text-primary mb-3" size={24} />
+        <div className="text-center pt-10 opacity-10">
+           <Flame className="mx-auto text-black mb-3" size={24} />
         </div>
       </div>
     </div>

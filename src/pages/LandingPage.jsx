@@ -122,7 +122,7 @@ const LandingPage = () => {
         >
           <button
             onClick={() => navigate('/register')}
-            className="group relative bg-gradient-to-r from-[#FFFC00] to-[#FFFC00] text-white px-8 md:px-16 py-4 md:py-5 rounded-full text-xl md:text-2xl font-black uppercase tracking-tighter shadow-2xl overflow-hidden w-full md:w-auto"
+            className="group relative bg-snap-yellow text-black px-8 md:px-16 py-4 md:py-5 rounded-full text-xl md:text-2xl font-black uppercase tracking-tighter shadow-2xl overflow-hidden w-full md:w-auto"
           >
             <span className="relative z-10 transition-transform group-hover:scale-110 inline-block">Create account</span>
             <motion.div 

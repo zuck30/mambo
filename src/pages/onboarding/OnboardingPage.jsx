@@ -125,7 +125,7 @@ const OnboardingPage = () => {
           value={formData.name}
           onChange={(e) => updateFormData('name', e.target.value)}
           placeholder="First Name"
-          className="w-full bg-transparent border-b-2 border-white/20 py-4 text-3xl text-white focus:outline-none focus:border-primary transition-colors"
+          className="w-full bg-transparent border-b-2 border-white/20 py-4 text-3xl text-white focus:outline-none focus:border-snap-yellow transition-colors"
           autoFocus
         />
       ),
@@ -155,7 +155,7 @@ const OnboardingPage = () => {
               key={g}
               onClick={() => updateFormData('gender', g)}
               className={`w-full py-4 rounded-full border-2 transition-all text-xl capitalize ${
-                formData.gender === g ? 'border-primary bg-primary/10 text-white' : 'border-white/20 text-dark-text'
+                formData.gender === g ? 'border-snap-yellow bg-snap-yellow/10 text-white' : 'border-white/20 text-dark-text'
               }`}
             >
               {g}
@@ -175,7 +175,7 @@ const OnboardingPage = () => {
               key={pref}
               onClick={() => updateFormData('show_gender', pref)}
               className={`w-full py-4 rounded-full border-2 transition-all text-xl capitalize ${
-                formData.show_gender === pref ? 'border-primary bg-primary/10 text-white' : 'border-white/20 text-dark-text'
+                formData.show_gender === pref ? 'border-snap-yellow bg-snap-yellow/10 text-white' : 'border-white/20 text-dark-text'
               }`}
             >
               {pref}
@@ -227,7 +227,7 @@ const OnboardingPage = () => {
               onClick={() => toggleInterest(interest)}
               className={`px-4 py-2 rounded-full border transition-all ${
                 formData.interests.includes(interest)
-                  ? 'border-primary bg-primary text-white'
+                  ? 'border-snap-yellow bg-snap-yellow text-black'
                   : 'border-white/20 text-dark-text'
               }`}
             >
@@ -250,7 +250,7 @@ const OnboardingPage = () => {
               onClick={() => updateFormData('relationship_goal', goal.label)}
               className={`w-full p-4 rounded-2xl border-2 text-left transition-all flex items-center gap-4 ${
                 formData.relationship_goal === goal.label
-                  ? 'border-primary bg-primary/10 text-white'
+                  ? 'border-snap-yellow bg-snap-yellow/10 text-white'
                   : 'border-white/10 text-dark-text hover:border-white/20'
               }`}
             >
@@ -268,12 +268,12 @@ const OnboardingPage = () => {
       subtitle: "We use your location to show people nearby.",
       content: (
         <div className="flex flex-col items-center justify-center space-y-6">
-          <div className="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center">
+          <div className="w-24 h-24 rounded-full bg-snap-yellow/10 flex items-center justify-center">
             <motion.div
               animate={{ scale: [1, 1.2, 1] }}
               transition={{ repeat: Infinity, duration: 2 }}
             >
-              <Check size={48} className="text-primary" />
+              <Check size={48} className="text-snap-yellow" />
             </motion.div>
           </div>
           <button
@@ -310,7 +310,7 @@ const OnboardingPage = () => {
             <div
               key={s.id}
               className={`h-1 flex-grow rounded-full transition-all ${
-                s.id <= step ? 'bg-primary' : 'bg-white/10'
+                s.id <= step ? 'bg-snap-yellow' : 'bg-white/10'
               }`}
             />
           ))}
@@ -335,7 +335,7 @@ const OnboardingPage = () => {
           <button
             onClick={() => step === steps.length ? handleComplete() : setStep(s => s + 1)}
             disabled={!currentStep.isValid || loading}
-            className="w-full bg-gradient-to-r from-primary to-primary-dark text-white font-bold py-4 rounded-full hover:opacity-90 transition-opacity disabled:opacity-50"
+            className="w-full bg-snap-yellow text-black font-black uppercase tracking-widest py-4 rounded-full hover:opacity-90 transition-opacity disabled:opacity-50"
           >
             {loading ? 'Saving...' : step === steps.length ? 'Complete' : 'Continue'}
           </button>

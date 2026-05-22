@@ -443,20 +443,13 @@ const HomePage = () => {
             >
                {profile?.photos?.[0] ? <img src={profile.photos[0]} className="w-full h-full object-cover" /> : <User className="text-white" />}
             </motion.button>
-            <motion.button
-              whileTap={{ scale: 0.9 }}
-              onClick={() => setShowFilters(true)}
-              className="w-10 h-10 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center border-2 border-white/20 pointer-events-auto"
-            >
-              <Search size={20} className="text-white" />
-            </motion.button>
           </div>
 
           <div className="flex items-center gap-3">
              <motion.button
               whileTap={{ scale: 0.9 }}
               onClick={() => setShowFilters(true)}
-              className="w-10 h-10 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center border-2 border-white/20"
+              className="w-10 h-10 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center border-2 border-white/20 pointer-events-auto"
             >
               <Filter size={20} className="text-white" />
             </motion.button>
