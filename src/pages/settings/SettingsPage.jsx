@@ -150,29 +150,6 @@ const SettingsPage = () => {
           </div>
         </section>
 
-        {/* Support Section */}
-        <section className="space-y-4">
-          <label className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] px-2 block">Support</label>
-          <div className="bg-zinc-900/20 border border-white/5 rounded-[2.5rem] overflow-hidden shadow-2xl">
-            {[
-              { id: 'safety', label: 'Safety Center', icon: Shield },
-              { id: 'terms', label: 'Terms of Service', icon: Shield }
-            ].map((item) => (
-              <button
-                key={item.id}
-                className="w-full p-6 flex items-center justify-between hover:bg-white/5 transition-colors border-b border-white/5 last:border-0 group text-left"
-              >
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-xl bg-zinc-800 flex items-center justify-center text-zinc-400">
-                    <item.icon size={18} />
-                  </div>
-                  <span className="font-bold text-sm text-white">{item.label}</span>
-                </div>
-                <ChevronRight size={18} className="text-zinc-600 group-hover:translate-x-1 transition-transform" />
-              </button>
-            ))}
-          </div>
-        </section>
 
         {/* Actions */}
         <div className="pt-6 space-y-3">
