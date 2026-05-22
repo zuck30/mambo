@@ -1,4 +1,4 @@
-# mambo
+<!-- # mambo
 
 mambo is a dating app with robust discovery engine.
 
@@ -101,4 +101,4 @@ To create your first admin account:
 | `npm run lint` | Runs ESLint for code quality |
 
 ---
-© 2026 Mambo Group. All Rights Reserved.
+© 2026 Mambo Group. All Rights Reserved. -->
