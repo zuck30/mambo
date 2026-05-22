@@ -93,7 +93,7 @@ const DiscoverCard = ({ profile, onSwipe, onClick }) => {
           <div className="flex items-end justify-between">
             <div className="space-y-3">
               <div className="flex items-baseline gap-3">
-                <h3 className="text-4xl font-black tracking-tighter uppercase text-white leading-none">
+                <h3 className="text-3xl font-black tracking-tighter  text-white leading-none">
                   {profile.name}
                 </h3>
                 <span className="text-2xl font-black text-primary italic leading-none">{calculateAge(profile.birthday)}</span>
