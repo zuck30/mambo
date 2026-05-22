@@ -150,7 +150,7 @@ const OnboardingPage = () => {
       title: "What's your gender?",
       content: (
         <div className="space-y-4">
-          {['male', 'female', 'non-binary'].map(g => (
+          {['male', 'female'].map(g => (
             <button
               key={g}
               onClick={() => updateFormData('gender', g)}
