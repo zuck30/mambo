@@ -23,6 +23,7 @@ const HomePage = () => {
   const [showFilters, setShowFilters] = useState(false);
   const [swipeHistory, setSwipeHistory] = useState([]);
   const [recentMatches, setRecentMatches] = useState([]);
+  const [activeTab, setActiveTab] = useState('discover');
 
   useEffect(() => {
     if (profile?.id) {
@@ -89,11 +90,15 @@ const HomePage = () => {
     if (isRefresh) setStack([]);
 
     try {
+      // Prioritize Passport coordinates over current GPS
+      const lat = profile.passport_latitude || profile.latitude;
+      const lon = profile.passport_longitude || profile.longitude;
+
       // 1. Try fetching via RPC (Server-side heavy lifting)
       const { data: rpcData, error: rpcError } = await supabase.rpc('get_discovery_stack', {
         p_user_id: user.id,
-        p_latitude: profile.latitude,
-        p_longitude: profile.longitude,
+        p_latitude: lat,
+        p_longitude: lon,
         p_distance_pref: profile.distance_pref || 80,
         p_show_gender: profile.show_gender || 'everyone',
         p_min_age: profile.min_age_pref || 18,
@@ -138,8 +143,8 @@ const HomePage = () => {
         if (error) throw error;
 
         discoveryData = data?.filter(p => {
-          if (profile.latitude == null || p.latitude == null) return true;
-          const d = calculateDistance(profile.latitude, profile.longitude, p.latitude, p.longitude);
+          if (lat == null || p.latitude == null) return true;
+          const d = calculateDistance(lat, lon, p.latitude, p.longitude);
           return d <= (profile.distance_pref || 80);
         }) || [];
       }
@@ -163,8 +168,8 @@ const HomePage = () => {
         if (likedMeIds.includes(p.id)) score += 150;
         if (profile.school && p.school && profile.school.trim().toLowerCase() === p.school.trim().toLowerCase()) score += 50;
 
-        if (profile.latitude && profile.longitude && p.latitude && p.longitude) {
-          const distance = calculateDistance(profile.latitude, profile.longitude, p.latitude, p.longitude);
+        if (lat && lon && p.latitude && p.longitude) {
+          const distance = calculateDistance(lat, lon, p.latitude, p.longitude);
           score += Math.max(0, 100 - distance);
         }
 
@@ -422,7 +427,8 @@ const HomePage = () => {
       />
 
       {/* Header */}
-      <header className="flex items-center justify-between px-6 py-4 z-20 bg-black/50 backdrop-blur-md shrink-0">
+      <header className="flex flex-col z-20 bg-black/50 backdrop-blur-md shrink-0">
+        <div className="flex items-center justify-between px-6 py-4">
         <motion.button
           whileTap={{ scale: 0.9 }}
           onClick={() => navigate('/app/profile')}
@@ -431,13 +437,37 @@ const HomePage = () => {
            {profile?.photos?.[0] ? <img src={profile.photos[0]} className="w-full h-full object-cover" /> : <Flame className="text-primary" />}
         </motion.button>
 
-        <motion.button
-          whileTap={{ scale: 0.9 }}
-          onClick={() => setShowFilters(true)}
-          className="p-2 text-dark-text hover:text-white transition-colors"
-        >
-          <Filter size={24} />
-        </motion.button>
+          <motion.button
+            whileTap={{ scale: 0.9 }}
+            onClick={() => setShowFilters(true)}
+            className="p-2 text-dark-text hover:text-white transition-colors"
+          >
+            <Filter size={24} />
+          </motion.button>
+        </div>
+
+        {/* Home Tabs */}
+        <div className="flex px-6 pb-2 gap-8 border-b border-white/5">
+          <button
+            onClick={() => setActiveTab('discover')}
+            className={`pb-2 text-sm font-black uppercase tracking-widest transition-all relative ${
+              activeTab === 'discover' ? 'text-primary' : 'text-zinc-500'
+            }`}
+          >
+            Discover
+            {activeTab === 'discover' && <motion.div layoutId="activeTab" className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />}
+          </button>
+          <button
+            onClick={() => setActiveTab('topPicks')}
+            className={`pb-2 text-sm font-black uppercase tracking-widest transition-all relative flex items-center gap-2 ${
+              activeTab === 'topPicks' ? 'text-amber-400' : 'text-zinc-500'
+            }`}
+          >
+            <Star size={14} className={activeTab === 'topPicks' ? 'fill-amber-400' : ''} />
+            Top Picks
+            {activeTab === 'topPicks' && <motion.div layoutId="activeTab" className="absolute bottom-0 left-0 right-0 h-0.5 bg-amber-400" />}
+          </button>
+        </div>
       </header>
 
       {/* New Matches & Spotlights Bar */}
@@ -484,6 +514,33 @@ const HomePage = () => {
           <div className="flex flex-col items-center gap-4">
             <div className="w-20 h-20 rounded-full border-4 border-primary/20 border-t-primary animate-spin" />
             <p className="text-primary font-bold animate-pulse">{t.finding_people}</p>
+          </div>
+        ) : activeTab === 'topPicks' ? (
+          <div className="w-full h-full max-w-4xl grid grid-cols-2 gap-4 p-4 overflow-y-auto no-scrollbar pb-32">
+             {stack.slice(0, 10).map((p) => (
+               <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                key={`top-pick-${p.id}`}
+                onClick={() => setActiveTab('discover')} // Focus back for swiping
+                className="aspect-[3/4] relative rounded-3xl overflow-hidden border-2 border-amber-400/30 group cursor-pointer"
+               >
+                 <img src={p.photos[0]} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                 <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80" />
+                 <div className="absolute top-3 left-3 bg-amber-400 text-black text-[8px] font-black uppercase px-2 py-1 rounded-full shadow-lg">
+                   Top Pick
+                 </div>
+                 <div className="absolute bottom-4 left-4">
+                   <p className="text-white font-black text-sm uppercase tracking-tighter">{p.name}</p>
+                   <p className="text-zinc-400 text-[10px] font-bold">{p.job || 'Explore profile'}</p>
+                 </div>
+               </motion.div>
+             ))}
+             {stack.length === 0 && (
+                <div className="col-span-2 text-center py-20 text-zinc-500 font-bold uppercase tracking-widest text-sm">
+                  Refreshing Picks...
+                </div>
+             )}
           </div>
         ) : stack.length > 0 ? (
           <AnimatePresence>

@@ -1,9 +1,18 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { supabase } from '../../lib/supabase';
-import { ChevronLeft, Plus, X, Camera, Check } from 'lucide-react';
+import { ChevronLeft, Plus, X, Camera, Check, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
+
+const GOALS_OPTIONS = [
+  { id: 'long_term', label: 'Long-term partner', icon: '💘' },
+  { id: 'long_term_open', label: 'Long-term, open to short', icon: '😍' },
+  { id: 'short_term_open', label: 'Short-term, open to long', icon: '🥂' },
+  { id: 'short_term', label: 'Short-term fun', icon: '🎉' },
+  { id: 'new_friends', label: 'New friends', icon: '👋' },
+  { id: 'still_figuring', label: 'Still figuring it out', icon: '🤔' }
+];
 
 const EditProfilePage = () => {
   const { profile, fetchProfile } = useAuth();
@@ -13,7 +22,9 @@ const EditProfilePage = () => {
     bio: profile?.bio || '',
     job: profile?.job || '',
     school: profile?.school || '',
-    photos: profile?.photos || []
+    photos: profile?.photos || [],
+    relationship_goal: profile?.relationship_goal || '',
+    smart_photos_enabled: profile?.smart_photos_enabled || false
   });
 
   const handleSave = async () => {
@@ -79,7 +90,50 @@ const EditProfilePage = () => {
         </section>
 
         {/* Info Fields */}
-        <div className="space-y-8">
+        <div className="space-y-12">
+          {/* Smart Photos Toggle */}
+          <section className="bg-zinc-900/50 border border-white/5 rounded-3xl p-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
+                  <Sparkles size={24} />
+                </div>
+                <div>
+                  <h4 className="font-bold text-sm">Smart Photos</h4>
+                  <p className="text-[10px] text-zinc-500 uppercase tracking-widest font-black">Top photo first</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setFormData(p => ({...p, smart_photos_enabled: !p.smart_photos_enabled}))}
+                className={`w-14 h-7 rounded-full relative transition-colors ${formData.smart_photos_enabled ? 'bg-primary' : 'bg-zinc-800'}`}
+              >
+                <div className={`absolute top-1 w-5 h-5 bg-white rounded-full transition-all ${formData.smart_photos_enabled ? 'right-1' : 'left-1'}`} />
+              </button>
+            </div>
+          </section>
+
+          {/* Relationship Goals */}
+          <section className="space-y-4">
+            <label className="text-[11px] font-black text-zinc-500 uppercase tracking-widest px-1">Relationship Goals</label>
+            <div className="grid grid-cols-1 gap-2">
+              {GOALS_OPTIONS.map(goal => (
+                <button
+                  key={goal.id}
+                  onClick={() => setFormData(p => ({...p, relationship_goal: goal.label}))}
+                  className={`w-full p-4 rounded-2xl border transition-all text-left flex items-center gap-3 ${
+                    formData.relationship_goal === goal.label
+                      ? 'border-primary bg-primary/5 text-white'
+                      : 'border-white/5 bg-zinc-900/30 text-zinc-400 hover:bg-zinc-900/50'
+                  }`}
+                >
+                  <span className="text-xl">{goal.icon}</span>
+                  <span className="text-sm font-bold">{goal.label}</span>
+                  {formData.relationship_goal === goal.label && <Check size={16} className="ml-auto text-primary" />}
+                </button>
+              ))}
+            </div>
+          </section>
+
           <div className="space-y-3">
             <label className="text-[11px] font-black text-zinc-500 uppercase tracking-widest px-1">About Me</label>
             <textarea

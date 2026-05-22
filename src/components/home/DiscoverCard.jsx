@@ -37,6 +37,18 @@ const DiscoverCard = ({ profile, onSwipe, onClick }) => {
     return Math.abs(new Date(ageDifMs).getUTCFullYear() - 1970);
   };
 
+  const getGoalIcon = (goal) => {
+    const goals = {
+      'Long-term partner': '💘',
+      'Long-term, open to short': '😍',
+      'Short-term, open to long': '🥂',
+      'Short-term fun': '🎉',
+      'New friends': '👋',
+      'Still figuring it out': '🤔'
+    };
+    return goals[goal] || '✨';
+  };
+
   return (
     <motion.div
       style={{ x, y, rotate, opacity }}
@@ -99,6 +111,14 @@ const DiscoverCard = ({ profile, onSwipe, onClick }) => {
                     <Heart size={12} className="text-primary fill-current" />
                     <span className="text-[10px] font-black uppercase tracking-widest text-primary">
                       {profile.commonInterestsCount} {t.shared}
+                    </span>
+                  </div>
+                )}
+                {profile.relationship_goal && (
+                  <div className="flex items-center gap-1.5 px-3 py-1 bg-white/10 backdrop-blur-md border border-white/20 rounded-full">
+                    <span className="text-xs">{getGoalIcon(profile.relationship_goal)}</span>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-white">
+                      {profile.relationship_goal}
                     </span>
                   </div>
                 )}

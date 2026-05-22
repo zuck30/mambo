@@ -12,6 +12,15 @@ const INTERESTS_OPTIONS = [
   'Sports', 'Technology', 'Nature', 'Fashion', 'Yoga'
 ];
 
+const GOALS_OPTIONS = [
+  { id: 'long_term', label: 'Long-term partner', icon: '💘' },
+  { id: 'long_term_open', label: 'Long-term, open to short', icon: '😍' },
+  { id: 'short_term_open', label: 'Short-term, open to long', icon: '🥂' },
+  { id: 'short_term', label: 'Short-term fun', icon: '🎉' },
+  { id: 'new_friends', label: 'New friends', icon: '👋' },
+  { id: 'still_figuring', label: 'Still figuring it out', icon: '🤔' }
+];
+
 const OnboardingPage = () => {
   const { user, profile, fetchProfile } = useAuth();
   const navigate = useNavigate();
@@ -31,6 +40,7 @@ const OnboardingPage = () => {
     show_gender: '',
     photos: [],
     interests: [],
+    relationship_goal: '',
     latitude: null,
     longitude: null,
     location_name: '',
@@ -230,6 +240,30 @@ const OnboardingPage = () => {
     },
     {
       id: 7,
+      title: "What are you looking for?",
+      subtitle: "This helps us find the right energy for you.",
+      content: (
+        <div className="grid grid-cols-1 gap-3">
+          {GOALS_OPTIONS.map(goal => (
+            <button
+              key={goal.id}
+              onClick={() => updateFormData('relationship_goal', goal.label)}
+              className={`w-full p-4 rounded-2xl border-2 text-left transition-all flex items-center gap-4 ${
+                formData.relationship_goal === goal.label
+                  ? 'border-primary bg-primary/10 text-white'
+                  : 'border-white/10 text-dark-text hover:border-white/20'
+              }`}
+            >
+              <span className="text-2xl">{goal.icon}</span>
+              <span className="font-bold">{goal.label}</span>
+            </button>
+          ))}
+        </div>
+      ),
+      isValid: !!formData.relationship_goal,
+    },
+    {
+      id: 8,
       title: "Enable Location",
       subtitle: "We use your location to show people nearby.",
       content: (
