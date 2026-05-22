@@ -54,12 +54,7 @@ const LikesPage = () => {
       {/* Premium theme Header */}
       <header className="flex items-center justify-between px-6 py-6 border-b border-white/5">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-zinc-800 border-2 border-white/10 overflow-hidden">
-            <img src={user?.photoURL || 'https://via.placeholder.com/40'} className="w-full h-full object-cover" />
-          </div>
-          <div className="w-10 h-10 rounded-full bg-zinc-900 flex items-center justify-center border border-white/5">
-             <Search size={20} className="text-white" />
-          </div>
+
         </div>
         <h1 className="text-xl font-black tracking-tight">Friends</h1>
         <div className="w-10 h-10 rounded-full bg-zinc-900 flex items-center justify-center border border-white/5">
