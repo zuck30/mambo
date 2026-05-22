@@ -67,11 +67,7 @@ const MessagesPage = () => {
 
   return (
     <div className="p-6 pb-32">
-      <header className="flex items-center justify-between mb-8">
-        <div className="flex items-center gap-3">
-        </div>
-        <h1 className="text-xl font-black tracking-tight">Chat</h1>
-      </header>
+
 
       {/* Search Bar */}
       <div className="relative mb-8">
