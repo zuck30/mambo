@@ -283,13 +283,6 @@ const HomePage = () => {
     }
   };
 
-  const handleBoost = async () => {
-    toast.success('Boost activated! You are now one of the top profiles in your area for 30 minutes.', {
-      icon: '⚡',
-      duration: 4000
-    });
-  };
-
   const handleRewind = async () => {
     if (loading || swipeHistory.length === 0) {
       toast.error('Nothing to rewind');
@@ -450,22 +443,21 @@ const HomePage = () => {
         <div className="flex px-6 pb-2 gap-8 border-b border-white/5">
           <button
             onClick={() => setActiveTab('discover')}
-            className={`pb-2 text-sm font-black uppercase tracking-widest transition-all relative ${
-              activeTab === 'discover' ? 'text-primary' : 'text-zinc-500'
+            className={`pb-2 text-[10px] font-black uppercase tracking-[0.2em] transition-all relative ${
+              activeTab === 'discover' ? 'text-primary' : 'text-zinc-600'
             }`}
           >
-            Discover
-            {activeTab === 'discover' && <motion.div layoutId="activeTab" className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />}
+            For You
+            {activeTab === 'discover' && <motion.div layoutId="activeTab" className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-full" />}
           </button>
           <button
             onClick={() => setActiveTab('topPicks')}
-            className={`pb-2 text-sm font-black uppercase tracking-widest transition-all relative flex items-center gap-2 ${
-              activeTab === 'topPicks' ? 'text-amber-400' : 'text-zinc-500'
+            className={`pb-2 text-[10px] font-black uppercase tracking-[0.2em] transition-all relative flex items-center gap-2 ${
+              activeTab === 'topPicks' ? 'text-primary' : 'text-zinc-600'
             }`}
           >
-            <Star size={14} className={activeTab === 'topPicks' ? 'fill-amber-400' : ''} />
             Top Picks
-            {activeTab === 'topPicks' && <motion.div layoutId="activeTab" className="absolute bottom-0 left-0 right-0 h-0.5 bg-amber-400" />}
+            {activeTab === 'topPicks' && <motion.div layoutId="activeTab" className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-full" />}
           </button>
         </div>
       </header>
@@ -479,14 +471,14 @@ const HomePage = () => {
               animate={{ scale: 1 }}
               key={`match-${m.matchId}`}
               onClick={() => navigate(`/app/chat/${m.matchId}`)}
-              className="flex-shrink-0 flex flex-col items-center gap-1"
+              className="flex-shrink-0 flex flex-col items-center gap-1.5"
             >
-              <div className="w-16 h-16 rounded-full p-0.5 bg-gradient-to-tr from-primary to-purple-500">
-                <div className="w-full h-full rounded-full border-2 border-black overflow-hidden">
+              <div className="w-16 h-16 rounded-[1.5rem] p-0.5 bg-gradient-to-tr from-primary to-mambo-magenta">
+                <div className="w-full h-full rounded-[1.25rem] border-2 border-black overflow-hidden">
                   <img src={m.photos[0]} className="w-full h-full object-cover" />
                 </div>
               </div>
-              <span className="text-[10px] font-bold text-white uppercase tracking-tighter truncate w-16 text-center">
+              <span className="text-[9px] font-black text-zinc-400 uppercase tracking-widest truncate w-16 text-center">
                 {m.name}
               </span>
             </motion.button>
@@ -494,16 +486,16 @@ const HomePage = () => {
         ))}
 
         {/* Divider */}
-        {recentMatches.length > 0 && <div className="w-[1px] h-12 bg-white/10 self-center" />}
+        {recentMatches.length > 0 && <div className="w-[1px] h-12 bg-white/5 self-center mx-2" />}
 
         {spotlights.map(p => (
-          <div key={`spotlight-${p.id}`} className="flex-shrink-0 flex flex-col items-center gap-1">
-            <div className="w-16 h-16 rounded-full p-0.5 bg-gradient-to-tr from-yellow-400 to-orange-500">
-              <div className="w-full h-full rounded-full border-2 border-black overflow-hidden">
-                <img src={p.photos[0]} className="w-full h-full object-cover" />
+          <div key={`spotlight-${p.id}`} className="flex-shrink-0 flex flex-col items-center gap-1.5">
+            <div className="w-16 h-16 rounded-[1.5rem] p-0.5 bg-zinc-800">
+              <div className="w-full h-full rounded-[1.25rem] border-2 border-black overflow-hidden">
+                <img src={p.photos[0]} className="w-full h-full object-cover grayscale" />
               </div>
             </div>
-            <span className="text-[10px] font-bold text-white uppercase tracking-tighter">Spotlight</span>
+            <span className="text-[9px] font-black text-zinc-600 uppercase tracking-widest">New</span>
           </div>
         ))}
       </div>
@@ -627,14 +619,6 @@ const HomePage = () => {
           <Heart className="w-7 h-7 md:w-8 md:h-8" fill="currentColor" />
         </motion.button>
 
-        <motion.button
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          onClick={handleBoost}
-          className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-dark-card border border-white/5 flex items-center justify-center text-purple-500 shadow-lg"
-        >
-          <Zap className="w-5 h-5 md:w-6 md:h-6" fill="currentColor" />
-        </motion.button>
       </div>
 
       {/* Match Modal */}
@@ -651,7 +635,7 @@ const HomePage = () => {
               animate={{ scale: 1, opacity: 1 }}
               className="space-y-4 mb-12"
             >
-              <h2 className="text-6xl font-black text-primary italic">{t.match}</h2>
+              <h2 className="text-6xl font-black text-white italic tracking-tighter uppercase">{t.match}</h2>
               <p className="text-white text-xl">{t.you_and} {matchedUser.name} {t.liked_each_other}</p>
             </motion.div>
 

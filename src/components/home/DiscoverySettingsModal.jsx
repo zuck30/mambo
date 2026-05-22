@@ -91,7 +91,7 @@ const DiscoverySettingsModal = ({ isOpen, onClose, profile, onSave }) => {
                       <p className="text-[10px] text-zinc-500 uppercase tracking-widest">Use GPS</p>
                     </div>
                   </div>
-                  {!passportLocation.lat && <div className="w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_rgba(255,121,172,0.6)]" />}
+                  {!passportLocation.lat && <div className="w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_rgba(242,194,14,0.4)]" />}
                 </button>
 
                 {CITIES.map((city) => (
@@ -107,7 +107,7 @@ const DiscoverySettingsModal = ({ isOpen, onClose, profile, onSave }) => {
                         <p className="text-[10px] text-zinc-500 uppercase tracking-widest">Passport</p>
                       </div>
                     </div>
-                    {passportLocation.name === city.name && <div className="w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_rgba(255,121,172,0.6)]" />}
+                    {passportLocation.name === city.name && <div className="w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_rgba(242,194,14,0.4)]" />}
                   </button>
                 ))}
               </div>

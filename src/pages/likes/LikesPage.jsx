@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../hooks/useAuth';
-import { Lock, Ghost, Crown } from 'lucide-react';
+import { Ghost } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const LikesPage = () => {
-  const { user, profile } = useAuth();
+  const { user } = useAuth();
   const [likers, setLikers] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -47,8 +47,6 @@ const LikesPage = () => {
     return Math.abs(new Date(ageDifMs).getUTCFullYear() - 1970);
   };
 
-  const isGold = profile?.subscription === 'gold';
-
   return (
     <div className="min-h-screen bg-black text-white font-sans antialiased pb-32">
       {/* Clean Page Header (No Sticky Nav) */}
@@ -77,9 +75,7 @@ const LikesPage = () => {
                   >
                     <img
                       src={p.photos[0]}
-                      className={`w-full h-full object-cover transition-all duration-700 ${
-                        !isGold && i > 1 ? 'blur-2xl scale-110 grayscale opacity-40' : 'group-hover:scale-110'
-                      }`}
+                      className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110"
                       alt=""
                     />
                     
@@ -88,16 +84,9 @@ const LikesPage = () => {
 
                     {/* Info Label */}
                     <div className="absolute bottom-5 left-5 right-5">
-                      {(isGold || i <= 1) ? (
-                        <p className="text-sm font-black italic tracking-tight">
-                          {p.name}, {calculateAge(p.birthday)}
-                        </p>
-                      ) : (
-                        <div className="flex flex-col items-center justify-center py-4 bg-black/40 backdrop-blur-md rounded-2xl border border-white/10">
-                          <Lock size={16} className="text-amber-400 mb-1" />
-                          <span className="text-[9px] font-black uppercase tracking-widest text-white/60">Blurred</span>
-                        </div>
-                      )}
+                      <p className="text-sm font-black italic tracking-tight">
+                        {p.name}, {calculateAge(p.birthday)}
+                      </p>
                     </div>
 
                     {/* Superlike Indicator */}
@@ -111,26 +100,6 @@ const LikesPage = () => {
               </AnimatePresence>
             </div>
 
-            {/* Original High-Vibe Upsell Card */}
-            {!isGold && (
-              <div className="relative group overflow-hidden bg-gradient-to-br from-amber-300 via-amber-500 to-orange-600 p-[1px] rounded-[2.5rem]">
-                <div className="bg-black rounded-[2.5rem] p-10 text-center relative overflow-hidden">
-                  <div className="relative z-10">
-                    <Crown size={40} className="mx-auto text-amber-500 mb-4" />
-                    <h3 className="text-2xl font-black uppercase tracking-tighter mb-2">Reveal Everyone</h3>
-                    <p className="text-zinc-400 text-sm mb-8 px-4 font-medium leading-relaxed">
-                      Upgrade to <span className="text-amber-500 font-bold">Mambo Gold</span> to see all {likers.length} people who already liked you.
-                    </p>
-                    <button className="w-full h-14 bg-amber-500 text-black rounded-2xl font-black text-sm uppercase tracking-widest hover:scale-[1.02] transition-transform active:scale-95 shadow-xl shadow-amber-500/20">
-                      Get Gold 5,000 TZS
-                    </button>
-                  </div>
-                  
-                  {/* Decorative Glow */}
-                  <div className="absolute -top-24 -left-24 w-48 h-48 bg-amber-500/10 blur-[100px]" />
-                </div>
-              </div>
-            )}
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center py-32 text-center">

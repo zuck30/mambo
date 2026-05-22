@@ -143,8 +143,8 @@ const SettingsPage = () => {
                 </div>
                 <span className="font-bold text-sm">Push Notifications</span>
               </div>
-              <div className="w-11 h-6 bg-primary rounded-full relative cursor-pointer">
-                <div className="absolute right-1 top-1 w-4 h-4 bg-white rounded-full" />
+              <div className="w-11 h-6 bg-zinc-800 rounded-full relative cursor-pointer">
+                <div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full" />
               </div>
             </div>
           </div>

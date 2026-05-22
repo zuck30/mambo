@@ -309,12 +309,12 @@ const ChatPage = () => {
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate(-1)}
-            className="p-2 -ml-2 text-zinc-500 hover:text-white transition-colors"
+            className="p-2 -ml-2 text-primary hover:text-white transition-colors"
           >
-            <ChevronLeft size={24} />
+            <ChevronLeft size={24} strokeWidth={3} />
           </button>
           <div className="flex items-center gap-3" onClick={() => navigate(`/app/profile/${match?.otherUser.id}`)}>
-            <div className="w-10 h-10 rounded-xl overflow-hidden border border-white/10">
+            <div className="w-10 h-10 rounded-[1rem] overflow-hidden border border-white/10 ring-2 ring-primary/20">
               <img
                 src={match?.otherUser.photos?.[0] || '/default-avatar.png'}
                 alt={match?.otherUser.name}
@@ -444,9 +444,9 @@ const ChatPage = () => {
                 >
                   <div className={`max-w-[80%] sm:max-w-[70%] relative group`}>
                     <div
-                      className={`px-4 py-2 text-sm font-medium leading-relaxed tracking-tight whitespace-pre-wrap break-words ${
+                      className={`px-4 py-2 text-sm font-black leading-relaxed tracking-tight whitespace-pre-wrap break-words ${
                         isOwn
-                          ? 'bg-white text-black rounded-[1.5rem] shadow-xl shadow-white/5'
+                          ? 'bg-primary text-black rounded-[1.5rem] shadow-xl shadow-primary/10'
                           : 'bg-zinc-900 text-zinc-200 border border-white/5 rounded-[1.5rem]'
                       }`}
                     >
@@ -543,9 +543,9 @@ const ChatPage = () => {
           {newMessage.trim() && (
             <button
               type="submit"
-              className="flex-shrink-0 w-12 h-12 rounded-full bg-white text-black flex items-center justify-center transition-all hover:scale-105 active:scale-95"
+              className="flex-shrink-0 w-12 h-12 rounded-full bg-primary text-black flex items-center justify-center transition-all hover:scale-105 active:scale-95 shadow-lg shadow-primary/20"
             >
-              <Send size={18} className="fill-current" />
+              <Send size={18} strokeWidth={3} />
             </button>
           )}
         </form>
